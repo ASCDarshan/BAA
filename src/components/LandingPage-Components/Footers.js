@@ -18,7 +18,10 @@ const FooterLink = styled(Typography)(({ theme }) => ({
     color: theme.palette.primary.main,
   },
 }));
-const Footers = () => {
+
+const Footers = (props) => {
+  const footerData = props.footerData;
+
   return (
     <Box component="footer" sx={{ bgcolor: "background.paper", py: 6, mt: 4 }}>
       <Container maxWidth="lg">
@@ -75,19 +78,36 @@ const Footers = () => {
         </Grid>
         <Box mt={5}>
           <Typography variant="body2" color="text.secondary" align="center">
-            © {new Date().getFullYear()} Bhavans Alumni Association. All rights
-            reserved.
+            {new Date().getFullYear()} {footerData.copyright_text}
           </Typography>
           <Box display="flex" justifyContent="center" mt={2}>
-            <IconButton color="inherit" aria-label="Facebook">
-              <FacebookIcon />
-            </IconButton>
-            <IconButton color="inherit" aria-label="Instagram">
-              <InstagramIcon />
-            </IconButton>
-            <IconButton color="inherit" aria-label="LinkedIn">
-              <LinkedInIcon />
-            </IconButton>
+            <a
+              href={footerData.facebook_link}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <IconButton color="inherit" aria-label="Facebook">
+                <FacebookIcon />
+              </IconButton>
+            </a>
+            <a
+              href={footerData.instagram_link}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <IconButton color="inherit" aria-label="Instagram">
+                <InstagramIcon />
+              </IconButton>
+            </a>
+            <a
+              href={footerData.linkedin_link}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <IconButton color="inherit" aria-label="LinkedIn">
+                <LinkedInIcon />
+              </IconButton>
+            </a>
           </Box>
         </Box>
       </Container>

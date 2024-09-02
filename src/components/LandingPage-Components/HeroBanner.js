@@ -1,9 +1,8 @@
 import { Box, Button, Container, styled, Typography } from "@mui/material";
 import React from "react";
 
-const heroImage = "/hero-image.jpg";
-const HeroSection = styled(Box)(({ theme }) => ({
-  backgroundImage: `url(${heroImage})`,
+const HeroSection = styled(Box)(({ bgImage }) => ({
+  backgroundImage: `url(${bgImage})`,
   backgroundSize: "cover",
   backgroundPosition: "center",
   height: "600px",
@@ -18,28 +17,34 @@ const HeroSection = styled(Box)(({ theme }) => ({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(0,0,0,0.5)", // Dark overlay
+    backgroundColor: "rgba(0,0,0,0.5)",
   },
 }));
-const HeroBanner = () => {
+
+const HeroBanner = (props) => {
+  const heroImages = props.heroImages;
+
   return (
-    <HeroSection>
-      <Container sx={{ position: "relative", zIndex: 1 }}>
-        <Typography variant="h2" component="h1" gutterBottom>
-          BHAVANS ALUMNI ASSOCIATION
-        </Typography>
-        <Typography variant="h5" paragraph>
-          To create a global network of Bhavans Alumni united by a shared
-          commitment to excellence, compassion, and lifelong learning.
-        </Typography>
-        <Button variant="contained" color="primary" sx={{ mr: 2 }}>
-          OUR MISSION
-        </Button>
-        <Button variant="outlined" color="inherit">
-          OUR STORY
-        </Button>
-      </Container>
-    </HeroSection>
+    <>
+      {heroImages.map((heroimg, index) => (
+        <HeroSection key={index} bgImage={heroimg.image}>
+          <Container sx={{ position: "relative", zIndex: 1 }}>
+            <Typography variant="h2" component="h1" gutterBottom>
+              {heroimg.title}
+            </Typography>
+            <Typography variant="h5" paragraph>
+              {heroimg.subtitle}
+            </Typography>
+            <Button variant="contained" color="primary" sx={{ mr: 2 }}>
+              OUR MISSION
+            </Button>
+            <Button variant="outlined" color="inherit">
+              OUR STORY
+            </Button>
+          </Container>
+        </HeroSection>
+      ))}
+    </>
   );
 };
 
