@@ -25,7 +25,18 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
 }));
 
 const Achievements = (props) => {
-  const achievementsData = props.Achievements;
+  const achievementsData = props.achievements;
+
+  if (!achievementsData || achievementsData.length === 0) {
+    return (
+      <Container sx={{ mt: 4 }}>
+        <SectionTitle variant="h4">Achievements</SectionTitle>
+        <Typography variant="body1">
+          No achievements available at the moment.
+        </Typography>
+      </Container>
+    );
+  }
 
   return (
     <Container sx={{ mt: 4 }}>
@@ -36,7 +47,7 @@ const Achievements = (props) => {
             <Card>
               <CardMedia
                 component="img"
-                height="140"
+                height="160"
                 image={achievement.image}
                 alt={achievement.title}
               />
