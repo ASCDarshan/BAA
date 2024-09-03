@@ -1,61 +1,73 @@
-import React, { useState } from 'react';
-import { TextField, Button, Typography, Container, Box, Paper } from '@mui/material';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState } from "react";
+import {
+  TextField,
+  Button,
+  Typography,
+  Container,
+  Box,
+  Paper,
+} from "@mui/material";
+import { useNavigate, Link } from "react-router-dom";
 
 const Register = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     // TODO: Implement registration logic here
-    console.log('Registration attempt:', { email, password, confirmPassword });
+    console.log("Registration attempt:", { email, password, confirmPassword });
     // For now, let's just navigate to the login page
-    navigate('/login');
+    navigate("/login");
   };
 
   return (
     <Box
       sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '100vh',
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
         backgroundColor: (theme) => theme.palette.background.default,
       }}
     >
       <Container component="main" maxWidth="xs">
-        <Paper 
-          elevation={3} 
-          sx={{ 
-            padding: 2, 
-            display: 'flex', 
-            flexDirection: 'column', 
-            alignItems: 'center',
-            mb: 2 // Add margin bottom
+        <Paper
+          elevation={3}
+          sx={{
+            padding: 2,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            mb: 2, // Add margin bottom
           }}
         >
           <img
             src="/logo.png"
             alt="BAA Logo"
-            style={{ width: '150px', height: 'auto' }}
+            style={{ width: "150px", height: "auto" }}
           />
         </Paper>
-        <Paper 
-          elevation={3} 
-          sx={{ 
-            padding: 4, 
-            display: 'flex', 
-            flexDirection: 'column', 
-            alignItems: 'center' 
+        <Paper
+          elevation={3}
+          sx={{
+            padding: 4,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
           }}
         >
           <Typography component="h1" variant="h5">
             Sign up
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1, width: '100%' }}>
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            noValidate
+            sx={{ mt: 1, width: "100%" }}
+          >
             <TextField
               margin="normal"
               required
@@ -100,8 +112,11 @@ const Register = () => {
             >
               Sign Up
             </Button>
-            <Box sx={{ textAlign: 'center' }}>
-              <Link to="/login" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <Box sx={{ textAlign: "center" }}>
+              <Link
+                to="/login"
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
                 <Typography variant="body2">
                   {"Already have an account? Sign In"}
                 </Typography>
