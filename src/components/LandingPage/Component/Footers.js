@@ -24,6 +24,7 @@ const FooterLink = styled(Typography)(({ theme }) => ({
 
 const Footers = (props) => {
   const { footerData } = props;
+  const { contactData } = props;
 
   return (
     <Box
@@ -52,13 +53,13 @@ const Footers = (props) => {
               Contact Us
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              123 Alumni Lane, Vadodara, Gujarat, India
+              {contactData.address}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Email: contact@bhavansalumni.org
+              Email: {contactData.email}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Phone: +91 1234567890
+              Phone: {contactData.phone}
             </Typography>
           </Grid>
           <Grid item xs={12} md={4}>

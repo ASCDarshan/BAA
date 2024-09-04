@@ -34,7 +34,14 @@ const SectionTitle = ({ children }) => (
 );
 
 const TestimonialCard = ({ testimonial }) => (
-  <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+  <Card
+    sx={{
+      height: "100%",
+      display: "flex",
+      flexDirection: "column",
+      margin: 2,
+    }}
+  >
     {testimonial.image && (
       <CardMedia
         component="img"
@@ -108,12 +115,14 @@ const Testimonials = ({ testimonialsData }) => {
   };
 
   return (
-    <Container sx={{ mt: 4, mb: 4, position: "relative" }}>
+    <Container sx={{ mt: 4, mb: 6, position: "relative" }}>
+      {" "}
       <SectionTitle>Testimonials</SectionTitle>
       {testimonialsData.length > 3 ? (
         <Slider {...settings}>
           {testimonialsData.map((testimonial, index) => (
-            <div key={index} style={{ padding: "0 10px" }}>
+            <div key={index} style={{ padding: "0 15px" }}>
+              {" "}
               <TestimonialCard testimonial={testimonial} />
             </div>
           ))}

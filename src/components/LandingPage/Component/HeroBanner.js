@@ -44,10 +44,15 @@ const HeroBanner = ({ heroImages }) => {
             <Typography variant="h5" paragraph>
               {heroimg.subtitle}
             </Typography>
-            <Button variant="contained" color="primary" sx={{ mr: 2 }}>
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ mr: 2 }}
+              href={"#about-us"}
+            >
               OUR MISSION
             </Button>
-            <Button variant="outlined" color="inherit">
+            <Button variant="outlined" color="inherit" href={"#about-us"}>
               OUR STORY
             </Button>
           </Container>

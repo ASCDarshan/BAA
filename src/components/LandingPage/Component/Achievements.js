@@ -29,7 +29,7 @@ const Achievements = (props) => {
 
   if (!achievementsData || achievementsData.length === 0) {
     return (
-      <Container sx={{ mt: 4 }}>
+      <Container sx={{ mt: 4, mb: 4 }}>
         <SectionTitle variant="h4">Achievements</SectionTitle>
         <Typography variant="body1">
           No achievements available at the moment.
@@ -39,12 +39,12 @@ const Achievements = (props) => {
   }
 
   return (
-    <Container sx={{ mt: 4 }}>
+    <Container sx={{ mt: 4, mb: 4 }}>
       <SectionTitle variant="h4">Achievements</SectionTitle>
       <Grid container spacing={3}>
         {achievementsData.map((achievement, index) => (
           <Grid item xs={12} sm={4} key={index}>
-            <Card>
+            <Card sx={{ padding: 2 }}>
               <CardMedia
                 component="img"
                 height="160"
