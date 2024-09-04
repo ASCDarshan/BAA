@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  Button,
   Card,
   CardContent,
   CardMedia,
@@ -44,7 +43,7 @@ const Events = ({ eventsData }) => {
                 alt={event.title || "Upcoming Event"}
               />
             </Grid>
-            <Grid item xs={12} md={8}>
+            <Grid item xs={12} md={8} mt={4}>
               <CardContent>
                 <Typography variant="h4" gutterBottom>
                   {event.name}

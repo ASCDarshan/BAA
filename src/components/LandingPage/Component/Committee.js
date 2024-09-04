@@ -76,7 +76,7 @@ const Committee = ({ committeeData }) => {
         ))}
       </Grid>
 
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={open} onClose={handleClose} maxWidth="lg" fullWidth>
         <DialogTitle>{selectedMember?.name}</DialogTitle>
         <DialogContent>
           <Typography>{selectedMember?.description}</Typography>
