@@ -35,7 +35,7 @@ const initialData = {
   comments: [],
   shares: [],
   content: "",
-  created_at: "2024-09-04T09:20:05.425574Z",
+  created_at: new Date().toISOString(),
   allow_likes: true,
   allow_comments: true,
   allow_sharing: true,
@@ -52,7 +52,9 @@ const MainContent = ({
   initiatives,
   suggestedAlumni,
 }) => {
+  const [gettingData, setGettingData] = useState([]);
   const [postData, setPostData] = useState(initialData);
+  const [refreshData, setRefreshData] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -63,42 +65,43 @@ const MainContent = ({
   };
 
   const handleFileChange = (e) => {
-    const images = e.target.value;
+    const images = e.target.files;
     setPostData((prevFormData) => ({
       ...prevFormData,
       images: images,
     }));
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await ajaxCall(
-          `sites/get/site/`,
-          {
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${
-                JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
-              }`,
-            },
-            method: "GET",
+  const fetchData = async () => {
+    try {
+      const response = await ajaxCall(
+        `posts/posts/`,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
           },
-          8000
-        );
-        if (response?.status === 200) {
-          setPostData(response?.data);
-        } else {
-          console.error("Fetch error:", response);
-        }
-      } catch (error) {
-        console.error("Network error:", error);
+          method: "GET",
+        },
+        8000
+      );
+      if (response?.status === 200) {
+        // Ensure the data is in array format
+        const data = Array.isArray(response?.data)
+          ? response.data
+          : [response.data];
+        setGettingData(data);
+      } else {
+        console.error("Fetch error:", response);
       }
-    };
+    } catch (error) {
+      console.error("Network error:", error);
+    }
+  };
 
+  useEffect(() => {
     fetchData();
-  }, []);
+  }, [refreshData]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -118,9 +121,6 @@ const MainContent = ({
         {
           headers: {
             Accept: "application/json",
-            // Authorization: `Bearer ${
-            //   JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
-            // }`,
           },
           method: "POST",
           body: formDataToSend,
@@ -129,11 +129,33 @@ const MainContent = ({
       );
       if ([200, 201].includes(response.status)) {
         console.log("Success");
+        setRefreshData((prev) => !prev);
+        setPostData({ initialData });
       } else {
         console.log("Error");
       }
     } catch (error) {
       console.log("Error");
+    }
+  };
+
+  const timeAgo = (timestamp) => {
+    const now = new Date();
+    const postTime = new Date(timestamp);
+    const differenceInSeconds = Math.floor((now - postTime) / 1000);
+
+    const minutes = Math.floor(differenceInSeconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (days > 0) {
+      return `posted ${days} day${days > 1 ? "s" : ""} ago`;
+    } else if (hours > 0) {
+      return `posted ${hours} hour${hours > 1 ? "s" : ""} ago`;
+    } else if (minutes > 0) {
+      return `posted ${minutes} minute${minutes > 1 ? "s" : ""} ago`;
+    } else {
+      return "posted just now";
     }
   };
 
@@ -183,50 +205,51 @@ const MainContent = ({
               <Tab label="Popular This Week" />
               <Tab label="Saved" />
             </Tabs>
-            {threads.map((thread) => (
-              <Card key={thread.id} sx={{ mb: 2 }}>
-                <CardContent>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      mb: 1,
-                      flexWrap: "wrap",
-                    }}
-                  >
-                    <Avatar sx={{ mr: 1 }}>{thread.author[0]}</Avatar>
-                    <Typography variant="subtitle1">{thread.author}</Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{ ml: 1, color: "text.secondary" }}
+            {Array.isArray(gettingData) &&
+              gettingData.map((data) => (
+                <Card key={data.id} sx={{ mb: 2 }}>
+                  <CardContent>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        mb: 1,
+                        flexWrap: "wrap",
+                      }}
                     >
-                      {thread.time} • in {thread.category}
+                      <Avatar sx={{ mr: 1 }}>{data.author[0]}</Avatar>
+                      <Typography variant="subtitle1">{data.author}</Typography>
+                      <Typography
+                        variant="body2"
+                        sx={{ ml: 1, color: "text.secondary" }}
+                      >
+                        {timeAgo(data.created_at)} • {data.category}
+                      </Typography>
+                    </Box>
+                    <Typography variant="h6" gutterBottom>
+                      {data.title}
                     </Typography>
-                  </Box>
-                  <Typography variant="h6" gutterBottom>
-                    {thread.title}
-                  </Typography>
-                  <Typography variant="body2" paragraph>
-                    {thread.content}
-                  </Typography>
-                </CardContent>
-                <CardActions>
-                  <IconButton size="small">
-                    <BookmarkIcon />
-                  </IconButton>
-                  <IconButton size="small">
-                    <FavoriteIcon />
-                  </IconButton>
-                  <Typography variant="body2" sx={{ mr: 2 }}>
-                    {thread.likes}
-                  </Typography>
-                  <IconButton size="small">
-                    <CommentIcon />
-                  </IconButton>
-                  <Typography variant="body2">{thread.comments}</Typography>
-                </CardActions>
-              </Card>
-            ))}
+                    <Typography variant="body2" paragraph>
+                      {data.content}
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    <IconButton size="small">
+                      <BookmarkIcon />
+                    </IconButton>
+                    <IconButton size="small">
+                      <FavoriteIcon />
+                    </IconButton>
+                    <Typography variant="body2" size="small">
+                      {data.likes}
+                    </Typography>
+                    <IconButton size="small">
+                      <CommentIcon />
+                    </IconButton>
+                    <Typography variant="body2">{data.comments}</Typography>
+                  </CardActions>
+                </Card>
+              ))}
           </Paper>
         </Grid>
         <Grid item xs={12} md={4}>
