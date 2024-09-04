@@ -33,7 +33,7 @@ const Navbar = ({ onDrawerToggle }) => {
           </IconButton>
         )}
         <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-          NUS
+          BAA
         </Typography>
         <IconButton color="inherit">
           <NotificationsIcon />
