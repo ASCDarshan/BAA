@@ -6,21 +6,59 @@ import {
   Container,
   Box,
   Paper,
+  CircularProgress,
 } from "@mui/material";
 import { useNavigate, Link } from "react-router-dom";
+import ajaxCall from "../helpers/ajaxCall";
+import { toast } from "react-toastify";
 
 const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [alumni_no, setalumniNo] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
   const navigate = useNavigate();
+
+  const fetchData = async (url, data) => {
+    console.log(data);
+    setIsLoading(true);
+    try {
+      const response = await ajaxCall(
+        url,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+          body: JSON.stringify(data),
+        },
+        8000
+      );
+      if (response?.status === 201) {
+        toast.success("Registration successful:");
+        navigate("/login");
+      } else {
+        toast.error("Registration failed. Please try again");
+      }
+    } catch (error) {
+      toast.error("Registration failed. Please try again");
+    }
+    setIsLoading(false);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // TODO: Implement registration logic here
-    console.log("Registration attempt:", { email, password, confirmPassword });
-    // For now, let's just navigate to the login page
-    navigate("/login");
+
+    const signupData = {
+      username: email,
+      password: password,
+      alumni_no: alumni_no,
+      // verificatiourl: verificatiourl,
+    };
+
+    fetchData("accounts/signup/", signupData);
   };
 
   return (
@@ -70,12 +108,11 @@ const Register = () => {
           >
             <TextField
               margin="normal"
+              type="text"
               required
               fullWidth
-              id="email"
-              label="Email Address"
+              label="Username"
               name="email"
-              autoComplete="email"
               autoFocus
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -96,29 +133,33 @@ const Register = () => {
               margin="normal"
               required
               fullWidth
-              name="confirmPassword"
-              label="Confirm Password"
-              type="password"
-              id="confirmPassword"
-              autoComplete="new-password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              name="alumni_no"
+              label="Alumni Number"
+              type="number"
+              value={alumni_no}
+              onChange={(e) => setalumniNo(e.target.value)}
             />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign Up
-            </Button>
+            {isLoading ? (
+              <Button variant="contained" color="primary" fullWidth disabled>
+                <CircularProgress />
+              </Button>
+            ) : (
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Sign Up
+              </Button>
+            )}
             <Box sx={{ textAlign: "center" }}>
               <Link
                 to="/login"
                 style={{ textDecoration: "none", color: "inherit" }}
               >
                 <Typography variant="body2">
-                  {"Already have an account? Sign In"}
+                  Already have an account? Sign In
                 </Typography>
               </Link>
             </Box>
