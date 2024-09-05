@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Container,
   Grid,
@@ -19,15 +19,18 @@ import {
   ListItem,
   ListItemText,
   ListItemAvatar,
-  Input,
+  InputAdornment,
+  CircularProgress,
+  CardMedia,
 } from "@mui/material";
-import {
-  Add as AddIcon,
-  Bookmark as BookmarkIcon,
-  Favorite as FavoriteIcon,
-  ChatBubbleOutline as CommentIcon,
-} from "@mui/icons-material";
+import CancelIcon from "@mui/icons-material/Cancel";
+import CommentIcon from "@mui/icons-material/Comment";
+import ShareIcon from "@mui/icons-material/Share";
+
+import { Add as AddIcon, Favorite as FavoriteIcon } from "@mui/icons-material";
 import ajaxCall from "../../../helpers/ajaxCall";
+import { toast } from "react-toastify";
+import { AddPhotoAlternate as UploadIcon } from "@mui/icons-material";
 
 const initialData = {
   images: [],
@@ -46,15 +49,18 @@ const initialData = {
 const MainContent = ({
   tabValue,
   handleTabChange,
-  threads,
   recommendedTopics,
-  events,
-  initiatives,
   suggestedAlumni,
+  eventsData,
+  initiativesData,
+  userProfileData,
+  userID,
 }) => {
+  const fileInputRef = useRef(null);
   const [gettingData, setGettingData] = useState([]);
   const [postData, setPostData] = useState(initialData);
   const [refreshData, setRefreshData] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -73,6 +79,7 @@ const MainContent = ({
   };
 
   const fetchData = async () => {
+    setIsLoading(true);
     try {
       const response = await ajaxCall(
         `posts/posts/`,
@@ -86,17 +93,20 @@ const MainContent = ({
         8000
       );
       if (response?.status === 200) {
-        // Ensure the data is in array format
         const data = Array.isArray(response?.data)
           ? response.data
           : [response.data];
-        setGettingData(data);
+        const sortedData = data.sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        );
+        setGettingData(sortedData);
       } else {
         console.error("Fetch error:", response);
       }
     } catch (error) {
       console.error("Network error:", error);
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -110,10 +120,10 @@ const MainContent = ({
     formDataToSend.append("content", postData.content);
     formDataToSend.append("images", postData.images);
     formDataToSend.append("category", postData.category);
-    formDataToSend.append("author", postData.author);
     formDataToSend.append("allow_likes", postData.allow_likes);
     formDataToSend.append("allow_comments", postData.allow_comments);
     formDataToSend.append("allow_sharing", postData.allow_sharing);
+    formDataToSend.append("author", userID);
 
     try {
       const response = await ajaxCall(
@@ -128,14 +138,17 @@ const MainContent = ({
         8000
       );
       if ([200, 201].includes(response.status)) {
-        console.log("Success");
+        toast.success("Post Created Successfully");
         setRefreshData((prev) => !prev);
-        setPostData({ initialData });
+        setPostData({
+          images: [],
+          content: "",
+        });
       } else {
-        console.log("Error");
+        toast.error("Some Problem Occurred. Please try again.");
       }
     } catch (error) {
-      console.log("Error");
+      toast.error("Some Problem Occurred. Please try again.");
     }
   };
 
@@ -159,160 +172,235 @@ const MainContent = ({
     }
   };
 
+  const handleIconClick = () => {
+    fileInputRef.current.click();
+  };
+
   return (
     <Container sx={{ mt: 3 }}>
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={8}>
-          <form onSubmit={handleSubmit}>
-            <TextField
-              fullWidth
-              variant="outlined"
-              name="content"
-              value={postData.content}
-              onChange={handleChange}
-              placeholder="Add Post"
-              sx={{ mb: 2, backgroundColor: "white" }}
-            />
-            <Input
-              size="small"
-              id="upload-document"
-              name="images"
-              type="file"
-              onChange={handleFileChange}
-              sx={{ mb: 2, backgroundColor: "white" }}
-            />
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                mb: 2,
-              }}
-            >
-              <Button variant="contained" startIcon={<AddIcon />} type="submit">
-                Add Post
-              </Button>
-            </Box>
-          </form>
-          <Paper sx={{ p: 2 }}>
-            <Tabs
-              value={tabValue}
-              onChange={handleTabChange}
-              sx={{ mb: 2 }}
-              variant="scrollable"
-              scrollButtons="auto"
-            >
-              <Tab label="Recent Thread" />
-              <Tab label="Popular This Week" />
-              <Tab label="Saved" />
-            </Tabs>
-            {Array.isArray(gettingData) &&
-              gettingData.map((data) => (
-                <Card key={data.id} sx={{ mb: 2 }}>
-                  <CardContent>
+      {isLoading ? (
+        <Button variant="contained" color="primary" fullWidth disabled>
+          <CircularProgress />
+        </Button>
+      ) : (
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={8}>
+            <form onSubmit={handleSubmit}>
+              <TextField
+                fullWidth
+                variant="outlined"
+                name="content"
+                value={postData.content}
+                onChange={handleChange}
+                placeholder="Add Post"
+                sx={{ mb: 2, backgroundColor: "white" }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      {postData.images.length > 0 ? (
+                        <>
+                          <img
+                            src={URL.createObjectURL(postData.images[0])}
+                            alt="Uploaded"
+                            style={{
+                              width: "40px",
+                              height: "40px",
+                              objectFit: "cover",
+                              borderRadius: "50%",
+                            }}
+                          />
+                          <IconButton
+                            onClick={() =>
+                              setPostData((prev) => ({ ...prev, images: [] }))
+                            }
+                            color="primary"
+                            component="span"
+                          >
+                            <CancelIcon />
+                          </IconButton>
+                        </>
+                      ) : (
+                        <IconButton
+                          onClick={handleIconClick}
+                          color="primary"
+                          component="span"
+                        >
+                          <UploadIcon />
+                        </IconButton>
+                      )}
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              <input
+                ref={fileInputRef}
+                type="file"
+                name="images"
+                style={{ display: "none" }}
+                onChange={handleFileChange}
+              />
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  mb: 2,
+                }}
+              >
+                <Button
+                  variant="contained"
+                  startIcon={<AddIcon />}
+                  type="submit"
+                >
+                  Add Post
+                </Button>
+              </Box>
+            </form>
+            <Paper sx={{ p: 2 }}>
+              <Tabs
+                value={tabValue}
+                onChange={handleTabChange}
+                sx={{ mb: 2 }}
+                variant="scrollable"
+                scrollButtons="auto"
+              >
+                <Tab label="Recent Thread" />
+                <Tab label="Popular This Week" />
+                <Tab label="Saved" />
+              </Tabs>
+              {Array.isArray(gettingData) &&
+                gettingData.map((data) => (
+                  <Card key={data.id} sx={{ display: "flex", mb: 2 }}>
+                    {data.images && data.images.length > 0 ? (
+                      <Box sx={{ display: "flex" }}>
+                        {data.images.map((imageData, index) => (
+                          <CardMedia
+                            key={index}
+                            component="img"
+                            sx={{ width: 160 }}
+                            image={imageData.image}
+                            alt={data.title}
+                          />
+                        ))}
+                      </Box>
+                    ) : null}
                     <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        mb: 1,
-                        flexWrap: "wrap",
-                      }}
+                      sx={{ display: "flex", flexDirection: "column", flex: 1 }}
                     >
-                      <Avatar sx={{ mr: 1 }}>{data.author[0]}</Avatar>
-                      <Typography variant="subtitle1">{data.author}</Typography>
-                      <Typography
-                        variant="body2"
-                        sx={{ ml: 1, color: "text.secondary" }}
-                      >
-                        {timeAgo(data.created_at)} • {data.category}
-                      </Typography>
+                      <CardContent>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            mb: 1,
+                            flexWrap: "wrap",
+                          }}
+                        >
+                          <Avatar sx={{ mr: 1 }}>
+                            {data.author.username
+                              ? data.author.username.charAt(0).toUpperCase()
+                              : "A"}
+                          </Avatar>
+                          <Typography variant="subtitle1">
+                            {data.author.username}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{ ml: 1, color: "text.secondary" }}
+                          >
+                            {data.category.name} • {timeAgo(data.created_at)}
+                          </Typography>
+                        </Box>
+                        <Typography variant="h6" gutterBottom>
+                          {data.title}
+                        </Typography>
+                        <Typography variant="body2" paragraph>
+                          {data.content}
+                        </Typography>
+                      </CardContent>
+                      <CardActions>
+                        <IconButton size="small">
+                          <FavoriteIcon />
+                        </IconButton>
+                        <IconButton size="small">
+                          <CommentIcon />
+                        </IconButton>
+                        <IconButton size="small">
+                          <ShareIcon />
+                        </IconButton>
+                      </CardActions>
                     </Box>
-                    <Typography variant="h6" gutterBottom>
-                      {data.title}
-                    </Typography>
-                    <Typography variant="body2" paragraph>
-                      {data.content}
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                    <IconButton size="small">
-                      <BookmarkIcon />
-                    </IconButton>
-                    <IconButton size="small">
-                      <FavoriteIcon />
-                    </IconButton>
-                    <Typography variant="body2" size="small">
-                      {data.likes}
-                    </Typography>
-                    <IconButton size="small">
-                      <CommentIcon />
-                    </IconButton>
-                    <Typography variant="body2">{data.comments}</Typography>
-                  </CardActions>
-                </Card>
-              ))}
-          </Paper>
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <Paper sx={{ p: 2, mb: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Recommended Topics
-            </Typography>
-            <Box sx={{ display: "flex", flexWrap: "wrap" }}>
-              {recommendedTopics.map((topic) => (
-                <Chip key={topic} label={topic} sx={{ m: 0.5 }} />
-              ))}
-            </Box>
-          </Paper>
-          <Paper sx={{ p: 2, mb: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Upcoming Events
-            </Typography>
-            <List>
-              {events.map((event) => (
-                <ListItem key={event.id}>
-                  <ListItemText primary={event.title} secondary={event.date} />
-                </ListItem>
-              ))}
-            </List>
-          </Paper>
-          <Paper sx={{ p: 2, mb: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Current Initiatives
-            </Typography>
-            <List>
-              {initiatives.map((initiative) => (
-                <ListItem key={initiative.id}>
+                  </Card>
+                ))}
+            </Paper>
+          </Grid>
+
+          <Grid item xs={12} md={4}>
+            <Paper sx={{ p: 2, mb: 3 }}>
+              <Typography variant="h6" gutterBottom>
+                Recommended Topics
+              </Typography>
+              <Box sx={{ display: "flex", flexWrap: "wrap" }}>
+                {recommendedTopics.map((topic) => (
+                  <Chip key={topic} label={topic} sx={{ m: 0.5 }} />
+                ))}
+              </Box>
+            </Paper>
+            <Paper sx={{ p: 2, mb: 3 }}>
+              <Typography variant="h6" gutterBottom>
+                Upcoming Events
+              </Typography>
+              <List>
+                {eventsData.map((event) => (
                   <ListItemText
-                    primary={initiative.title}
-                    secondary={initiative.description}
+                    key={event.id}
+                    primary={event.name}
+                    secondary={`${event.start_date} to ${event.end_date}`}
                   />
-                </ListItem>
-              ))}
-            </List>
-          </Paper>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              People You May Know
-            </Typography>
-            <List>
-              {suggestedAlumni.map((alumni) => (
-                <ListItem key={alumni.id}>
-                  <ListItemAvatar>
-                    <Avatar>{alumni.name[0]}</Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={alumni.name}
-                    secondary={`Class of ${alumni.graduationYear}`}
-                  />
-                  <Button variant="outlined" size="small">
-                    Connect
-                  </Button>
-                </ListItem>
-              ))}
-            </List>
-          </Paper>
+                ))}
+              </List>
+            </Paper>
+            <Paper sx={{ p: 2, mb: 3 }}>
+              <Typography variant="h6" gutterBottom>
+                Current Initiatives
+              </Typography>
+              <List>
+                {initiativesData.map((initiative) => (
+                  <ListItem key={initiative.id}>
+                    <ListItemText
+                      primary={initiative.name}
+                      secondary={initiative.purpose}
+                    />
+                  </ListItem>
+                ))}
+              </List>
+            </Paper>
+            <Paper sx={{ p: 2 }}>
+              <Typography variant="h6" gutterBottom>
+                People You May Know
+              </Typography>
+              <List>
+                {Array.isArray(userProfileData) &&
+                  userProfileData.map((data) => (
+                    <ListItem key={data.id}>
+                      <ListItemAvatar>
+                        <Avatar sx={{ mr: 1 }}>
+                          {data.user.username
+                            ? data.user.username.charAt(0).toUpperCase()
+                            : "A"}
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={data.user.username}
+                        secondary={`Batch of ${data.school_graduation_year}`}
+                      />
+                      <ListItemText primary={data.phone_number} />
+                    </ListItem>
+                  ))}
+              </List>
+            </Paper>
+          </Grid>
         </Grid>
-      </Grid>
+      )}
     </Container>
   );
 };

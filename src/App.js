@@ -8,6 +8,7 @@ import Register from "./components/Auth/Register";
 import Dashboard from "./components/Dashboard/Component/Dashboard";
 import Navbar from "./components/LandingPage/Navbar/Navbar";
 import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const theme = createTheme({
   palette: {

@@ -1,31 +1,6 @@
-import React, { useState } from "react";
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  IconButton,
-  Avatar,
-  Box,
-  Container,
-  Grid,
-  Paper,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  ListItemAvatar,
-  Button,
-  TextField,
-  Chip,
-  Tabs,
-  Tab,
-  Drawer,
-  Card,
-  CardContent,
-  CardActions,
-  useMediaQuery,
-} from "@mui/material";
-import { styled, ThemeProvider, createTheme } from "@mui/material/styles";
+import React, { useEffect, useState } from "react";
+import { Box, useMediaQuery } from "@mui/material";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 import {
   Home as HomeIcon,
   Forum as ForumIcon,
@@ -41,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar/Navbar";
 import MainContent from "./MainContent/MainContent";
 import Sidebar from "./SideBar/Sidebar";
+import ajaxCall from "../../helpers/ajaxCall";
 
 const drawerWidth = 240;
 
@@ -57,6 +33,13 @@ const theme = createTheme({
 });
 
 const Dashboard = () => {
+  const [eventsData, setEventsData] = useState([]);
+  const [initiativesData, setInitiativesData] = useState([]);
+  const [userProfileData, setUserProfileData] = useState([]);
+
+  const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
+  const userID = loginInfo?.userId;
+
   const [tabValue, setTabValue] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const navigate = useNavigate();
@@ -76,50 +59,12 @@ const Dashboard = () => {
 
   const menuItems = [
     { text: "Home", icon: <HomeIcon /> },
-    { text: "Forum", icon: <ForumIcon /> },
     { text: "Directory", icon: <DirectoryIcon /> },
     { text: "Mentorship", icon: <MentorshipIcon /> },
-    { text: "Jobs", icon: <JobsIcon /> },
     { text: "Events", icon: <EventIcon /> },
     { text: "Business Directory", icon: <BusinessDirectoryIcon /> },
     { text: "Resources", icon: <ResourcesIcon /> },
-    { text: "Log Out", icon: <LogoutIcon /> },
-  ];
-
-  const threads = [
-    {
-      id: 1,
-      author: "Hado Kagutsuchi",
-      title: "The Future of Freelancers is Promising!",
-      content:
-        "Freelance work is such a great job. The New Year provides good reasons to be optimistic and to smile, as it projects a positive and stable career future for...",
-      time: "32 min ago",
-      category: "Freelance",
-      likes: 56,
-      comments: 16,
-    },
-    {
-      id: 2,
-      author: "Mulan Fang",
-      title: "Why Do I Get Bored with Jobs Easily?",
-      content:
-        "Psychologists say monotony is one the most common causes of boredom. Often times our natural response to monotony is to seek external stimulation—we...",
-      time: "48 min ago",
-      category: "Career",
-      likes: 48,
-      comments: 32,
-    },
-    {
-      id: 3,
-      author: "Ameer Black Mamba",
-      title: "Burnout Prevention and Treatment",
-      content:
-        "If constant stress has you feeling helpless, disillusioned, and completely exhausted, you may be on the road to burnout. Learn what you can do to regain your...",
-      time: "1 hour ago",
-      category: "Tips",
-      likes: 0,
-      comments: 0,
-    },
+    { text: "Log Out", icon: <LogoutIcon />, Link: "/login" },
   ];
 
   const recommendedTopics = [
@@ -130,6 +75,35 @@ const Dashboard = () => {
     "Tips",
     "Mindfulness",
   ];
+
+  const fetchData = async (url, setData) => {
+    try {
+      const response = await ajaxCall(
+        url,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          method: "GET",
+        },
+        8000
+      );
+      if (response?.status === 200) {
+        setData(response?.data || []);
+      } else {
+        console.error("Fetch error:", response);
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData("events/events/", setEventsData);
+    fetchData("initiatives/initiatives/", setInitiativesData);
+    fetchData("profiles/user-profile", setUserProfileData);
+  }, []);
 
   const events = [
     { id: 1, title: "Annual Alumni Dinner", date: "2023-09-15" },
@@ -168,11 +142,14 @@ const Dashboard = () => {
         <MainContent
           tabValue={tabValue}
           handleTabChange={handleTabChange}
-          threads={threads}
           recommendedTopics={recommendedTopics}
           events={events}
           initiatives={initiatives}
           suggestedAlumni={suggestedAlumni}
+          eventsData={eventsData}
+          initiativesData={initiativesData}
+          userProfileData={userProfileData}
+          userID={userID}
         />
       </Box>
     </ThemeProvider>

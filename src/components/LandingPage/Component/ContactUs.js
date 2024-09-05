@@ -71,12 +71,13 @@ const ContactUs = () => {
         8000
       );
       if ([200, 201].includes(response.status)) {
+        toast.success("Post Created Successfully");
         setFormData({ name: "", email: "", address: "", phone: "" });
       } else if ([400, 404].includes(response.status)) {
-        console.log(response.status);
+        toast.error("Some Problem Occurred. Please try again.");
       }
     } catch (error) {
-      console.log(error.status);
+      toast.error("Some Problem Occurred. Please try again.");
     }
   };
 

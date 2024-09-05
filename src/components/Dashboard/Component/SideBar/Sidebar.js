@@ -8,6 +8,7 @@ import {
   ListItemText,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import { Link } from "react-router-dom"; // Use this for routing
 
 const Sidebar = ({
   isSmallScreen,
@@ -37,7 +38,7 @@ const Sidebar = ({
       <Toolbar />
       <List>
         {menuItems.map((item) => (
-          <ListItem button key={item.text}>
+          <ListItem button key={item.text} component={Link} to={item.Link}>
             <ListItemIcon sx={{ color: "inherit" }}>{item.icon}</ListItemIcon>
             <ListItemText primary={item.text} />
           </ListItem>
