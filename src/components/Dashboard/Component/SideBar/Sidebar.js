@@ -8,7 +8,7 @@ import {
   ListItemText,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { Link } from "react-router-dom"; // Use this for routing
+import { Link } from "react-router-dom";
 
 const Sidebar = ({
   isSmallScreen,

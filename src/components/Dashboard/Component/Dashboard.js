@@ -53,10 +53,6 @@ const Dashboard = () => {
     setDrawerOpen(!drawerOpen);
   };
 
-  const handleLogout = () => {
-    navigate("/login");
-  };
-
   const menuItems = [
     { text: "Home", icon: <HomeIcon /> },
     { text: "Directory", icon: <DirectoryIcon /> },

@@ -21,7 +21,6 @@ const Register = () => {
   const navigate = useNavigate();
 
   const fetchData = async (url, data) => {
-    console.log(data);
     setIsLoading(true);
     try {
       const response = await ajaxCall(

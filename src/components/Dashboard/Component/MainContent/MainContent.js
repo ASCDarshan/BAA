@@ -24,13 +24,14 @@ import {
   CardMedia,
 } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
-import CommentIcon from "@mui/icons-material/Comment";
-import ShareIcon from "@mui/icons-material/Share";
 
-import { Add as AddIcon, Favorite as FavoriteIcon } from "@mui/icons-material";
+import { Add as AddIcon } from "@mui/icons-material";
 import ajaxCall from "../../../helpers/ajaxCall";
 import { toast } from "react-toastify";
 import { AddPhotoAlternate as UploadIcon } from "@mui/icons-material";
+import PostLike from "./Like-comment-share/PostLike";
+import PostComment from "./Like-comment-share/PostComment";
+import PostShare from "./Like-comment-share/PostShare";
 
 const initialData = {
   images: [],
@@ -50,7 +51,6 @@ const MainContent = ({
   tabValue,
   handleTabChange,
   recommendedTopics,
-  suggestedAlumni,
   eventsData,
   initiativesData,
   userProfileData,
@@ -250,6 +250,7 @@ const MainContent = ({
                   variant="contained"
                   startIcon={<AddIcon />}
                   type="submit"
+                  size="small"
                 >
                   Add Post
                 </Button>
@@ -318,15 +319,21 @@ const MainContent = ({
                         </Typography>
                       </CardContent>
                       <CardActions>
-                        <IconButton size="small">
-                          <FavoriteIcon />
-                        </IconButton>
-                        <IconButton size="small">
-                          <CommentIcon />
-                        </IconButton>
-                        <IconButton size="small">
-                          <ShareIcon />
-                        </IconButton>
+                        <PostLike
+                          postId={data.id}
+                          userId={userID}
+                          likeCounts={data.likes}
+                        />
+                        <PostComment
+                          postId={data.id}
+                          userId={userID}
+                          commentCounts={data.comments}
+                        />
+                        <PostShare
+                          postId={data.id}
+                          userId={userID}
+                          shareCounts={data.shares}
+                        />
                       </CardActions>
                     </Box>
                   </Card>
