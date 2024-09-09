@@ -15,7 +15,7 @@ import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import ajaxCall from "../../../../helpers/ajaxCall";
 import { toast } from "react-toastify";
 
-const PostShare = ({ postId, userId, shareCounts }) => {
+const PostShare = ({ postId, userId }) => {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {

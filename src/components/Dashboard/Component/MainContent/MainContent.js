@@ -14,53 +14,57 @@ import {
   Avatar,
   Typography,
   IconButton,
-  Chip,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemAvatar,
   InputAdornment,
   CircularProgress,
   CardMedia,
+  Chip,
+  List,
+  ListItemText,
+  ListItem,
+  ListItemAvatar,
 } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
-
 import { Add as AddIcon } from "@mui/icons-material";
+import { AddPhotoAlternate as UploadIcon } from "@mui/icons-material";
 import ajaxCall from "../../../helpers/ajaxCall";
 import { toast } from "react-toastify";
-import { AddPhotoAlternate as UploadIcon } from "@mui/icons-material";
 import PostLike from "./Like-comment-share/PostLike";
 import PostComment from "./Like-comment-share/PostComment";
 import PostShare from "./Like-comment-share/PostShare";
 
-const initialData = {
-  images: [],
-  likes: [],
-  comments: [],
-  shares: [],
-  content: "",
-  created_at: new Date().toISOString(),
-  allow_likes: true,
-  allow_comments: true,
-  allow_sharing: true,
-  author: 1,
-  category: 1,
-};
-
 const MainContent = ({
-  tabValue,
-  handleTabChange,
+  userProfileData,
+  userID,
   recommendedTopics,
   eventsData,
   initiativesData,
-  userProfileData,
-  userID,
 }) => {
+  const initialData = {
+    images: [],
+    likes: [],
+    comments: [],
+    shares: [],
+    content: "",
+    created_at: new Date().toISOString(),
+    allow_likes: true,
+    allow_comments: true,
+    allow_sharing: true,
+    author: userID,
+    category: 1,
+  };
+
   const fileInputRef = useRef(null);
   const [gettingData, setGettingData] = useState([]);
+  const [popularPosts, setPopularPosts] = useState([]);
   const [postData, setPostData] = useState(initialData);
   const [refreshData, setRefreshData] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const [tabValue, setTabValue] = useState(1);
+
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -78,11 +82,11 @@ const MainContent = ({
     }));
   };
 
-  const fetchData = async () => {
+  const fetchRecentPosts = async () => {
     setIsLoading(true);
     try {
       const response = await ajaxCall(
-        `posts/posts/`,
+        "posts/posts/",
         {
           headers: {
             Accept: "application/json",
@@ -109,9 +113,42 @@ const MainContent = ({
     setIsLoading(false);
   };
 
+  // for popular this week
+  const fetchPopularPosts = async () => {
+    setIsLoading(true);
+    try {
+      const response = await ajaxCall(
+        "posts/posts/",
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          method: "GET",
+        },
+        8000
+      );
+      if (response?.status === 200) {
+        const data = Array.isArray(response?.data)
+          ? response.data
+          : [response.data];
+        setPopularPosts(data);
+      } else {
+        console.error("Fetch error:", response);
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+    }
+    setIsLoading(false);
+  };
+
   useEffect(() => {
-    fetchData();
-  }, [refreshData]);
+    if (tabValue === 1) {
+      fetchRecentPosts();
+    } else if (tabValue === 2) {
+      fetchPopularPosts();
+    }
+  }, [tabValue, refreshData]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -176,86 +213,159 @@ const MainContent = ({
     fileInputRef.current.click();
   };
 
+  const renderPosts = (posts) => (
+    <>
+      {Array.isArray(posts) &&
+        posts.map((data) => (
+          <Card key={data.id} sx={{ display: "flex", mb: 2 }}>
+            {data.images && data.images.length > 0 ? (
+              <Box sx={{ display: "flex" }}>
+                {data.images.map((imageData, index) => (
+                  <CardMedia
+                    key={index}
+                    component="img"
+                    sx={{ width: 160 }}
+                    image={imageData.image}
+                    alt={data.title}
+                  />
+                ))}
+              </Box>
+            ) : null}
+            <Box sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
+              <CardContent>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    mb: 1,
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <Avatar sx={{ mr: 1 }}>
+                    {data.author.username
+                      ? data.author.username.charAt(0).toUpperCase()
+                      : "A"}
+                  </Avatar>
+                  <Typography variant="subtitle1">
+                    {data.author.username}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{ ml: 1, color: "text.secondary" }}
+                  >
+                    {data.category.name} • {timeAgo(data.created_at)}
+                  </Typography>
+                </Box>
+                <Typography variant="h6" gutterBottom>
+                  {data.title}
+                </Typography>
+                <Typography variant="body2" paragraph>
+                  {data.content}
+                </Typography>
+              </CardContent>
+              <CardActions>
+                <PostLike
+                  postId={data.id}
+                  userId={userID}
+                  likeCounts={data.likes}
+                />
+                <PostComment
+                  postId={data.id}
+                  userId={userID}
+                  commentCounts={data.comments}
+                />
+                <PostShare
+                  postId={data.id}
+                  userId={userID}
+                  shareCounts={data.shares}
+                />
+              </CardActions>
+            </Box>
+          </Card>
+        ))}
+    </>
+  );
+
   return (
     <Container sx={{ mt: 3 }}>
-      {isLoading ? (
-        <Button variant="contained" color="primary" fullWidth disabled>
-          <CircularProgress />
-        </Button>
-      ) : (
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={8}>
-            <form onSubmit={handleSubmit}>
-              <TextField
-                fullWidth
-                variant="outlined"
-                name="content"
-                value={postData.content}
-                onChange={handleChange}
-                placeholder="Add Post"
-                sx={{ mb: 2, backgroundColor: "white" }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      {postData.images.length > 0 ? (
-                        <>
-                          <img
-                            src={URL.createObjectURL(postData.images[0])}
-                            alt="Uploaded"
-                            style={{
-                              width: "40px",
-                              height: "40px",
-                              objectFit: "cover",
-                              borderRadius: "50%",
-                            }}
-                          />
-                          <IconButton
-                            onClick={() =>
-                              setPostData((prev) => ({ ...prev, images: [] }))
-                            }
-                            color="primary"
-                            component="span"
-                          >
-                            <CancelIcon />
-                          </IconButton>
-                        </>
-                      ) : (
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={8}>
+          <form onSubmit={handleSubmit}>
+            <TextField
+              fullWidth
+              variant="outlined"
+              name="content"
+              value={postData.content}
+              onChange={handleChange}
+              placeholder="Add Post"
+              sx={{ mb: 2, backgroundColor: "white" }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    {postData.images.length > 0 ? (
+                      <>
+                        <img
+                          src={URL.createObjectURL(postData.images[0])}
+                          alt="Uploaded"
+                          style={{
+                            width: "40px",
+                            height: "40px",
+                            objectFit: "cover",
+                            borderRadius: "50%",
+                          }}
+                        />
                         <IconButton
-                          onClick={handleIconClick}
+                          onClick={() =>
+                            setPostData((prev) => ({ ...prev, images: [] }))
+                          }
                           color="primary"
                           component="span"
                         >
-                          <UploadIcon />
+                          <CancelIcon />
                         </IconButton>
-                      )}
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              <input
-                ref={fileInputRef}
-                type="file"
-                name="images"
-                style={{ display: "none" }}
-                onChange={handleFileChange}
-              />
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  mb: 2,
-                }}
+                      </>
+                    ) : (
+                      <IconButton
+                        onClick={handleIconClick}
+                        color="primary"
+                        component="span"
+                      >
+                        <UploadIcon />
+                      </IconButton>
+                    )}
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <input
+              ref={fileInputRef}
+              type="file"
+              name="images"
+              style={{ display: "none" }}
+              onChange={handleFileChange}
+            />
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                mb: 2,
+              }}
+            >
+              <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                type="submit"
+                size="small"
               >
-                <Button
-                  variant="contained"
-                  startIcon={<AddIcon />}
-                  type="submit"
-                  size="small"
-                >
-                  Add Post
-                </Button>
-              </Box>
-            </form>
+                Add Post
+              </Button>
+            </Box>
+          </form>
+          {isLoading ? (
+            <Button variant="contained" color="primary" fullWidth disabled>
+              <CircularProgress />
+            </Button>
+          ) : (
             <Paper sx={{ p: 2 }}>
               <Tabs
                 value={tabValue}
@@ -264,150 +374,81 @@ const MainContent = ({
                 variant="scrollable"
                 scrollButtons="auto"
               >
-                <Tab label="Recent Thread" />
-                <Tab label="Popular This Week" />
-                <Tab label="Saved" />
+                <Tab label="Recent Thread" value={1} />
+                <Tab label="Popular This Week" value={2} />
               </Tabs>
-              {Array.isArray(gettingData) &&
-                gettingData.map((data) => (
-                  <Card key={data.id} sx={{ display: "flex", mb: 2 }}>
-                    {data.images && data.images.length > 0 ? (
-                      <Box sx={{ display: "flex" }}>
-                        {data.images.map((imageData, index) => (
-                          <CardMedia
-                            key={index}
-                            component="img"
-                            sx={{ width: 160 }}
-                            image={imageData.image}
-                            alt={data.title}
-                          />
-                        ))}
-                      </Box>
-                    ) : null}
-                    <Box
-                      sx={{ display: "flex", flexDirection: "column", flex: 1 }}
-                    >
-                      <CardContent>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            mb: 1,
-                            flexWrap: "wrap",
-                          }}
-                        >
-                          <Avatar sx={{ mr: 1 }}>
-                            {data.author.username
-                              ? data.author.username.charAt(0).toUpperCase()
-                              : "A"}
-                          </Avatar>
-                          <Typography variant="subtitle1">
-                            {data.author.username}
-                          </Typography>
-                          <Typography
-                            variant="body2"
-                            sx={{ ml: 1, color: "text.secondary" }}
-                          >
-                            {data.category.name} • {timeAgo(data.created_at)}
-                          </Typography>
-                        </Box>
-                        <Typography variant="h6" gutterBottom>
-                          {data.title}
-                        </Typography>
-                        <Typography variant="body2" paragraph>
-                          {data.content}
-                        </Typography>
-                      </CardContent>
-                      <CardActions>
-                        <PostLike
-                          postId={data.id}
-                          userId={userID}
-                          likeCounts={data.likes}
-                        />
-                        <PostComment
-                          postId={data.id}
-                          userId={userID}
-                          commentCounts={data.comments}
-                        />
-                        <PostShare
-                          postId={data.id}
-                          userId={userID}
-                          shareCounts={data.shares}
-                        />
-                      </CardActions>
-                    </Box>
-                  </Card>
-                ))}
-            </Paper>
-          </Grid>
 
-          <Grid item xs={12} md={4}>
-            <Paper sx={{ p: 2, mb: 3 }}>
-              <Typography variant="h6" gutterBottom>
-                Recommended Topics
-              </Typography>
-              <Box sx={{ display: "flex", flexWrap: "wrap" }}>
-                {recommendedTopics.map((topic) => (
-                  <Chip key={topic} label={topic} sx={{ m: 0.5 }} />
-                ))}
-              </Box>
+              {tabValue === 1 && renderPosts(gettingData)}
+              {tabValue === 2 && renderPosts(popularPosts)}
             </Paper>
-            <Paper sx={{ p: 2, mb: 3 }}>
-              <Typography variant="h6" gutterBottom>
-                Upcoming Events
-              </Typography>
-              <List>
-                {eventsData.map((event) => (
+          )}
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <Paper sx={{ p: 2, mb: 3 }}>
+            <Typography variant="h6" gutterBottom>
+              Recommended Topics
+            </Typography>
+            <Box sx={{ display: "flex", flexWrap: "wrap" }}>
+              {recommendedTopics.map((topic) => (
+                <Chip key={topic} label={topic} sx={{ m: 0.5 }} />
+              ))}
+            </Box>
+          </Paper>
+          <Paper sx={{ p: 2, mb: 3 }}>
+            <Typography variant="h6" gutterBottom>
+              Upcoming Events
+            </Typography>
+            <List>
+              {eventsData.map((event) => (
+                <ListItemText
+                  key={event.id}
+                  primary={event.name}
+                  secondary={`${event.start_date} to ${event.end_date}`}
+                />
+              ))}
+            </List>
+          </Paper>
+          <Paper sx={{ p: 2, mb: 3 }}>
+            <Typography variant="h6" gutterBottom>
+              Current Initiatives
+            </Typography>
+            <List>
+              {initiativesData.map((initiative) => (
+                <ListItem key={initiative.id}>
                   <ListItemText
-                    key={event.id}
-                    primary={event.name}
-                    secondary={`${event.start_date} to ${event.end_date}`}
+                    primary={initiative.name}
+                    secondary={initiative.purpose}
                   />
-                ))}
-              </List>
-            </Paper>
-            <Paper sx={{ p: 2, mb: 3 }}>
-              <Typography variant="h6" gutterBottom>
-                Current Initiatives
-              </Typography>
-              <List>
-                {initiativesData.map((initiative) => (
-                  <ListItem key={initiative.id}>
+                </ListItem>
+              ))}
+            </List>
+          </Paper>
+          <Paper sx={{ p: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              People You May Know
+            </Typography>
+            <List>
+              {Array.isArray(userProfileData) &&
+                userProfileData.map((data) => (
+                  <ListItem key={data.id}>
+                    <ListItemAvatar>
+                      <Avatar sx={{ mr: 1 }}>
+                        {data.user.username
+                          ? data.user.username.charAt(0).toUpperCase()
+                          : "A"}
+                      </Avatar>
+                    </ListItemAvatar>
                     <ListItemText
-                      primary={initiative.name}
-                      secondary={initiative.purpose}
+                      primary={data.user.username}
+                      secondary={`Batch of ${data.school_graduation_year}`}
                     />
+                    <ListItemText primary={data.phone_number} />
                   </ListItem>
                 ))}
-              </List>
-            </Paper>
-            <Paper sx={{ p: 2 }}>
-              <Typography variant="h6" gutterBottom>
-                People You May Know
-              </Typography>
-              <List>
-                {Array.isArray(userProfileData) &&
-                  userProfileData.map((data) => (
-                    <ListItem key={data.id}>
-                      <ListItemAvatar>
-                        <Avatar sx={{ mr: 1 }}>
-                          {data.user.username
-                            ? data.user.username.charAt(0).toUpperCase()
-                            : "A"}
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary={data.user.username}
-                        secondary={`Batch of ${data.school_graduation_year}`}
-                      />
-                      <ListItemText primary={data.phone_number} />
-                    </ListItem>
-                  ))}
-              </List>
-            </Paper>
-          </Grid>
+            </List>
+          </Paper>
         </Grid>
-      )}
+      </Grid>
     </Container>
   );
 };

@@ -3,17 +3,12 @@ import { Box, useMediaQuery } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import {
   Home as HomeIcon,
-  Forum as ForumIcon,
   ContactPhone as DirectoryIcon,
-  School as MentorshipIcon,
-  Work as JobsIcon,
-  Event as EventIcon,
-  Business as BusinessDirectoryIcon,
   Description as ResourcesIcon,
   ExitToApp as LogoutIcon,
 } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar/Navbar";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import MainContent from "./MainContent/MainContent";
 import Sidebar from "./SideBar/Sidebar";
 import ajaxCall from "../../helpers/ajaxCall";
@@ -42,7 +37,6 @@ const Dashboard = () => {
 
   const [tabValue, setTabValue] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const navigate = useNavigate();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
 
   const handleTabChange = (event, newValue) => {
@@ -55,11 +49,7 @@ const Dashboard = () => {
 
   const menuItems = [
     { text: "Home", icon: <HomeIcon /> },
-    { text: "Directory", icon: <DirectoryIcon /> },
-    { text: "Mentorship", icon: <MentorshipIcon /> },
-    { text: "Events", icon: <EventIcon /> },
-    { text: "Business Directory", icon: <BusinessDirectoryIcon /> },
-    { text: "Resources", icon: <ResourcesIcon /> },
+    { text: "Profile", icon: <AccountCircleIcon />, Link: "/userProfile" },
     { text: "Log Out", icon: <LogoutIcon />, Link: "/login" },
   ];
 
@@ -127,7 +117,7 @@ const Dashboard = () => {
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ display: "flex" }}>
-        <Navbar />
+        <Navbar userProfileData={userProfileData} />
         <Sidebar
           isSmallScreen={isSmallScreen}
           drawerOpen={drawerOpen}

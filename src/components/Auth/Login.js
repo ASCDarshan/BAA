@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   TextField,
   Button,
@@ -9,13 +9,13 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { useNavigate, Link } from "react-router-dom";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import ajaxCall from "../helpers/ajaxCall";
 import { toast } from "react-toastify";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
   const navigate = useNavigate();
 
   const fetchData = async (url, data) => {
@@ -43,7 +43,6 @@ const Login = () => {
             userId: result?.user_id,
           })
         );
-
         toast.success("Login Successful");
         navigate("/dashboard");
       } else if (response.status === 400) {
@@ -57,11 +56,23 @@ const Login = () => {
     setIsLoading(false);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const loginCredentials = { username: email, password };
-    fetchData("accounts/login/", loginCredentials);
-  };
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: Yup.object({
+      email: Yup.string().required("Email is required"),
+      password: Yup.string().required("Password is required"),
+    }),
+    onSubmit: (values) => {
+      const loginCredentials = {
+        username: values.email,
+        password: values.password,
+      };
+      fetchData("accounts/login/", loginCredentials);
+    },
+  });
 
   return (
     <Box
@@ -104,7 +115,7 @@ const Login = () => {
           </Typography>
           <Box
             component="form"
-            onSubmit={handleSubmit}
+            onSubmit={formik.handleSubmit}
             noValidate
             sx={{ mt: 1, width: "100%" }}
           >
@@ -117,8 +128,11 @@ const Login = () => {
               name="email"
               autoComplete="email"
               autoFocus
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.email && Boolean(formik.errors.email)}
+              helperText={formik.touched.email && formik.errors.email}
             />
             <TextField
               margin="normal"
@@ -129,8 +143,11 @@ const Login = () => {
               type="password"
               id="password"
               autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.password && Boolean(formik.errors.password)}
+              helperText={formik.touched.password && formik.errors.password}
             />
             {isLoading ? (
               <Button variant="contained" color="primary" fullWidth disabled>

@@ -29,13 +29,13 @@ const PostComment = ({ postId, userId, commentCounts }) => {
   };
 
   const [open, setOpen] = useState(false);
-  const [comment, setComment] = useState(initialData);
   const [commentsList, setCommentsList] = useState([]);
+  const [comment, setComment] = useState(initialData);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasComments, setHasComments] = useState(true);
-  const [commentCount, setCommentCount] = useState(commentCounts.length || 0);
 
+  const commentCount = commentCounts.length || 0;
   useEffect(() => {
     if (open) {
       fetchComments();
@@ -70,7 +70,7 @@ const PostComment = ({ postId, userId, commentCounts }) => {
 
       if (response.status === 200) {
         const filteredComments = response.data.filter(
-          (comment) => comment.post === postId
+          (comment) => comment.post.id === postId
         );
         setCommentsList(filteredComments);
         setHasComments(filteredComments.length > 0);
@@ -93,11 +93,7 @@ const PostComment = ({ postId, userId, commentCounts }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          content: comment.content,
-          post: comment.post,
-          user: comment.user,
-        }),
+        body: JSON.stringify(comment),
       });
 
       if ([200, 201].includes(response.status)) {
@@ -142,14 +138,9 @@ const PostComment = ({ postId, userId, commentCounts }) => {
                       }}
                     >
                       <ListItemText
-                        primary={
-                          <Typography variant="subtitle1">
-                            {comment.author}
-                          </Typography>
-                        }
                         secondary={
                           <Typography variant="body2" color="textSecondary">
-                            {comment.content}
+                            {comment.content} - {comment.user.username}
                           </Typography>
                         }
                       />

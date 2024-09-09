@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
   AppBar,
   Toolbar,
-  Typography,
   Button,
   IconButton,
   Drawer,
@@ -15,6 +14,7 @@ import {
   useTheme,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import LogoImg from "../../../images/BAA.png";
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -34,16 +34,23 @@ const Navbar = () => {
     { name: "Contact", to: "contact-us" },
   ];
 
+  const scrollToSection = (sectionId) => {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" });
+    }
+    if (mobileOpen) {
+      setMobileOpen(false);
+    }
+  };
+
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
-      <Typography variant="h6" sx={{ my: 2 }}>
-        BAA
-      </Typography>
       <List>
         <ListItem disablePadding>
           <ListItemText>
             <Button
-              href={"/"}
+              onClick={() => scrollToSection("hero-banner")}
               sx={{ color: "inherit", display: "block", width: "100%" }}
             >
               Home
@@ -54,7 +61,7 @@ const Navbar = () => {
           <ListItem key={item.name} disablePadding>
             <ListItemText>
               <Button
-                href={`#${item.to}`}
+                onClick={() => scrollToSection(item.to)}
                 sx={{ color: "inherit", display: "block", width: "100%" }}
               >
                 {item.name}
@@ -65,8 +72,13 @@ const Navbar = () => {
         <ListItem disablePadding>
           <ListItemText>
             <Button
-              href={"/login"}
-              sx={{ color: "inherit", display: "block", width: "100%" }}
+              href="/login"
+              sx={{
+                color: "inherit",
+                display: "block",
+                width: "100%",
+                textAlign: "center",
+              }}
             >
               Login
             </Button>
@@ -77,17 +89,15 @@ const Navbar = () => {
   );
 
   return (
-    <AppBar position="static" color="default" elevation={1}>
+    <AppBar position="fixed" color="default" elevation={1}>
       <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{ flexGrow: 1, display: { xs: "none", sm: "flex" } }}
-          >
-            BAA
-          </Typography>
+        <Toolbar disableGutters sx={{ justifyContent: "space-between" }}>
+          <Box
+            component="img"
+            src={LogoImg}
+            alt="BAA Logo"
+            sx={{ height: 40 }}
+          />
           {isMobile ? (
             <>
               <IconButton
@@ -95,34 +105,26 @@ const Navbar = () => {
                 aria-label="open drawer"
                 edge="start"
                 onClick={handleDrawerToggle}
-                sx={{ mr: 2, display: { sm: "none" } }}
+                sx={{ display: { sm: "none" } }}
               >
                 <MenuIcon />
               </IconButton>
-              <Typography
-                variant="h6"
-                noWrap
-                component="div"
-                sx={{ flexGrow: 1, display: { xs: "flex", sm: "none" } }}
-              >
-                BAA
-              </Typography>
             </>
           ) : (
-            <Box sx={{ display: { xs: "none", sm: "block" } }}>
-              <Button href={"/"} sx={{ color: "inherit" }}>
+            <Box sx={{ display: { xs: "none", sm: "flex" }, gap: 2 }}>
+              <Button href="/" sx={{ color: "inherit" }}>
                 Home
               </Button>
               {menuItems.map((item) => (
                 <Button
                   key={item.name}
-                  href={`#${item.to}`}
+                  onClick={() => scrollToSection(item.to)}
                   sx={{ color: "inherit" }}
                 >
                   {item.name}
                 </Button>
               ))}
-              <Button href={"/login"} sx={{ color: "inherit" }}>
+              <Button href="/login" sx={{ color: "inherit" }}>
                 Login
               </Button>
             </Box>
