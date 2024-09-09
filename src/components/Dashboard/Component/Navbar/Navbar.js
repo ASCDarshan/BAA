@@ -1,15 +1,56 @@
-import React from "react";
-import { AppBar, Toolbar, Typography, IconButton, Avatar } from "@mui/material";
+import React, { useState } from "react";
 import {
-  Menu as MenuIcon,
-  Notifications as NotificationsIcon,
-} from "@mui/icons-material";
+  AppBar,
+  Toolbar,
+  Typography,
+  IconButton,
+  Avatar,
+  Menu,
+  MenuItem,
+  Box,
+} from "@mui/material";
+import { Menu as MenuIcon } from "@mui/icons-material";
 import { useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
+import LogoImg from "../../../../images/BAA.png";
 
-const Navbar = ({ onDrawerToggle }) => {
+const Navbar = ({ onDrawerToggle, userProfileData }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
+  const navigate = useNavigate();
+
+  const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
+
+  const loggedInUserId = loginInfo?.userId;
+
+  const loggedInUser = userProfileData?.find(
+    (userProfile) => userProfile.user?.id === loggedInUserId
+  );
+
+  const username = loggedInUser?.user?.username || "Guest";
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const isMenuOpen = Boolean(anchorEl);
+
+  const handleAvatarClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleViewProfile = () => {
+    handleMenuClose();
+    navigate("/userProfile");
+  };
+
+  const handleLogout = () => {
+    handleMenuClose();
+    localStorage.removeItem("loginInfo");
+    navigate("/login");
+  };
 
   return (
     <AppBar
@@ -32,13 +73,33 @@ const Navbar = ({ onDrawerToggle }) => {
             <MenuIcon />
           </IconButton>
         )}
-        <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-          BAA
-        </Typography>
-        <IconButton color="inherit">
-          <NotificationsIcon />
-        </IconButton>
-        <Avatar sx={{ ml: 2 }}>JM</Avatar>
+        <Box component="img" src={LogoImg} alt="BAA Logo" sx={{ height: 40 }} />
+
+        <Box display="flex" alignItems="center">
+          <IconButton onClick={handleAvatarClick}>
+            <Avatar>{username.charAt(0).toUpperCase()}</Avatar>
+          </IconButton>
+          <Typography variant="body1">{username}</Typography>
+        </Box>
+
+        <Menu
+          anchorEl={anchorEl}
+          open={isMenuOpen}
+          onClose={handleMenuClose}
+          PaperProps={{
+            elevation: 3,
+            sx: {
+              mt: 1.5,
+              "& .MuiMenuItem-root": {
+                display: "flex",
+                justifyContent: "space-between",
+              },
+            },
+          }}
+        >
+          <MenuItem onClick={handleViewProfile}>View Profile</MenuItem>
+          <MenuItem onClick={handleLogout}>Logout</MenuItem>
+        </Menu>
       </Toolbar>
     </AppBar>
   );

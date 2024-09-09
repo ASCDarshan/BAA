@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   TextField,
   Button,
@@ -9,15 +9,13 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { useNavigate, Link } from "react-router-dom";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import ajaxCall from "../helpers/ajaxCall";
 import { toast } from "react-toastify";
 
 const Register = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [alumni_no, setalumniNo] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
+  const [isLoading, setIsLoading] = React.useState(false);
   const navigate = useNavigate();
 
   const fetchData = async (url, data) => {
@@ -47,18 +45,29 @@ const Register = () => {
     setIsLoading(false);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const signupData = {
-      username: email,
-      password: password,
-      alumni_no: alumni_no,
-      // verificatiourl: verificatiourl,
-    };
-
-    fetchData("accounts/signup/", signupData);
-  };
+  // Formik configuration
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+      alumni_no: "",
+    },
+    validationSchema: Yup.object({
+      email: Yup.string().required("Email is required"),
+      password: Yup.string().required("Password is required"),
+      alumni_no: Yup.string()
+        .required("Alumni Number is required")
+        .matches(/^\d+$/, "Alumni Number must be a number"),
+    }),
+    onSubmit: (values) => {
+      const signupData = {
+        username: values.email,
+        password: values.password,
+        alumni_no: values.alumni_no,
+      };
+      fetchData("accounts/signup/", signupData);
+    },
+  });
 
   return (
     <Box
@@ -78,7 +87,7 @@ const Register = () => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            mb: 2, // Add margin bottom
+            mb: 2,
           }}
         >
           <img
@@ -101,20 +110,22 @@ const Register = () => {
           </Typography>
           <Box
             component="form"
-            onSubmit={handleSubmit}
+            onSubmit={formik.handleSubmit}
             noValidate
             sx={{ mt: 1, width: "100%" }}
           >
             <TextField
               margin="normal"
-              type="text"
               required
               fullWidth
-              label="Username"
+              label="Email"
               name="email"
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.email && Boolean(formik.errors.email)}
+              helperText={formik.touched.email && formik.errors.email}
               autoFocus
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
             />
             <TextField
               margin="normal"
@@ -123,10 +134,11 @@ const Register = () => {
               name="password"
               label="Password"
               type="password"
-              id="password"
-              autoComplete="new-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.password && Boolean(formik.errors.password)}
+              helperText={formik.touched.password && formik.errors.password}
             />
             <TextField
               margin="normal"
@@ -134,9 +146,14 @@ const Register = () => {
               fullWidth
               name="alumni_no"
               label="Alumni Number"
-              type="number"
-              value={alumni_no}
-              onChange={(e) => setalumniNo(e.target.value)}
+              type="text"
+              value={formik.values.alumni_no}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={
+                formik.touched.alumni_no && Boolean(formik.errors.alumni_no)
+              }
+              helperText={formik.touched.alumni_no && formik.errors.alumni_no}
             />
             {isLoading ? (
               <Button variant="contained" color="primary" fullWidth disabled>
