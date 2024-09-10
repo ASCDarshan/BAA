@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { CircularProgress, Box } from "@mui/material";
-import HeroBanner from "./Component/HeroBanner";
-import AboutUs from "./Component/AboutUs";
-import Achievements from "./Component/Achievements";
-import Testimonials from "./Component/Testimonials";
-import ContactUs from "./Component/ContactUs";
+import HeroBanner from "./Component/Content/HeroBanner";
+import AboutUs from "./Component/Content/AboutUs";
+import Achievements from "./Component/Content/Achievements";
+import Testimonials from "./Component/Content/Testimonials";
+import ContactUs from "./Component/ContactUs/ContactUs";
 import ajaxCall from "../helpers/ajaxCall";
-import Footers from "./Component/Footers";
-import Events from "./Component/Events";
-import Committee from "./Component/Committee";
+import Events from "./Component/Content/Events";
+import Committee from "./Component/Content/Committee";
+import Initiatives from "./Component/Content/Initiatives";
 
 const LandingPage = () => {
   const [aboutusData, setAboutusData] = useState([]);
@@ -17,6 +17,7 @@ const LandingPage = () => {
   const [testimonialsData, setTestimonialsData] = useState([]);
   const [footerData, setFooterData] = useState([]);
   const [eventsData, setEventsData] = useState([]);
+  const [InitiativesData, setInitiativesData] = useState([]);
   const [committeeData, setCommitteeData] = useState([]);
   const [contactData, setContactData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -52,6 +53,7 @@ const LandingPage = () => {
         fetchData("website/achievements/", setAchievements),
         fetchData("website/testimonials/", setTestimonialsData),
         fetchData("events/events/", setEventsData),
+        fetchData("initiatives/initiatives/", setInitiativesData),
         fetchData("website/footer/", setFooterData),
         fetchData("website/committee", setCommitteeData),
         fetchData("website/reach-us/", setContactData),
@@ -88,6 +90,9 @@ const LandingPage = () => {
       <div id="events">
         <Events eventsData={eventsData} />
       </div>
+      <div id="events">
+        <Initiatives InitiativesData={InitiativesData} />
+      </div>
       <div id="achievements">
         <Achievements achievements={achievements} />
       </div>
@@ -99,9 +104,6 @@ const LandingPage = () => {
       </div>
       <div id="contact-us">
         <ContactUs />
-      </div>
-      <div id="footer">
-        <Footers footerData={footerData} contactData={contactData} />
       </div>
     </>
   );

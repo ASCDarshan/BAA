@@ -61,7 +61,7 @@ const Navbar = ({ onDrawerToggle, userProfileData }) => {
         color: "black",
       }}
     >
-      <Toolbar>
+      <Toolbar sx={{ justifyContent: "space-between" }}>
         {isSmallScreen && (
           <IconButton
             color="inherit"
@@ -73,9 +73,15 @@ const Navbar = ({ onDrawerToggle, userProfileData }) => {
             <MenuIcon />
           </IconButton>
         )}
-        <Box component="img" src={LogoImg} alt="BAA Logo" sx={{ height: 40 }} />
+        <Box
+          component="img"
+          src={LogoImg}
+          alt="BAA Logo"
+          sx={{ height: 40 }}
+          ml={2}
+        />
 
-        <Box display="flex" alignItems="center">
+        <Box display="flex" alignItems="center" mr={2}>
           <IconButton onClick={handleAvatarClick}>
             <Avatar>{username.charAt(0).toUpperCase()}</Avatar>
           </IconButton>

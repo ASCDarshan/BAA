@@ -24,11 +24,17 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
   },
 }));
 
+const StyledCard = styled(Card)({
+  display: "flex",
+  flexDirection: "column",
+  height: "100%",
+});
+
 const AboutUs = (props) => {
   return (
     <Container sx={{ mt: 4 }}>
       <SectionTitle variant="h4">About Us</SectionTitle>
-      {props ? (
+      {props.aboutusData ? (
         <Grid container spacing={3}>
           {[
             {
@@ -45,7 +51,7 @@ const AboutUs = (props) => {
             },
           ].map((post, index) => (
             <Grid item xs={12} sm={4} key={index}>
-              <Card>
+              <StyledCard>
                 <CardContent>
                   <Typography gutterBottom variant="h5" component="div">
                     {post.title}
@@ -54,7 +60,7 @@ const AboutUs = (props) => {
                     {post.author}
                   </Typography>
                 </CardContent>
-              </Card>
+              </StyledCard>
             </Grid>
           ))}
         </Grid>

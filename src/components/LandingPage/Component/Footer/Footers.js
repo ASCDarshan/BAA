@@ -6,11 +6,12 @@ import {
   styled,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import { Link } from "react-router-dom";
+import ajaxCall from "../../../helpers/ajaxCall";
 
 const FooterLink = styled(Typography)(({ theme }) => ({
   cursor: "pointer",
@@ -22,10 +23,38 @@ const FooterLink = styled(Typography)(({ theme }) => ({
   },
 }));
 
-const Footers = (props) => {
-  const { footerData } = props;
-  const { contactData } = props;
+const Footers = () => {
+  const [footerData, setFooterData] = useState([]);
+  const [contactData, setContactData] = useState([]);
 
+  const fetchData = async (url, setData) => {
+    try {
+      const response = await ajaxCall(
+        url,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          method: "GET",
+        },
+        8000
+      );
+      if (response?.status === 200) {
+        setData(response?.data || []);
+      } else {
+        console.error("Fetch error:", response);
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+    }
+  };
+  useEffect(() => {
+    Promise.all([
+      fetchData("website/footer/", setFooterData),
+      fetchData("website/reach-us/", setContactData),
+    ]);
+  }, []);
   return (
     <Box
       component="footer"

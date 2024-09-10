@@ -12,6 +12,7 @@ import {
   Grid,
   styled,
   Typography,
+  Box,
 } from "@mui/material";
 
 const SectionTitle = styled(Typography)(({ theme }) => ({
@@ -32,6 +33,7 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
 const Committee = ({ committeeData }) => {
   const [open, setOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
+  const [visibleCount, setVisibleCount] = useState(3); // Show only 3 initially
 
   const handleClickOpen = (member) => {
     setSelectedMember(member);
@@ -42,16 +44,20 @@ const Committee = ({ committeeData }) => {
     setOpen(false);
   };
 
+  const handleViewMore = () => {
+    setVisibleCount(visibleCount + 3); // Show 3 more members when "View More" is clicked
+  };
+
   return (
     <Container sx={{ mt: 4 }}>
       <SectionTitle variant="h4">Committee</SectionTitle>
       <Grid container spacing={3}>
-        {committeeData.map((member, index) => (
+        {committeeData.slice(0, visibleCount).map((member, index) => (
           <Grid item xs={12} sm={4} key={index}>
             <Card>
               <CardMedia
                 component="img"
-                height="270"
+                height="250"
                 image={member.image}
                 alt={member.title}
               />
@@ -75,6 +81,14 @@ const Committee = ({ committeeData }) => {
           </Grid>
         ))}
       </Grid>
+
+      {visibleCount < committeeData.length && ( // Show "View More" if there are more members to show
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+          <Button variant="contained" onClick={handleViewMore}>
+            View More
+          </Button>
+        </Box>
+      )}
 
       <Dialog open={open} onClose={handleClose} maxWidth="lg" fullWidth>
         <DialogTitle>{selectedMember?.name}</DialogTitle>

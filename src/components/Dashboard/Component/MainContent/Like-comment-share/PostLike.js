@@ -5,10 +5,10 @@ import ajaxCall from "../../../../helpers/ajaxCall";
 
 const PostLike = ({ postId, userId, likeCounts }) => {
   const [isLiked, setIsLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(likeCounts.length || 0);
+  const [likeCount, setLikeCount] = useState(likeCounts?.length || 0);
 
   useEffect(() => {
-    const userHasLiked = likeCounts.some((like) => like.user === userId);
+    const userHasLiked = likeCounts?.some((like) => like.user === userId);
     setIsLiked(userHasLiked);
   }, [likeCounts, userId]);
 

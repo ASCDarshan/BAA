@@ -35,7 +35,7 @@ const PostComment = ({ postId, userId, commentCounts }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasComments, setHasComments] = useState(true);
 
-  const commentCount = commentCounts.length || 0;
+  const commentCount = commentCounts?.length || 0;
   useEffect(() => {
     if (open) {
       fetchComments();
@@ -88,7 +88,7 @@ const PostComment = ({ postId, userId, commentCounts }) => {
     setIsSubmitting(true);
 
     try {
-      const response = await ajaxCall(`posts/comments/`, {
+      const response = await ajaxCall(`comment-create/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
