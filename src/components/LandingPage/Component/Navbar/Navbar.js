@@ -14,7 +14,7 @@ import {
   useTheme,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import LogoImg from "../../../images/BAA.png";
+import LogoImg from "../../../../images/BAA.png";
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -27,7 +27,6 @@ const Navbar = () => {
 
   const menuItems = [
     { name: "About", to: "about-us" },
-    { name: "Event", to: "events" },
     { name: "Achievements", to: "achievements" },
     { name: "Committee", to: "committee" },
     { name: "Testimonials", to: "testimonials" },
@@ -54,6 +53,21 @@ const Navbar = () => {
               sx={{ color: "inherit", display: "block", width: "100%" }}
             >
               Home
+            </Button>
+          </ListItemText>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemText>
+            <Button
+              href="/events"
+              sx={{
+                color: "inherit",
+                display: "block",
+                width: "100%",
+                textAlign: "center",
+              }}
+            >
+              Event
             </Button>
           </ListItemText>
         </ListItem>
@@ -114,6 +128,9 @@ const Navbar = () => {
             <Box sx={{ display: { xs: "none", sm: "flex" }, gap: 2 }}>
               <Button href="/" sx={{ color: "inherit" }}>
                 Home
+              </Button>
+              <Button href="/events" sx={{ color: "inherit" }}>
+                Event
               </Button>
               {menuItems.map((item) => (
                 <Button

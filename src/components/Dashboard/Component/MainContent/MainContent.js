@@ -50,7 +50,7 @@ const MainContent = ({
     allow_comments: true,
     allow_sharing: true,
     author: userID,
-    category: 1,
+    category: 2,
   };
 
   const fileInputRef = useRef(null);
@@ -100,6 +100,7 @@ const MainContent = ({
         const data = Array.isArray(response?.data)
           ? response.data
           : [response.data];
+
         const sortedData = data.sort(
           (a, b) => new Date(b.created_at) - new Date(a.created_at)
         );
@@ -118,7 +119,7 @@ const MainContent = ({
     setIsLoading(true);
     try {
       const response = await ajaxCall(
-        "posts/posts/",
+        "posts/postlike-count/",
         {
           headers: {
             Accept: "application/json",
@@ -161,10 +162,9 @@ const MainContent = ({
     formDataToSend.append("allow_comments", postData.allow_comments);
     formDataToSend.append("allow_sharing", postData.allow_sharing);
     formDataToSend.append("author", userID);
-
     try {
       const response = await ajaxCall(
-        "posts/posts/",
+        "posts/post-create/",
         {
           headers: {
             Accept: "application/json",
@@ -218,7 +218,7 @@ const MainContent = ({
       {Array.isArray(posts) &&
         posts.map((data) => (
           <Card key={data.id} sx={{ display: "flex", mb: 2 }}>
-            {data.images && data.images.length > 0 ? (
+            {data?.images && data.images.length > 0 ? (
               <Box sx={{ display: "flex" }}>
                 {data.images.map((imageData, index) => (
                   <CardMedia
@@ -287,7 +287,7 @@ const MainContent = ({
   );
 
   return (
-    <Container sx={{ mt: 3 }}>
+    <Container sx={{ mt: 10 }}>
       <Grid container spacing={3}>
         <Grid item xs={12} md={8}>
           <form onSubmit={handleSubmit}>
