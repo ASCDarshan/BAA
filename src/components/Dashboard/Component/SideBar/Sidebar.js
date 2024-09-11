@@ -38,7 +38,7 @@ const Sidebar = ({
       <Toolbar />
       <List>
         {menuItems.map((item) => (
-          <ListItem button key={item.text} component={Link} to={item.Link}>
+          <ListItem button key={item.text} component={Link} to={item.link}>
             <ListItemIcon sx={{ color: "inherit" }}>{item.icon}</ListItemIcon>
             <ListItemText primary={item.text} />
           </ListItem>

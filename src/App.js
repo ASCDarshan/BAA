@@ -28,6 +28,9 @@ const theme = createTheme({
 
 function App() {
   const location = useLocation();
+
+  const hideFooterPaths = ["/dashboard", "/login", "/register", "/userProfile"];
+
   return (
     <ThemeProvider theme={theme}>
       <ToastContainer theme="colored" position="top-center" autoClose={3000} />
@@ -41,7 +44,7 @@ function App() {
         <Route path="/events" element={<Event />} />
         <Route path="/userProfile" element={<UserProfile />} />
       </Routes>
-      {location.pathname !== "/dashboard" && <Footers />}
+      {!hideFooterPaths.includes(location.pathname) && <Footers />}
     </ThemeProvider>
   );
 }

@@ -136,7 +136,7 @@ const ContactUs = () => {
         <Grid item xs={6} md={6} mt={11}>
           <StyledIframe
             src={
-              "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3691.6754776114396!2d73.16878171495722!3d22.309434785322052!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395fc5873e594259%3A0xda3dc91c20f4beec!2sAnant%20Soft%20Computing!5e0!3m2!1sen!2sin!4v1630000000000!5m2!1sen!2sin"
+              "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14882.181992377934!2d73.16385965!3d22.33736295!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395fc438ffffffff%3A0x9983a37a832dd134!2sBhavan's%20School%2C%20Vadodara!5e0!3m2!1sen!2sin!4v1694430824557!5m2!1sen!2sin"
             }
             allowFullScreen=""
             loading="lazy"

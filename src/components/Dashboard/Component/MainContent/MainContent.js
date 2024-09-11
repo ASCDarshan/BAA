@@ -50,7 +50,7 @@ const MainContent = ({
     allow_comments: true,
     allow_sharing: true,
     author: userID,
-    category: 2,
+    category: 1,
   };
 
   const fileInputRef = useRef(null);
@@ -86,7 +86,7 @@ const MainContent = ({
     setIsLoading(true);
     try {
       const response = await ajaxCall(
-        "posts/posts/",
+        "posts/post-create/",
         {
           headers: {
             Accept: "application/json",
@@ -156,7 +156,7 @@ const MainContent = ({
 
     const formDataToSend = new FormData();
     formDataToSend.append("content", postData.content);
-    formDataToSend.append("images", postData.images);
+    formDataToSend.append("images", postData.images[0]);
     formDataToSend.append("category", postData.category);
     formDataToSend.append("allow_likes", postData.allow_likes);
     formDataToSend.append("allow_comments", postData.allow_comments);
@@ -166,9 +166,6 @@ const MainContent = ({
       const response = await ajaxCall(
         "posts/post-create/",
         {
-          headers: {
-            Accept: "application/json",
-          },
           method: "POST",
           body: formDataToSend,
         },
@@ -242,18 +239,18 @@ const MainContent = ({
                   }}
                 >
                   <Avatar sx={{ mr: 1 }}>
-                    {data.author.username
-                      ? data.author.username.charAt(0).toUpperCase()
+                    {data.author?.username
+                      ? data.author?.username.charAt(0).toUpperCase()
                       : "A"}
                   </Avatar>
                   <Typography variant="subtitle1">
-                    {data.author.username}
+                    {data.author?.username}
                   </Typography>
                   <Typography
                     variant="body2"
                     sx={{ ml: 1, color: "text.secondary" }}
                   >
-                    {data.category.name} • {timeAgo(data.created_at)}
+                    {data.category?.name} • {timeAgo(data?.created_at)}
                   </Typography>
                 </Box>
                 <Typography variant="h6" gutterBottom>
