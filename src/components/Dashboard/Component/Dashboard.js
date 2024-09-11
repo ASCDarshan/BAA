@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Box, useMediaQuery } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import {
-  Home as HomeIcon,
-  ContactPhone as DirectoryIcon,
-  Description as ResourcesIcon,
-  ExitToApp as LogoutIcon,
-} from "@mui/icons-material";
+import { Home as HomeIcon, ExitToApp as LogoutIcon } from "@mui/icons-material";
 import Navbar from "./Navbar/Navbar";
+import {
+  ContactPhone as DirectoryIcon,
+  Event as EventIcon,
+  Description as ResourcesIcon,
+} from "@mui/icons-material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import MainContent from "./MainContent/MainContent";
 import Sidebar from "./SideBar/Sidebar";
@@ -48,9 +48,12 @@ const Dashboard = () => {
   };
 
   const menuItems = [
-    { text: "Home", icon: <HomeIcon /> },
-    { text: "Profile", icon: <AccountCircleIcon />, Link: "/userProfile" },
-    { text: "Log Out", icon: <LogoutIcon />, Link: "/login" },
+    { text: "Home", icon: <HomeIcon />, link: "/dashboard" },
+    { text: "Directory", icon: <DirectoryIcon /> },
+    { text: "Events", icon: <EventIcon /> },
+    { text: "Resources", icon: <ResourcesIcon /> },
+    { text: "Profile", icon: <AccountCircleIcon />, link: "/userProfile" },
+    { text: "Log Out", icon: <LogoutIcon />, link: "/login" },
   ];
 
   const recommendedTopics = [

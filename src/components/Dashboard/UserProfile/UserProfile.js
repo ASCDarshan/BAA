@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Box, useMediaQuery } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import {
+  ContactPhone as DirectoryIcon,
+  Event as EventIcon,
+  Description as ResourcesIcon,
+} from "@mui/icons-material";
 import { Home as HomeIcon, ExitToApp as LogoutIcon } from "@mui/icons-material";
 import Navbar from "../Component/Navbar/Navbar";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Sidebar from "../Component/SideBar/Sidebar";
 import ajaxCall from "../../helpers/ajaxCall";
+import ProfileForm from "../UserProfile/ProfileForm";
 
 const drawerWidth = 240;
 
@@ -42,11 +48,13 @@ const UserProfile = () => {
   };
 
   const menuItems = [
-    { text: "Home", icon: <HomeIcon /> },
-    { text: "Profile", icon: <AccountCircleIcon />, Link: "/userProfile" },
-    { text: "Log Out", icon: <LogoutIcon />, Link: "/login" },
+    { text: "Home", icon: <HomeIcon />, link: "/dashboard" },
+    { text: "Directory", icon: <DirectoryIcon /> },
+    { text: "Events", icon: <EventIcon /> },
+    { text: "Resources", icon: <ResourcesIcon /> },
+    { text: "Profile", icon: <AccountCircleIcon />, link: "/userProfile" },
+    { text: "Log Out", icon: <LogoutIcon />, link: "/login" },
   ];
-
   const fetchData = async (url, setData) => {
     try {
       const response = await ajaxCall(
@@ -87,6 +95,7 @@ const UserProfile = () => {
           menuItems={menuItems}
           drawerWidth={drawerWidth}
         />
+        <ProfileForm />
       </Box>
     </ThemeProvider>
   );

@@ -36,11 +36,6 @@ const PostComment = ({ postId, userId, commentCounts }) => {
   const [hasComments, setHasComments] = useState(true);
 
   const commentCount = commentCounts?.length || 0;
-  useEffect(() => {
-    if (open) {
-      fetchComments();
-    }
-  }, [open]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -83,12 +78,18 @@ const PostComment = ({ postId, userId, commentCounts }) => {
     setIsLoading(false);
   };
 
+  useEffect(() => {
+    if (open) {
+      fetchComments();
+    }
+  }, [open]);
+
   const handleSubmitComment = async () => {
     if (comment.content.trim() === "") return;
     setIsSubmitting(true);
 
     try {
-      const response = await ajaxCall(`comment-create/`, {
+      const response = await ajaxCall(`posts/comment-create/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

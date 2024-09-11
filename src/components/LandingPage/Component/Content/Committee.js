@@ -45,7 +45,7 @@ const Committee = ({ committeeData }) => {
   };
 
   const handleViewMore = () => {
-    setVisibleCount(visibleCount + 3); // Show 3 more members when "View More" is clicked
+    setVisibleCount(visibleCount + 3);
   };
 
   return (
@@ -53,14 +53,15 @@ const Committee = ({ committeeData }) => {
       <SectionTitle variant="h4">Committee</SectionTitle>
       <Grid container spacing={3}>
         {committeeData.slice(0, visibleCount).map((member, index) => (
-          <Grid item xs={12} sm={4} key={index}>
+          <Grid item xs={8} sm={4} key={index}>
             <Card>
               <CardMedia
                 component="img"
-                height="250"
                 image={member.image}
                 alt={member.title}
+                sx={{ objectFit: "contain" }}
               />
+
               <CardContent>
                 <Typography gutterBottom variant="h5" component="div">
                   {member.name}
@@ -82,7 +83,7 @@ const Committee = ({ committeeData }) => {
         ))}
       </Grid>
 
-      {visibleCount < committeeData.length && ( // Show "View More" if there are more members to show
+      {visibleCount < committeeData.length && (
         <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
           <Button variant="contained" onClick={handleViewMore}>
             View More
@@ -94,6 +95,17 @@ const Committee = ({ committeeData }) => {
         <DialogTitle>{selectedMember?.name}</DialogTitle>
         <DialogContent>
           <Typography>{selectedMember?.description}</Typography>
+        </DialogContent>
+        <DialogContent>
+          {selectedMember?.phone && (
+            <Typography>Contact: {selectedMember.phone}</Typography>
+          )}
+          {selectedMember?.email && (
+            <Typography>Email: {selectedMember.email}</Typography>
+          )}
+          {selectedMember?.websites && (
+            <Typography>Website: {selectedMember.websites}</Typography>
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Close</Button>
