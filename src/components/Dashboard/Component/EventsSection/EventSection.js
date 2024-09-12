@@ -7,11 +7,11 @@ import {
   Description as ResourcesIcon,
 } from "@mui/icons-material";
 import { Home as HomeIcon, ExitToApp as LogoutIcon } from "@mui/icons-material";
-import Navbar from "../Component/Navbar/Navbar";
+import Navbar from "../Navbar/Navbar";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import Sidebar from "../Component/SideBar/Sidebar";
-import ajaxCall from "../../helpers/ajaxCall";
-import ProfileForm from "../UserProfile/ProfileForm";
+import Sidebar from "../SideBar/Sidebar";
+import ajaxCall from "../../../helpers/ajaxCall";
+import AddEvents from "./AddEvents";
 
 const drawerWidth = 240;
 
@@ -27,21 +27,14 @@ const theme = createTheme({
   },
 });
 
-const UserProfile = () => {
-  const [eventsData, setEventsData] = useState([]);
-  const [initiativesData, setInitiativesData] = useState([]);
+const EventSection = () => {
   const [userProfileData, setUserProfileData] = useState([]);
 
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
   const userID = loginInfo?.userId;
 
-  const [tabValue, setTabValue] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
-
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
-  };
 
   const handleDrawerToggle = () => {
     setDrawerOpen(!drawerOpen);
@@ -50,8 +43,8 @@ const UserProfile = () => {
   const menuItems = [
     { text: "Home", icon: <HomeIcon />, link: "/dashboard" },
     { text: "Directory", icon: <DirectoryIcon /> },
-    { text: "Events", icon: <EventIcon /> },
-    { text: "Resources", icon: <ResourcesIcon /> },
+    { text: "Events", icon: <EventIcon />, link: "/addEvents" },
+    { text: "Initiatives", icon: <ResourcesIcon />, link: "/addInitiatives" },
     { text: "Profile", icon: <AccountCircleIcon />, link: "/userProfile" },
     { text: "Log Out", icon: <LogoutIcon />, link: "/login" },
   ];
@@ -79,9 +72,7 @@ const UserProfile = () => {
   };
 
   useEffect(() => {
-    fetchData("events/events/", setEventsData);
-    fetchData("initiatives/initiatives/", setInitiativesData);
-    fetchData("profiles/user-profile", setUserProfileData);
+    fetchData(`profiles/user-profile/${userID}/`, setUserProfileData);
   }, []);
 
   return (
@@ -95,10 +86,10 @@ const UserProfile = () => {
           menuItems={menuItems}
           drawerWidth={drawerWidth}
         />
-        <ProfileForm />
+        <AddEvents userID={userID} />
       </Box>
     </ThemeProvider>
   );
 };
 
-export default UserProfile;
+export default EventSection;
