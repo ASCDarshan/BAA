@@ -20,15 +20,7 @@ const Navbar = ({ onDrawerToggle, userProfileData }) => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
   const navigate = useNavigate();
 
-  const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
-
-  const loggedInUserId = loginInfo?.userId;
-
-  const loggedInUser = userProfileData?.find(
-    (userProfile) => userProfile.user?.id === loggedInUserId
-  );
-
-  const username = loggedInUser?.user?.username || "Guest";
+  const username = userProfileData?.user?.username || "Guest";
 
   const [anchorEl, setAnchorEl] = useState(null);
   const isMenuOpen = Boolean(anchorEl);

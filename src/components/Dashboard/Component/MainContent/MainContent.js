@@ -52,7 +52,6 @@ const MainContent = ({
     author: userID,
     category: 1,
   };
-
   const fileInputRef = useRef(null);
   const [gettingData, setGettingData] = useState([]);
   const [popularPosts, setPopularPosts] = useState([]);
