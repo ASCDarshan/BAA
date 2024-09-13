@@ -1,15 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Container,
-  Typography,
+  Grid,
   TextField,
   Button,
-  Grid,
+  Typography,
+  Container,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
   Box,
   Paper,
   createTheme,
 } from "@mui/material";
-import ajaxCall from "../../../helpers/ajaxCall";
+
+import ajaxCall from "../../../../helpers/ajaxCall";
 import { toast } from "react-toastify";
 
 const theme = createTheme({
@@ -23,52 +28,78 @@ const theme = createTheme({
     },
   },
 });
-const AddEvents = () => {
-  const [formData, setFormData] = useState({
+
+const SubEventForm = () => {
+  const [eventData, setEventData] = useState([]); // Initialize as an array
+  const [subEventData, setSubEventData] = useState({
     name: "",
     description: "",
-    start_date: "",
-    end_date: "",
+    date: "",
     start_time: "",
     end_time: "",
-    registration_deadline: "",
     location: "",
+    max_participants: "",
     qr_code: "",
-    subevents: [],
+    main_event: "",
   });
+
+  const fetchData = async (url, setData) => {
+    try {
+      const response = await ajaxCall(
+        url,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          method: "GET",
+        },
+        8000
+      );
+      if (response?.status === 200) {
+        setData(response?.data || []); // Ensure that we handle empty data
+      } else {
+        console.error("Fetch error:", response);
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData("events/events/", setEventData);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    setSubEventData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    setFormData((prevFormData) => ({
+    setSubEventData((prevFormData) => ({
       ...prevFormData,
       qr_code: file,
     }));
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const formDataToSend = new FormData();
-    formDataToSend.append("name", formData.name);
-    formDataToSend.append("description", formData.description);
-    formDataToSend.append("start_date", formData.start_date);
-    formDataToSend.append("end_date", formData.end_date);
-    formDataToSend.append("start_time", formData.start_time);
-    formDataToSend.append("end_time", formData.end_time);
-    formDataToSend.append(
-      "registration_deadline",
-      formData.registration_deadline
-    );
-    formDataToSend.append("location", formData.location);
-    formDataToSend.append("qr_code", formData.qr_code);
+    formDataToSend.append("name", subEventData.name);
+    formDataToSend.append("description", subEventData.description);
+    formDataToSend.append("date", subEventData.date);
+    formDataToSend.append("start_time", subEventData.start_time);
+    formDataToSend.append("end_time", subEventData.end_time);
+    formDataToSend.append("location", subEventData.location);
+    formDataToSend.append("max_participants", subEventData.max_participants);
+    formDataToSend.append("qr_code", subEventData.qr_code);
+    formDataToSend.append("main_event", subEventData.main_event);
 
     try {
       const response = await ajaxCall(
-        `events/events/`,
+        `events/subevents/`,
         {
           method: "POST",
           body: formDataToSend,
@@ -92,15 +123,33 @@ const AddEvents = () => {
           elevation={3}
           sx={{ p: 3, backgroundColor: theme.palette.background.paper }}
         >
-          <Typography variant="h5">Add Events</Typography>
+          <Typography variant="h5">Add Subevent</Typography>
           <form onSubmit={handleSubmit}>
             <Grid container spacing={2} sx={{ mt: 2 }}>
+              <Grid item xs={6}>
+                <FormControl fullWidth required>
+                  <InputLabel id="purpose-label">Event</InputLabel>
+                  <Select
+                    labelId="purpose-label"
+                    name="main_event" // Correct field name
+                    value={subEventData.main_event}
+                    onChange={handleChange}
+                    label="Event"
+                  >
+                    {eventData.map((event, index) => (
+                      <MenuItem key={index} value={event.id}>
+                        {event.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
               <Grid item xs={12}>
                 <TextField
                   fullWidth
                   label="Event Name"
                   name="name"
-                  value={formData.name}
+                  value={subEventData.name}
                   onChange={handleChange}
                   required
                 />
@@ -110,7 +159,7 @@ const AddEvents = () => {
                   fullWidth
                   label="Description"
                   name="description"
-                  value={formData.description}
+                  value={subEventData.description}
                   onChange={handleChange}
                   multiline
                   rows={4}
@@ -120,34 +169,23 @@ const AddEvents = () => {
               <Grid item xs={6}>
                 <TextField
                   fullWidth
-                  label="Start Date"
-                  name="start_date"
+                  label="Date"
+                  name="date"
                   type="date"
-                  value={formData.start_date}
+                  value={subEventData.date}
                   onChange={handleChange}
                   InputLabelProps={{ shrink: true }}
                   required
                 />
               </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  fullWidth
-                  label="End Date"
-                  name="end_date"
-                  type="date"
-                  value={formData.end_date}
-                  onChange={handleChange}
-                  InputLabelProps={{ shrink: true }}
-                  required
-                />
-              </Grid>
+
               <Grid item xs={6}>
                 <TextField
                   fullWidth
                   label="Start Time"
                   name="start_time"
                   type="time"
-                  value={formData.start_time}
+                  value={subEventData.start_time}
                   onChange={handleChange}
                   InputLabelProps={{ shrink: true }}
                   required
@@ -159,19 +197,7 @@ const AddEvents = () => {
                   label="End Time"
                   name="end_time"
                   type="time"
-                  value={formData.end_time}
-                  onChange={handleChange}
-                  InputLabelProps={{ shrink: true }}
-                  required
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  fullWidth
-                  label="Registration Deadline"
-                  name="registration_deadline"
-                  type="datetime-local"
-                  value={formData.registration_deadline}
+                  value={subEventData.end_time}
                   onChange={handleChange}
                   InputLabelProps={{ shrink: true }}
                   required
@@ -183,7 +209,18 @@ const AddEvents = () => {
                   label="Location"
                   name="location"
                   type="text"
-                  value={formData.location}
+                  value={subEventData.location}
+                  onChange={handleChange}
+                  required
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label="Max Participants"
+                  name="max_participants"
+                  type="number"
+                  value={subEventData.max_participants}
                   onChange={handleChange}
                   required
                 />
@@ -192,7 +229,7 @@ const AddEvents = () => {
                 <TextField
                   fullWidth
                   label="QR Code"
-                  name="qrCode"
+                  name="qr_code"
                   type="file"
                   onChange={handleFileChange}
                   InputLabelProps={{ shrink: true }}
@@ -203,7 +240,6 @@ const AddEvents = () => {
                   type="submit"
                   variant="contained"
                   color="primary"
-                  onClick={handleSubmit}
                   size="small"
                 >
                   Submit
@@ -217,4 +253,4 @@ const AddEvents = () => {
   );
 };
 
-export default AddEvents;
+export default SubEventForm;

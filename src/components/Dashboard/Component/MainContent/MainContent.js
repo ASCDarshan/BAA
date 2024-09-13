@@ -31,6 +31,8 @@ import { toast } from "react-toastify";
 import PostLike from "./Like-comment-share/PostLike";
 import PostComment from "./Like-comment-share/PostComment";
 import PostShare from "./Like-comment-share/PostShare";
+import DashboardEvents from "./DashboardEvents";
+import DashboardInitiatives from "./DashboardInitiatives";
 
 const MainContent = ({
   userProfileData,
@@ -390,35 +392,8 @@ const MainContent = ({
               ))}
             </Box>
           </Paper>
-          <Paper sx={{ p: 2, mb: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Upcoming Events
-            </Typography>
-            <List>
-              {eventsData.map((event) => (
-                <ListItemText
-                  key={event.id}
-                  primary={event.name}
-                  secondary={`${event.start_date} to ${event.end_date}`}
-                />
-              ))}
-            </List>
-          </Paper>
-          <Paper sx={{ p: 2, mb: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Current Initiatives
-            </Typography>
-            <List>
-              {initiativesData.map((initiative) => (
-                <ListItem key={initiative.id}>
-                  <ListItemText
-                    primary={initiative.name}
-                    secondary={initiative.purpose}
-                  />
-                </ListItem>
-              ))}
-            </List>
-          </Paper>
+          <DashboardEvents eventsData={eventsData} />
+          <DashboardInitiatives initiativesData={initiativesData} />
           <Paper sx={{ p: 2 }}>
             <Typography variant="h6" gutterBottom>
               People You May Know

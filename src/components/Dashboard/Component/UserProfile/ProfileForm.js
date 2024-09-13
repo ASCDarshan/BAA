@@ -25,41 +25,41 @@ const steps = [
   "Additional Information",
 ];
 
-const ProfileForm = ({ userID }) => {
+const ProfileForm = ({ userID, userProfileData }) => {
   const [activeStep, setActiveStep] = useState(0);
   const [formData, setFormData] = useState({
-    school_graduation_year: "",
-    birth_date: null,
-    bio: "",
-    profile_picture: null,
-    phone_number: "",
-    alternative_email: "",
-    street_address: "",
-    city: "",
-    state: "",
-    country: "",
-    postal_code: "",
-    Education: "",
-    degree: "",
-    major: "",
-    year_of_graduation: "",
-    company: "",
-    company_address: "",
-    company_website: "",
-    job_title: "",
-    industry: "",
+    school_graduation_year: userProfileData.school_graduation_year,
+    birth_date: userProfileData.birth_date,
+    bio: userProfileData.bio,
+    profile_picture: userProfileData.profile_picture,
+    phone_number: userProfileData.phone_number,
+    alternative_email: userProfileData.alternative_email,
+    street_address: userProfileData.street_address,
+    city: userProfileData.city,
+    state: userProfileData.state,
+    country: userProfileData.country,
+    postal_code: userProfileData.postal_code,
+    Education: userProfileData.Education,
+    degree: userProfileData.degree,
+    major: userProfileData.major,
+    year_of_graduation: userProfileData.year_of_graduation,
+    company: userProfileData.company,
+    company_address: userProfileData.company_address,
+    company_website: userProfileData.company_website,
+    job_title: userProfileData.job_title,
+    industry: userProfileData.industry,
     company_portfolio: null,
-    linkedin_profile: "",
-    twitter_profile: "",
-    facebook_profile: "",
+    linkedin_profile: userProfileData.linkedin_profile,
+    twitter_profile: userProfileData.twitter_profile,
+    facebook_profile: userProfileData.facebook_profile,
     is_mentor: false,
-    mentorship_areas: "",
+    mentorship_areas: userProfileData.mentorship_areas,
     show_email: false,
     show_phone: false,
-    interests: "",
-    skills: "",
-    achievements: "",
-    publications: "",
+    interests: userProfileData.interests,
+    skills: userProfileData.skills,
+    achievements: userProfileData.achievements,
+    publications: userProfileData.publications,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     user: userID,
@@ -501,7 +501,7 @@ const ProfileForm = ({ userID }) => {
 
   return (
     <Container sx={{ mt: 10 }}>
-      <Typography variant="h5">User Profile</Typography>
+      <Typography variant="h5">Update Profile</Typography>
       <Grid container spacing={3} mt={2}>
         <Grid item xs={12} md={8}>
           <Box sx={{ width: "100%" }}>
@@ -525,47 +525,31 @@ const ProfileForm = ({ userID }) => {
                   </Button>
                 )}
                 {activeStep === steps.length - 1 ? (
-                  <Button
-                    size="small"
-                    variant="contained"
-                    color="primary"
-                    type="submit"
-                    disabled={formData.isSubmitting}
-                    onClick={handleSubmit}
-                  >
-                    Submit
-                  </Button>
+                  <Grid item xs={12} container justifyContent="flex-end">
+                    <Button
+                      size="small"
+                      variant="contained"
+                      color="primary"
+                      type="submit"
+                      disabled={formData.isSubmitting}
+                      onClick={handleSubmit}
+                    >
+                      Submit
+                    </Button>
+                  </Grid>
                 ) : (
-                  <Button
-                    size="small"
-                    variant="contained"
-                    color="primary"
-                    onClick={handleNext}
-                  >
-                    Next
-                  </Button>
+                  <Grid item xs={12} container justifyContent="flex-end">
+                    <Button
+                      size="small"
+                      variant="contained"
+                      color="primary"
+                      onClick={handleNext}
+                    >
+                      Next
+                    </Button>
+                  </Grid>
                 )}
               </Box>
-
-              {/* <Box
-                sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}
-              >
-                <Button
-                  size="small"
-                  disabled={activeStep === 0}
-                  onClick={handleBack}
-                >
-                  Back
-                </Button>
-                <Button
-                  size="small"
-                  variant="contained"
-                  onClick={handleNext}
-                  disabled={activeStep === steps.length - 1}
-                >
-                  {activeStep === steps.length - 1 ? "Submit" : "Next"}
-                </Button>
-              </Box> */}
             </Box>
           </Box>
         </Grid>

@@ -1,11 +1,31 @@
 import React, { useState } from "react";
-import { Container, Typography, TextField, Button, Grid } from "@mui/material";
+import {
+  Container,
+  Typography,
+  TextField,
+  Button,
+  Grid,
+  Box,
+  Paper,
+  createTheme,
+} from "@mui/material";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 
 import ajaxCall from "../../../helpers/ajaxCall";
 import { toast } from "react-toastify";
 
-const AddEvents = () => {
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: "#3f51b5",
+    },
+    background: {
+      default: "#f0f2f5",
+      paper: "#ffffff",
+    },
+  },
+});
+const AddInitiatives = () => {
   const [formData, setFormData] = useState({
     name: "",
     purpose: "",
@@ -63,124 +83,132 @@ const AddEvents = () => {
 
   return (
     <Container sx={{ mt: 10 }}>
-      <Typography variant="h5">Add Initiatives</Typography>
-      <form onSubmit={handleSubmit}>
-        <Grid container spacing={2} sx={{ mt: 2 }}>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Event Name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Purpose"
-              name="purpose"
-              value={formData.purpose}
-              onChange={handleChange}
-              multiline
-              rows={4}
-              required
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <FormControl fullWidth required>
-              <InputLabel id="purpose-label">Status</InputLabel>
-              <Select
-                labelId="purpose-label"
-                name="status"
-                value={formData.status}
-                onChange={handleChange}
-                label="Status"
-              >
-                <MenuItem value="PLANNED">Planned</MenuItem>
-                <MenuItem value="IN_PROGRESS">In Progress</MenuItem>
-                <MenuItem value="COMPLETED">Completed</MenuItem>
-                <MenuItem value="CANCELLED">Cancelled</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
+      <Box>
+        <Paper
+          elevation={3}
+          sx={{ p: 3, backgroundColor: theme.palette.background.paper }}
+        >
+          <Typography variant="h5">Add Initiatives</Typography>
+          <form onSubmit={handleSubmit}>
+            <Grid container spacing={2} sx={{ mt: 2 }}>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Event Name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Purpose"
+                  name="purpose"
+                  value={formData.purpose}
+                  onChange={handleChange}
+                  multiline
+                  rows={4}
+                  required
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <FormControl fullWidth required>
+                  <InputLabel id="purpose-label">Status</InputLabel>
+                  <Select
+                    labelId="purpose-label"
+                    name="status"
+                    value={formData.status}
+                    onChange={handleChange}
+                    label="Status"
+                  >
+                    <MenuItem value="PLANNED">Planned</MenuItem>
+                    <MenuItem value="IN_PROGRESS">In Progress</MenuItem>
+                    <MenuItem value="COMPLETED">Completed</MenuItem>
+                    <MenuItem value="CANCELLED">Cancelled</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
 
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              label="Start Date"
-              name="start_date"
-              type="date"
-              value={formData.start_date}
-              onChange={handleChange}
-              InputLabelProps={{ shrink: true }}
-              required
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              label="End Date"
-              name="end_date"
-              type="date"
-              value={formData.end_date}
-              onChange={handleChange}
-              InputLabelProps={{ shrink: true }}
-              required
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              label="Deadline of Funds Requirement"
-              name="funds_deadline"
-              type="date"
-              value={formData.funds_deadline}
-              InputLabelProps={{ shrink: true }}
-              onChange={handleChange}
-              required
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              label="Total Funds Required"
-              name="total_funds_required"
-              type="number"
-              value={formData.total_funds_required}
-              onChange={handleChange}
-              InputLabelProps={{ shrink: true }}
-              required
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Registration Deadline"
-              name="status"
-              type="date"
-              value={formData.status}
-              onChange={handleChange}
-              InputLabelProps={{ shrink: true }}
-              required
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              onClick={handleSubmit}
-              size="small"
-            >
-              Submit
-            </Button>
-          </Grid>
-        </Grid>
-      </form>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label="Total Funds Required"
+                  name="total_funds_required"
+                  type="number"
+                  value={formData.total_funds_required}
+                  onChange={handleChange}
+                  required
+                />
+              </Grid>
+
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label="Start Date"
+                  name="start_date"
+                  type="date"
+                  value={formData.start_date}
+                  onChange={handleChange}
+                  InputLabelProps={{ shrink: true }}
+                  required
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label="End Date"
+                  name="end_date"
+                  type="date"
+                  value={formData.end_date}
+                  onChange={handleChange}
+                  InputLabelProps={{ shrink: true }}
+                  required
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label="Deadline of Funds Requirement"
+                  name="funds_deadline"
+                  type="date"
+                  value={formData.funds_deadline}
+                  InputLabelProps={{ shrink: true }}
+                  onChange={handleChange}
+                  required
+                />
+              </Grid>
+
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label="Registration Deadline"
+                  name="status"
+                  type="date"
+                  value={formData.status}
+                  onChange={handleChange}
+                  InputLabelProps={{ shrink: true }}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} container justifyContent="flex-end">
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  onClick={handleSubmit}
+                  size="small"
+                >
+                  Submit
+                </Button>
+              </Grid>
+            </Grid>
+          </form>
+        </Paper>
+      </Box>
     </Container>
   );
 };
 
-export default AddEvents;
+export default AddInitiatives;
