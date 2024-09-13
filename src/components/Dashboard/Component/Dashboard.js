@@ -8,6 +8,7 @@ import {
   Event as EventIcon,
   Description as ResourcesIcon,
 } from "@mui/icons-material";
+import CalendarViewMonthIcon from "@mui/icons-material/CalendarViewMonth";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import MainContent from "./MainContent/MainContent";
 import Sidebar from "./SideBar/Sidebar";
@@ -49,8 +50,8 @@ const Dashboard = () => {
 
   const menuItems = [
     { text: "Home", icon: <HomeIcon />, link: "/dashboard" },
-    { text: "Directory", icon: <DirectoryIcon /> },
     { text: "Events", icon: <EventIcon />, link: "/addEvents" },
+    { text: "Subevent", icon: <CalendarViewMonthIcon />, link: "/subEvents" },
     { text: "Initiatives", icon: <ResourcesIcon />, link: "/addInitiatives" },
     { text: "Profile", icon: <AccountCircleIcon />, link: "/userProfile" },
     { text: "Log Out", icon: <LogoutIcon />, link: "/login" },
@@ -94,29 +95,6 @@ const Dashboard = () => {
     fetchData(`profiles/user-profile/${userID}/`, setUserProfileData);
   }, []);
 
-  const events = [
-    { id: 1, title: "Annual Alumni Dinner", date: "2023-09-15" },
-    { id: 2, title: "Career Fair", date: "2023-10-01" },
-  ];
-
-  const initiatives = [
-    {
-      id: 1,
-      title: "Scholarship Fund",
-      description: "Help support future students",
-    },
-    {
-      id: 2,
-      title: "Mentorship Program",
-      description: "Guide current students in their career paths",
-    },
-  ];
-
-  const suggestedAlumni = [
-    { id: 1, name: "Alice Johnson", graduationYear: 2018 },
-    { id: 2, name: "Bob Williams", graduationYear: 2019 },
-  ];
-
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ display: "flex" }}>
@@ -132,9 +110,6 @@ const Dashboard = () => {
           tabValue={tabValue}
           handleTabChange={handleTabChange}
           recommendedTopics={recommendedTopics}
-          events={events}
-          initiatives={initiatives}
-          suggestedAlumni={suggestedAlumni}
           eventsData={eventsData}
           initiativesData={initiativesData}
           userProfileData={userProfileData}

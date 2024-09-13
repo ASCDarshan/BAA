@@ -5,13 +5,13 @@ import {
   Event as EventIcon,
   Description as ResourcesIcon,
 } from "@mui/icons-material";
-import { Home as HomeIcon, ExitToApp as LogoutIcon } from "@mui/icons-material";
 import CalendarViewMonthIcon from "@mui/icons-material/CalendarViewMonth";
-import Navbar from "../Navbar/Navbar";
+import { Home as HomeIcon, ExitToApp as LogoutIcon } from "@mui/icons-material";
+import Navbar from "../../Navbar/Navbar";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import Sidebar from "../SideBar/Sidebar";
-import ajaxCall from "../../../helpers/ajaxCall";
-import ProfileForm from "./ProfileForm";
+import Sidebar from "../../SideBar/Sidebar";
+import ajaxCall from "../../../../helpers/ajaxCall";
+import SubEventForm from "./SubEventForm";
 
 const drawerWidth = 240;
 
@@ -27,9 +27,7 @@ const theme = createTheme({
   },
 });
 
-const UserProfile = () => {
-  const [eventsData, setEventsData] = useState([]);
-  const [initiativesData, setInitiativesData] = useState([]);
+const SubEvents = () => {
   const [userProfileData, setUserProfileData] = useState([]);
 
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
@@ -88,10 +86,10 @@ const UserProfile = () => {
           menuItems={menuItems}
           drawerWidth={drawerWidth}
         />
-        <ProfileForm userID={userID} userProfileData={userProfileData} />
+        <SubEventForm userID={userID} />
       </Box>
     </ThemeProvider>
   );
 };
 
-export default UserProfile;
+export default SubEvents;
