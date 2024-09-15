@@ -11,9 +11,24 @@ import {
   FormControlLabel,
   Container,
   Typography,
+  Paper,
+  createTheme,
 } from "@mui/material";
 import { toast } from "react-toastify";
 import ajaxCall from "../../../helpers/ajaxCall";
+
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: "#3f51b5",
+    },
+    background: {
+      default: "#f0f2f5",
+      paper: "#ffffff",
+    },
+  },
+});
 
 const steps = [
   "Personal Information",
@@ -501,59 +516,66 @@ const ProfileForm = ({ userID, userProfileData }) => {
 
   return (
     <Container sx={{ mt: 10 }}>
-      <Typography variant="h5">Update Profile</Typography>
-      <Grid container spacing={3} mt={2}>
-        <Grid item xs={12} md={8}>
-          <Box sx={{ width: "100%" }}>
-            <Stepper activeStep={activeStep} alternativeLabel>
-              {steps.map((label, index) => (
-                <Step key={label}>
-                  <StepLabel>{label}</StepLabel>
-                </Step>
-              ))}
-            </Stepper>
+      <Box>
+        <Paper
+          elevation={3}
+          sx={{ p: 3, backgroundColor: theme.palette.background.paper }}
+        >
+          <Typography variant="h5">Update Profile</Typography>
+            <Grid item xs={12} md={8}>
+              <Box sx={{ width: "100%" }}>
+                <Stepper activeStep={activeStep} alternativeLabel>
+                  {steps.map((label, index) => (
+                    <Step key={label}>
+                      <StepLabel>{label}</StepLabel>
+                    </Step>
+                  ))}
+                </Stepper>
 
-            <Box sx={{ mt: 3 }}>
-              {renderStepContent(activeStep)}
+                  {renderStepContent(activeStep)}
 
-              <Box
-                sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}
-              >
-                {activeStep !== 0 && (
-                  <Button size="small" onClick={handleBack} sx={{ mr: 1 }}>
-                    Back
-                  </Button>
-                )}
-                {activeStep === steps.length - 1 ? (
-                  <Grid item xs={12} container justifyContent="flex-end">
-                    <Button
-                      size="small"
-                      variant="contained"
-                      color="primary"
-                      type="submit"
-                      disabled={formData.isSubmitting}
-                      onClick={handleSubmit}
-                    >
-                      Submit
-                    </Button>
-                  </Grid>
-                ) : (
-                  <Grid item xs={12} container justifyContent="flex-end">
-                    <Button
-                      size="small"
-                      variant="contained"
-                      color="primary"
-                      onClick={handleNext}
-                    >
-                      Next
-                    </Button>
-                  </Grid>
-                )}
-              </Box>
-            </Box>
-          </Box>
-        </Grid>
-      </Grid>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      mt: 2,
+                    }}
+                  >
+                    {activeStep !== 0 && (
+                      <Button size="small" onClick={handleBack} sx={{ mr: 1 }}>
+                        Back
+                      </Button>
+                    )}
+                    {activeStep === steps.length - 1 ? (
+                      <Grid item xs={12} container justifyContent="flex-end">
+                        <Button
+                          size="small"
+                          variant="contained"
+                          color="primary"
+                          type="submit"
+                          disabled={formData.isSubmitting}
+                          onClick={handleSubmit}
+                        >
+                          Submit
+                        </Button>
+                      </Grid>
+                    ) : (
+                      <Grid item xs={12} container justifyContent="flex-end">
+                        <Button
+                          size="small"
+                          variant="contained"
+                          color="primary"
+                          onClick={handleNext}
+                        >
+                          Next
+                        </Button>
+                      </Grid>
+                    )}
+                  </Box>
+                </Box>
+            </Grid>
+        </Paper>
+      </Box>
     </Container>
   );
 };
