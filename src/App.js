@@ -12,7 +12,6 @@ import "react-toastify/dist/ReactToastify.css";
 import UserProfile from "./components/Dashboard/Component/UserProfile/UserProfile";
 import DisplayUser from "./components/Dashboard/Component/UserProfile/DisplayUser";
 import Footers from "./components/LandingPage/Component/Footer/Footers";
-import Event from "./components/LandingPage/Component/EventPage/Event";
 import EventSection from "./components/Dashboard/Component/EventsSection/EventSection";
 import InitiativesSection from "./components/Dashboard/Component/EventsSection/InitiativesSection";
 import SubEvents from "./components/Dashboard/Component/EventsSection/SubEventSection/SubEvents";
@@ -46,11 +45,10 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/subEvents" element={<SubEvents />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/subEvents" element={<SubEvents />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/events" element={<Event />} />
         <Route path="/addEvents" element={<EventSection />} />
         <Route path="/addInitiatives" element={<InitiativesSection />} />
         <Route path="/userProfile" element={<DisplayUser />} />
