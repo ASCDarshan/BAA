@@ -33,7 +33,7 @@ const Events = ({ eventsData }) => {
     <Container sx={{ mt: 4 }}>
       <SectionTitle variant="h4">Upcoming Events</SectionTitle>
       {eventsData.map((event, index) => (
-        <Card key={index}>
+        <Card key={index} sx={{ mt: 4 }}>
           <Grid container>
             <Grid item xs={12} md={4}>
               <CardMedia

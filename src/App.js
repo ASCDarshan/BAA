@@ -15,6 +15,7 @@ import Footers from "./components/LandingPage/Component/Footer/Footers";
 import EventSection from "./components/Dashboard/Component/EventsSection/EventSection";
 import InitiativesSection from "./components/Dashboard/Component/EventsSection/InitiativesSection";
 import SubEvents from "./components/Dashboard/Component/EventsSection/SubEventSection/SubEvents";
+import Event from "./components/LandingPage/Component/EventPage/Event";
 
 const theme = createTheme({
   palette: {
@@ -45,6 +46,7 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/events" element={<Event />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/subEvents" element={<SubEvents />} />

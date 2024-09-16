@@ -112,7 +112,6 @@ const Dashboard = () => {
           recommendedTopics={recommendedTopics}
           eventsData={eventsData}
           initiativesData={initiativesData}
-          userProfileData={userProfileData}
           userID={userID}
         />
       </Box>

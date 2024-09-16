@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -16,7 +16,6 @@ import {
 } from "@mui/material";
 import { toast } from "react-toastify";
 import ajaxCall from "../../../helpers/ajaxCall";
-
 
 const theme = createTheme({
   palette: {
@@ -41,8 +40,7 @@ const steps = [
 ];
 
 const ProfileForm = ({ userID, userProfileData }) => {
-  const [activeStep, setActiveStep] = useState(0);
-  const [formData, setFormData] = useState({
+  const Data = {
     school_graduation_year: userProfileData.school_graduation_year,
     birth_date: userProfileData.birth_date,
     bio: userProfileData.bio,
@@ -75,6 +73,45 @@ const ProfileForm = ({ userID, userProfileData }) => {
     skills: userProfileData.skills,
     achievements: userProfileData.achievements,
     publications: userProfileData.publications,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    user: userID,
+  };
+
+  const [activeStep, setActiveStep] = useState(0);
+  const [formData, setFormData] = useState({
+    school_graduation_year: Data.school_graduation_year,
+    birth_date: Data.birth_date,
+    bio: Data.bio,
+    profile_picture: Data.profile_picture,
+    phone_number: Data.phone_number,
+    alternative_email: Data.alternative_email,
+    street_address: Data.street_address,
+    city: Data.city,
+    state: Data.state,
+    country: Data.country,
+    postal_code: Data.postal_code,
+    Education: Data.Education,
+    degree: Data.degree,
+    major: Data.major,
+    year_of_graduation: Data.year_of_graduation,
+    company: Data.company,
+    company_address: Data.company_address,
+    company_website: Data.company_website,
+    job_title: Data.job_title,
+    industry: Data.industry,
+    company_portfolio: null,
+    linkedin_profile: Data.linkedin_profile,
+    twitter_profile: Data.twitter_profile,
+    facebook_profile: Data.facebook_profile,
+    is_mentor: false,
+    mentorship_areas: Data.mentorship_areas,
+    show_email: false,
+    show_phone: false,
+    interests: Data.interests,
+    skills: Data.skills,
+    achievements: Data.achievements,
+    publications: Data.publications,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     user: userID,
@@ -170,8 +207,8 @@ const ProfileForm = ({ userID, userProfileData }) => {
     switch (step) {
       case 0:
         return (
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
+          <Grid container spacing={2} mt={2}>
+            <Grid item xs={6}>
               <TextField
                 fullWidth
                 label="School Graduation Year"
@@ -180,7 +217,7 @@ const ProfileForm = ({ userID, userProfileData }) => {
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <Grid item xs={12}>
                 <TextField
                   type="date"
@@ -193,7 +230,7 @@ const ProfileForm = ({ userID, userProfileData }) => {
                 />
               </Grid>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <TextField
                 fullWidth
                 label="Bio"
@@ -204,7 +241,7 @@ const ProfileForm = ({ userID, userProfileData }) => {
                 rows={3}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <TextField
                 fullWidth
                 type="file"
@@ -214,7 +251,7 @@ const ProfileForm = ({ userID, userProfileData }) => {
                 onChange={handleFileChange}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <TextField
                 fullWidth
                 label="Phone Number"
@@ -223,7 +260,7 @@ const ProfileForm = ({ userID, userProfileData }) => {
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <TextField
                 fullWidth
                 label="Alternative Email"
@@ -236,8 +273,8 @@ const ProfileForm = ({ userID, userProfileData }) => {
         );
       case 1:
         return (
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
+          <Grid container spacing={2} mt={2}>
+            <Grid item xs={6}>
               <TextField
                 fullWidth
                 label="Street Address"
@@ -286,8 +323,8 @@ const ProfileForm = ({ userID, userProfileData }) => {
         );
       case 2:
         return (
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
+          <Grid container spacing={2} mt={2}>
+            <Grid item xs={6}>
               <TextField
                 fullWidth
                 label="Education"
@@ -296,7 +333,7 @@ const ProfileForm = ({ userID, userProfileData }) => {
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <TextField
                 fullWidth
                 label="Degree"
@@ -305,7 +342,7 @@ const ProfileForm = ({ userID, userProfileData }) => {
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <TextField
                 fullWidth
                 label="Major"
@@ -314,7 +351,7 @@ const ProfileForm = ({ userID, userProfileData }) => {
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <TextField
                 fullWidth
                 label="Year of Graduation"
@@ -327,8 +364,8 @@ const ProfileForm = ({ userID, userProfileData }) => {
         );
       case 3:
         return (
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
+          <Grid container spacing={2} mt={2}>
+            <Grid item xs={6}>
               <TextField
                 fullWidth
                 label="Company"
@@ -337,7 +374,7 @@ const ProfileForm = ({ userID, userProfileData }) => {
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <TextField
                 fullWidth
                 label="Company Address"
@@ -346,7 +383,7 @@ const ProfileForm = ({ userID, userProfileData }) => {
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <TextField
                 fullWidth
                 label="Company Website"
@@ -355,7 +392,7 @@ const ProfileForm = ({ userID, userProfileData }) => {
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <TextField
                 fullWidth
                 label="Job Title"
@@ -364,7 +401,7 @@ const ProfileForm = ({ userID, userProfileData }) => {
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <TextField
                 fullWidth
                 label="Industry"
@@ -373,7 +410,7 @@ const ProfileForm = ({ userID, userProfileData }) => {
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <TextField
                 fullWidth
                 type="file"
@@ -387,8 +424,8 @@ const ProfileForm = ({ userID, userProfileData }) => {
         );
       case 4:
         return (
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
+          <Grid container spacing={2} mt={2}>
+            <Grid item xs={6}>
               <TextField
                 fullWidth
                 label="LinkedIn Profile"
@@ -397,7 +434,7 @@ const ProfileForm = ({ userID, userProfileData }) => {
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <TextField
                 fullWidth
                 label="Twitter"
@@ -406,7 +443,7 @@ const ProfileForm = ({ userID, userProfileData }) => {
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <TextField
                 fullWidth
                 label="Facebook"
@@ -419,8 +456,8 @@ const ProfileForm = ({ userID, userProfileData }) => {
         );
       case 5:
         return (
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
+          <Grid container spacing={2} mt={2}>
+            <Grid item xs={6}>
               <TextField
                 fullWidth
                 label="Mentorship Areas"
@@ -429,7 +466,7 @@ const ProfileForm = ({ userID, userProfileData }) => {
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -442,7 +479,7 @@ const ProfileForm = ({ userID, userProfileData }) => {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -454,7 +491,7 @@ const ProfileForm = ({ userID, userProfileData }) => {
                 label="Show Email"
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -470,8 +507,8 @@ const ProfileForm = ({ userID, userProfileData }) => {
         );
       case 6:
         return (
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
+          <Grid container spacing={2} mt={2}>
+            <Grid item xs={6}>
               <TextField
                 fullWidth
                 label="Interest"
@@ -480,7 +517,7 @@ const ProfileForm = ({ userID, userProfileData }) => {
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <TextField
                 fullWidth
                 label="Skills"
@@ -489,7 +526,7 @@ const ProfileForm = ({ userID, userProfileData }) => {
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <TextField
                 fullWidth
                 label="Achievements"
@@ -498,7 +535,7 @@ const ProfileForm = ({ userID, userProfileData }) => {
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <TextField
                 fullWidth
                 label="Publications"
@@ -522,58 +559,58 @@ const ProfileForm = ({ userID, userProfileData }) => {
           sx={{ p: 3, backgroundColor: theme.palette.background.paper }}
         >
           <Typography variant="h5">Update Profile</Typography>
-            <Grid item xs={12} md={8}>
-              <Box sx={{ width: "100%" }}>
-                <Stepper activeStep={activeStep} alternativeLabel>
-                  {steps.map((label, index) => (
-                    <Step key={label}>
-                      <StepLabel>{label}</StepLabel>
-                    </Step>
-                  ))}
-                </Stepper>
+          <Grid item xs={12} md={8}>
+            <Box sx={{ width: "100%" }}>
+              <Stepper activeStep={activeStep} alternativeLabel>
+                {steps.map((label, index) => (
+                  <Step key={label}>
+                    <StepLabel>{label}</StepLabel>
+                  </Step>
+                ))}
+              </Stepper>
 
-                  {renderStepContent(activeStep)}
+              {renderStepContent(activeStep)}
 
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      mt: 2,
-                    }}
-                  >
-                    {activeStep !== 0 && (
-                      <Button size="small" onClick={handleBack} sx={{ mr: 1 }}>
-                        Back
-                      </Button>
-                    )}
-                    {activeStep === steps.length - 1 ? (
-                      <Grid item xs={12} container justifyContent="flex-end">
-                        <Button
-                          size="small"
-                          variant="contained"
-                          color="primary"
-                          type="submit"
-                          disabled={formData.isSubmitting}
-                          onClick={handleSubmit}
-                        >
-                          Submit
-                        </Button>
-                      </Grid>
-                    ) : (
-                      <Grid item xs={12} container justifyContent="flex-end">
-                        <Button
-                          size="small"
-                          variant="contained"
-                          color="primary"
-                          onClick={handleNext}
-                        >
-                          Next
-                        </Button>
-                      </Grid>
-                    )}
-                  </Box>
-                </Box>
-            </Grid>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  mt: 2,
+                }}
+              >
+                {activeStep !== 0 && (
+                  <Button size="small" onClick={handleBack} sx={{ mr: 1 }}>
+                    Back
+                  </Button>
+                )}
+                {activeStep === steps.length - 1 ? (
+                  <Grid item xs={12} container justifyContent="flex-end">
+                    <Button
+                      size="small"
+                      variant="contained"
+                      color="primary"
+                      type="submit"
+                      disabled={formData.isSubmitting}
+                      onClick={handleSubmit}
+                    >
+                      Submit
+                    </Button>
+                  </Grid>
+                ) : (
+                  <Grid item xs={12} container justifyContent="flex-end">
+                    <Button
+                      size="small"
+                      variant="contained"
+                      color="primary"
+                      onClick={handleNext}
+                    >
+                      Next
+                    </Button>
+                  </Grid>
+                )}
+              </Box>
+            </Box>
+          </Grid>
         </Paper>
       </Box>
     </Container>
