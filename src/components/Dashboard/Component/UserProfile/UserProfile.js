@@ -28,9 +28,8 @@ const theme = createTheme({
 });
 
 const UserProfile = () => {
-  const [eventsData, setEventsData] = useState([]);
-  const [initiativesData, setInitiativesData] = useState([]);
   const [userProfileData, setUserProfileData] = useState([]);
+  const [count, setCount] = useState(0);
 
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
   const userID = loginInfo?.userId;
@@ -75,7 +74,11 @@ const UserProfile = () => {
 
   useEffect(() => {
     fetchData(`profiles/user-profile/${userID}/`, setUserProfileData);
-  }, []);
+  }, [count]);
+
+  const handleCount = () => {
+    setCount(1);
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -88,7 +91,11 @@ const UserProfile = () => {
           menuItems={menuItems}
           drawerWidth={drawerWidth}
         />
-        <ProfileForm userID={userID} userProfileData={userProfileData} />
+        <ProfileForm
+          userID={userID}
+          userProfileData={userProfileData}
+          handleCount={handleCount}
+        />
       </Box>
     </ThemeProvider>
   );

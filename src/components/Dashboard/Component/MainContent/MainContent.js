@@ -33,9 +33,9 @@ import PostComment from "./Like-comment-share/PostComment";
 import PostShare from "./Like-comment-share/PostShare";
 import DashboardEvents from "./DashboardEvents";
 import DashboardInitiatives from "./DashboardInitiatives";
+import DashboardUsers from "./DashboardUsers";
 
 const MainContent = ({
-  userProfileData,
   userID,
   recommendedTopics,
   eventsData,
@@ -157,7 +157,13 @@ const MainContent = ({
 
     const formDataToSend = new FormData();
     formDataToSend.append("content", postData.content);
-    formDataToSend.append("images", postData.images[0]);
+    // formDataToSend.append("images", postData.images[0]);
+    if (postData.images && postData.images.length > 0) {
+      for (let i = 0; i < postData.images.length; i++) {
+        formDataToSend.append(`images[${i}]image`, postData.images[i]);
+      }
+    }
+
     formDataToSend.append("category", postData.category);
     formDataToSend.append("allow_likes", postData.allow_likes);
     formDataToSend.append("allow_comments", postData.allow_comments);
@@ -223,7 +229,7 @@ const MainContent = ({
                     key={index}
                     component="img"
                     sx={{ width: 160 }}
-                    image={imageData.image}
+                    images={imageData.images}
                     alt={data.title}
                   />
                 ))}
@@ -394,30 +400,7 @@ const MainContent = ({
           </Paper>
           <DashboardEvents eventsData={eventsData} />
           <DashboardInitiatives initiativesData={initiativesData} />
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              People You May Know
-            </Typography>
-            <List>
-              {Array.isArray(userProfileData) &&
-                userProfileData.map((data) => (
-                  <ListItem key={data.id}>
-                    <ListItemAvatar>
-                      <Avatar sx={{ mr: 1 }}>
-                        {data.user.username
-                          ? data.user.username.charAt(0).toUpperCase()
-                          : "A"}
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary={data.user.username}
-                      secondary={`Batch of ${data.school_graduation_year}`}
-                    />
-                    <ListItemText primary={data.phone_number} />
-                  </ListItem>
-                ))}
-            </List>
-          </Paper>
+          <DashboardUsers />
         </Grid>
       </Grid>
     </Container>

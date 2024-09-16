@@ -99,7 +99,6 @@ const UserProfile = () => {
     linkedin_profile,
     twitter_profile,
     facebook_profile,
-    company,
     job_title,
     Education,
     degree,

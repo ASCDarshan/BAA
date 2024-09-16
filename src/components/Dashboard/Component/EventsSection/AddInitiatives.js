@@ -130,7 +130,6 @@ const AddInitiatives = () => {
                   </Select>
                 </FormControl>
               </Grid>
-
               <Grid item xs={6}>
                 <TextField
                   fullWidth
@@ -142,7 +141,6 @@ const AddInitiatives = () => {
                   required
                 />
               </Grid>
-
               <Grid item xs={6}>
                 <TextField
                   fullWidth
