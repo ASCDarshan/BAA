@@ -14,7 +14,6 @@ import DisplayUser from "./components/Dashboard/Component/UserProfile/DisplayUse
 import Footers from "./components/LandingPage/Component/Footer/Footers";
 import EventSection from "./components/Dashboard/Component/EventsSection/EventSection";
 import InitiativesSection from "./components/Dashboard/Component/EventsSection/InitiativesSection";
-import SubEvents from "./components/Dashboard/Component/EventsSection/SubEventSection/SubEvents";
 import Event from "./components/LandingPage/Component/EventPage/Event";
 
 const theme = createTheme({
@@ -49,7 +48,6 @@ function App() {
         <Route path="/events" element={<Event />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/subEvents" element={<SubEvents />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/addEvents" element={<EventSection />} />
         <Route path="/addInitiatives" element={<InitiativesSection />} />
