@@ -8,7 +8,6 @@ import {
   Event as EventIcon,
   Description as ResourcesIcon,
 } from "@mui/icons-material";
-import CalendarViewMonthIcon from "@mui/icons-material/CalendarViewMonth";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import MainContent from "./MainContent/MainContent";
 import Sidebar from "./SideBar/Sidebar";
@@ -51,7 +50,6 @@ const Dashboard = () => {
   const menuItems = [
     { text: "Home", icon: <HomeIcon />, link: "/dashboard" },
     { text: "Events", icon: <EventIcon />, link: "/addEvents" },
-    { text: "Subevent", icon: <CalendarViewMonthIcon />, link: "/subEvents" },
     { text: "Initiatives", icon: <ResourcesIcon />, link: "/addInitiatives" },
     { text: "Profile", icon: <AccountCircleIcon />, link: "/userProfile" },
     { text: "Log Out", icon: <LogoutIcon />, link: "/login" },

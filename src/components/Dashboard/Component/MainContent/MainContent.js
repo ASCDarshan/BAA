@@ -18,10 +18,6 @@ import {
   CircularProgress,
   CardMedia,
   Chip,
-  List,
-  ListItemText,
-  ListItem,
-  ListItemAvatar,
 } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { Add as AddIcon } from "@mui/icons-material";

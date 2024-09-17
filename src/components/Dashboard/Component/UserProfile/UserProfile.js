@@ -6,7 +6,6 @@ import {
   Description as ResourcesIcon,
 } from "@mui/icons-material";
 import { Home as HomeIcon, ExitToApp as LogoutIcon } from "@mui/icons-material";
-import CalendarViewMonthIcon from "@mui/icons-material/CalendarViewMonth";
 import Navbar from "../Navbar/Navbar";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Sidebar from "../SideBar/Sidebar";
@@ -44,7 +43,6 @@ const UserProfile = () => {
   const menuItems = [
     { text: "Home", icon: <HomeIcon />, link: "/dashboard" },
     { text: "Events", icon: <EventIcon />, link: "/addEvents" },
-    { text: "Subevent", icon: <CalendarViewMonthIcon />, link: "/subEvents" },
     { text: "Initiatives", icon: <ResourcesIcon />, link: "/addInitiatives" },
     { text: "Profile", icon: <AccountCircleIcon />, link: "/userProfile" },
     { text: "Log Out", icon: <LogoutIcon />, link: "/login" },
