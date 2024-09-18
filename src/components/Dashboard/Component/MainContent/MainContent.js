@@ -58,11 +58,9 @@ const MainContent = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const [tabValue, setTabValue] = useState(1);
-
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setPostData((prevFormData) => ({
@@ -83,11 +81,14 @@ const MainContent = ({
     setIsLoading(true);
     try {
       const response = await ajaxCall(
-        "posts/post-create/",
+        "posts/post-get/",
         {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
+            }`,
           },
           method: "GET",
         },
@@ -154,12 +155,7 @@ const MainContent = ({
     const formDataToSend = new FormData();
     formDataToSend.append("content", postData.content);
     // formDataToSend.append("images", postData.images[0]);
-    if (postData.images && postData.images.length > 0) {
-      for (let i = 0; i < postData.images.length; i++) {
-        formDataToSend.append(`images[${i}]image`, postData.images[i]);
-      }
-    }
-
+    formDataToSend.append("images", postData.images[0]);
     formDataToSend.append("category", postData.category);
     formDataToSend.append("allow_likes", postData.allow_likes);
     formDataToSend.append("allow_comments", postData.allow_comments);
@@ -225,7 +221,7 @@ const MainContent = ({
                     key={index}
                     component="img"
                     sx={{ width: 160 }}
-                    images={imageData.images}
+                    image={imageData.image}
                     alt={data.title}
                   />
                 ))}

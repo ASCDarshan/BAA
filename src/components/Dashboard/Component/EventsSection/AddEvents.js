@@ -116,6 +116,9 @@ const AddEvents = () => {
           body: JSON.stringify(formData),
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
+            }`,
           },
         },
         8000

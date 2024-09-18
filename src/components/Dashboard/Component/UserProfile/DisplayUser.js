@@ -70,6 +70,9 @@ const UserProfile = () => {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
+            }`,
           },
           method: "GET",
         },
@@ -125,7 +128,6 @@ const UserProfile = () => {
               sx={{ p: 3, backgroundColor: theme.palette.background.paper }}
             >
               <Grid container spacing={2}>
-                {/* Profile Picture and Username */}
                 <Grid item xs={12} sm={4} textAlign="center">
                   <Avatar
                     alt={username}
@@ -140,7 +142,6 @@ const UserProfile = () => {
                   </Typography>
                 </Grid>
 
-                {/* Bio and Social Links */}
                 <Grid item xs={12} sm={8}>
                   <Typography variant="h6">Bio</Typography>
                   <Typography variant="body1" paragraph>
@@ -176,7 +177,6 @@ const UserProfile = () => {
                   </Box>
                 </Grid>
 
-                {/* Education, Skills, and Additional Information */}
                 <Grid item xs={12}>
                   <Typography variant="h6">Education</Typography>
                   <Typography variant="body1">
@@ -194,7 +194,6 @@ const UserProfile = () => {
                   </Typography>
                 </Grid>
 
-                {/* Additional Information */}
                 <Grid item xs={12}>
                   <Typography variant="h6">Additional Information</Typography>
                   <Typography variant="body1">

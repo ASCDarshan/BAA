@@ -35,11 +35,12 @@ const Login = () => {
       );
       if (response?.status === 200) {
         const result = response?.data;
+        console.log(result);
         localStorage.setItem(
           "loginInfo",
           JSON.stringify({
-            accessToken: result?.accessToken,
-            refreshToken: result?.refreshToken,
+            accessToken: result?.access,
+            refreshToken: result?.refresh,
             userId: result?.user_id,
           })
         );
