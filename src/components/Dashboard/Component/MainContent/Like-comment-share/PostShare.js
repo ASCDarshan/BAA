@@ -15,8 +15,9 @@ import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import ajaxCall from "../../../../helpers/ajaxCall";
 import { toast } from "react-toastify";
 
-const PostShare = ({ postId, userId }) => {
+const PostShare = ({ postId, userId, shareCounts }) => {
   const [open, setOpen] = useState(false);
+  const shareCount = shareCounts?.length || 0;
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -34,6 +35,9 @@ const PostShare = ({ postId, userId }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${
+            JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
+          }`,
         },
         body: JSON.stringify({
           shared_to: platform,
@@ -57,6 +61,7 @@ const PostShare = ({ postId, userId }) => {
     <>
       <IconButton size="small" onClick={handleClickOpen}>
         <ShareIcon />
+        {shareCount}
       </IconButton>
 
       <Dialog open={open} onClose={handleClose} fullWidth>
