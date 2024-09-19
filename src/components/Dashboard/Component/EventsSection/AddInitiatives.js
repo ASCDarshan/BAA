@@ -97,6 +97,7 @@ const AddInitiatives = () => {
                   label="Event Name"
                   name="name"
                   value={formData.name}
+                  size="small"
                   onChange={handleChange}
                   required
                 />
@@ -107,6 +108,7 @@ const AddInitiatives = () => {
                   label="Purpose"
                   name="purpose"
                   value={formData.purpose}
+                  size="small"
                   onChange={handleChange}
                   multiline
                   rows={4}
@@ -120,6 +122,7 @@ const AddInitiatives = () => {
                     labelId="purpose-label"
                     name="status"
                     value={formData.status}
+                    size="small"
                     onChange={handleChange}
                     label="Status"
                   >
@@ -137,6 +140,7 @@ const AddInitiatives = () => {
                   name="total_funds_required"
                   type="number"
                   value={formData.total_funds_required}
+                  size="small"
                   onChange={handleChange}
                   required
                 />
@@ -148,6 +152,7 @@ const AddInitiatives = () => {
                   name="start_date"
                   type="date"
                   value={formData.start_date}
+                  size="small"
                   onChange={handleChange}
                   InputLabelProps={{ shrink: true }}
                   required
@@ -160,6 +165,7 @@ const AddInitiatives = () => {
                   name="end_date"
                   type="date"
                   value={formData.end_date}
+                  size="small"
                   onChange={handleChange}
                   InputLabelProps={{ shrink: true }}
                   required
@@ -172,6 +178,7 @@ const AddInitiatives = () => {
                   name="funds_deadline"
                   type="date"
                   value={formData.funds_deadline}
+                  size="small"
                   InputLabelProps={{ shrink: true }}
                   onChange={handleChange}
                   required
@@ -185,6 +192,7 @@ const AddInitiatives = () => {
                   name="status"
                   type="date"
                   value={formData.status}
+                  size="small"
                   onChange={handleChange}
                   InputLabelProps={{ shrink: true }}
                   required
