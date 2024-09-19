@@ -49,6 +49,9 @@ const ProfileForm = ({ userID }) => {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
+            }`,
           },
           method: "GET",
         },
@@ -249,6 +252,7 @@ const ProfileForm = ({ userID }) => {
                 name="school_graduation_year"
                 value={formData.school_graduation_year}
                 onChange={handleChange}
+                size="small"
               />
             </Grid>
             <Grid item xs={6}>
@@ -261,8 +265,30 @@ const ProfileForm = ({ userID }) => {
                   name="birth_date"
                   value={formData.birth_date}
                   onChange={handleChange}
+                  size="small"
                 />
               </Grid>
+            </Grid>
+
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                label="Phone Number"
+                name="phone_number"
+                value={formData.phone_number}
+                onChange={handleChange}
+                size="small"
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                label="Alternative Email"
+                name="alternative_email"
+                value={formData.alternative_email}
+                onChange={handleChange}
+                size="small"
+              />
             </Grid>
             <Grid item xs={6}>
               <TextField
@@ -271,6 +297,7 @@ const ProfileForm = ({ userID }) => {
                 name="bio"
                 value={formData.bio}
                 onChange={handleChange}
+                size="small"
                 multiline
                 rows={3}
               />
@@ -283,24 +310,7 @@ const ProfileForm = ({ userID }) => {
                 name="profile_picture"
                 InputLabelProps={{ shrink: true }}
                 onChange={handleFileChange}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                label="Phone Number"
-                name="phone_number"
-                value={formData.phone_number}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                label="Alternative Email"
-                name="alternative_email"
-                value={formData.alternative_email}
-                onChange={handleChange}
+                size="small"
               />
             </Grid>
           </Grid>
@@ -315,6 +325,7 @@ const ProfileForm = ({ userID }) => {
                 name="street_address"
                 value={formData.street_address}
                 onChange={handleChange}
+                size="small"
               />
             </Grid>
             <Grid item xs={6}>
@@ -324,6 +335,7 @@ const ProfileForm = ({ userID }) => {
                 name="city"
                 value={formData.city}
                 onChange={handleChange}
+                size="small"
               />
             </Grid>
             <Grid item xs={6}>
@@ -333,6 +345,7 @@ const ProfileForm = ({ userID }) => {
                 name="state"
                 value={formData.state}
                 onChange={handleChange}
+                size="small"
               />
             </Grid>
             <Grid item xs={6}>
@@ -342,6 +355,7 @@ const ProfileForm = ({ userID }) => {
                 name="country"
                 value={formData.country}
                 onChange={handleChange}
+                size="small"
               />
             </Grid>
             <Grid item xs={6}>
@@ -351,6 +365,7 @@ const ProfileForm = ({ userID }) => {
                 name="postal_code"
                 value={formData.postal_code}
                 onChange={handleChange}
+                size="small"
               />
             </Grid>
           </Grid>
@@ -365,6 +380,7 @@ const ProfileForm = ({ userID }) => {
                 name="Education"
                 value={formData.Education}
                 onChange={handleChange}
+                size="small"
               />
             </Grid>
             <Grid item xs={6}>
@@ -374,6 +390,7 @@ const ProfileForm = ({ userID }) => {
                 name="degree"
                 value={formData.degree}
                 onChange={handleChange}
+                size="small"
               />
             </Grid>
             <Grid item xs={6}>
@@ -383,6 +400,7 @@ const ProfileForm = ({ userID }) => {
                 name="major"
                 value={formData.major}
                 onChange={handleChange}
+                size="small"
               />
             </Grid>
             <Grid item xs={6}>
@@ -392,6 +410,7 @@ const ProfileForm = ({ userID }) => {
                 name="year_of_graduation"
                 value={formData.year_of_graduation}
                 onChange={handleChange}
+                size="small"
               />
             </Grid>
           </Grid>
@@ -406,6 +425,7 @@ const ProfileForm = ({ userID }) => {
                 name="company"
                 value={formData.company}
                 onChange={handleChange}
+                size="small"
               />
             </Grid>
             <Grid item xs={6}>
@@ -415,6 +435,7 @@ const ProfileForm = ({ userID }) => {
                 name="company_address"
                 value={formData.company_address}
                 onChange={handleChange}
+                size="small"
               />
             </Grid>
             <Grid item xs={6}>
@@ -424,6 +445,7 @@ const ProfileForm = ({ userID }) => {
                 name="company_website"
                 value={formData.company_website}
                 onChange={handleChange}
+                size="small"
               />
             </Grid>
             <Grid item xs={6}>
@@ -433,6 +455,7 @@ const ProfileForm = ({ userID }) => {
                 name="job_title"
                 value={formData.job_title}
                 onChange={handleChange}
+                size="small"
               />
             </Grid>
             <Grid item xs={6}>
@@ -442,6 +465,7 @@ const ProfileForm = ({ userID }) => {
                 name="industry"
                 value={formData.industry}
                 onChange={handleChange}
+                size="small"
               />
             </Grid>
             <Grid item xs={6}>
@@ -452,6 +476,7 @@ const ProfileForm = ({ userID }) => {
                 label="Company Portfolio"
                 name="company_portfolio"
                 onChange={handleFileChange}
+                size="small"
               />
             </Grid>
           </Grid>
@@ -466,6 +491,7 @@ const ProfileForm = ({ userID }) => {
                 name="linkedin_profile"
                 value={formData.linkedin_profile}
                 onChange={handleChange}
+                size="small"
               />
             </Grid>
             <Grid item xs={6}>
@@ -475,6 +501,7 @@ const ProfileForm = ({ userID }) => {
                 name="twitter_profile"
                 value={formData.twitter_profile}
                 onChange={handleChange}
+                size="small"
               />
             </Grid>
             <Grid item xs={6}>
@@ -484,6 +511,7 @@ const ProfileForm = ({ userID }) => {
                 name="facebook_profile"
                 value={formData.facebook_profile}
                 onChange={handleChange}
+                size="small"
               />
             </Grid>
           </Grid>
@@ -498,14 +526,16 @@ const ProfileForm = ({ userID }) => {
                 name="mentorship_areas"
                 value={formData.mentorship_areas}
                 onChange={handleChange}
+                size="small"
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <FormControlLabel
                 control={
                   <Checkbox
                     checked={formData.is_mentor}
                     onChange={handleCheckboxChange}
+                    size="small"
                     name="is_mentor"
                   />
                 }
@@ -513,24 +543,26 @@ const ProfileForm = ({ userID }) => {
               />
             </Grid>
 
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <FormControlLabel
                 control={
                   <Checkbox
                     checked={formData.show_email}
                     onChange={handleCheckboxChange}
+                    size="small"
                     name="show_email"
                   />
                 }
                 label="Show Email"
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <FormControlLabel
                 control={
                   <Checkbox
                     checked={formData.show_phone}
                     onChange={handleCheckboxChange}
+                    size="small"
                     name="show_phone"
                   />
                 }
@@ -548,6 +580,7 @@ const ProfileForm = ({ userID }) => {
                 label="Interest"
                 name="interests"
                 value={formData.interests}
+                size="small"
                 onChange={handleChange}
               />
             </Grid>
@@ -557,6 +590,7 @@ const ProfileForm = ({ userID }) => {
                 label="Skills"
                 name="skills"
                 value={formData.skills}
+                size="small"
                 onChange={handleChange}
               />
             </Grid>
@@ -566,6 +600,7 @@ const ProfileForm = ({ userID }) => {
                 label="Achievements"
                 name="achievements"
                 value={formData.achievements}
+                size="small"
                 onChange={handleChange}
               />
             </Grid>
@@ -575,6 +610,7 @@ const ProfileForm = ({ userID }) => {
                 label="Publications"
                 name="publications"
                 value={formData.publications}
+                size="small"
                 onChange={handleChange}
               />
             </Grid>
@@ -594,7 +630,7 @@ const ProfileForm = ({ userID }) => {
         >
           <Typography variant="h5">Update Profile</Typography>
           <Grid item xs={12} md={8}>
-            <Box sx={{ width: "100%" }}>
+            <Box sx={{ width: "100%" }} mt={2}>
               <Stepper activeStep={activeStep} alternativeLabel>
                 {steps.map((label, index) => (
                   <Step key={label}>

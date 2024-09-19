@@ -151,6 +151,7 @@ const AddEvents = () => {
                     name="name"
                     value={formData.name}
                     onChange={handleMainEventChange}
+                    size="small"
                     required
                   />
                 </Grid>
@@ -161,6 +162,7 @@ const AddEvents = () => {
                     name="location"
                     type="text"
                     value={formData.location}
+                    size="small"
                     onChange={handleMainEventChange}
                     required
                   />
@@ -173,6 +175,7 @@ const AddEvents = () => {
                     type="date"
                     value={formData.start_date}
                     onChange={handleMainEventChange}
+                    size="small"
                     InputLabelProps={{ shrink: true }}
                     required
                   />
@@ -184,6 +187,7 @@ const AddEvents = () => {
                     name="end_date"
                     type="date"
                     value={formData.end_date}
+                    size="small"
                     onChange={handleMainEventChange}
                     InputLabelProps={{ shrink: true }}
                     required
@@ -196,6 +200,7 @@ const AddEvents = () => {
                     name="start_time"
                     type="time"
                     value={formData.start_time}
+                    size="small"
                     onChange={handleMainEventChange}
                     InputLabelProps={{ shrink: true }}
                     required
@@ -208,6 +213,7 @@ const AddEvents = () => {
                     name="end_time"
                     type="time"
                     value={formData.end_time}
+                    size="small"
                     onChange={handleMainEventChange}
                     InputLabelProps={{ shrink: true }}
                     required
@@ -219,6 +225,7 @@ const AddEvents = () => {
                     label="Description"
                     name="description"
                     value={formData.description}
+                    size="small"
                     onChange={handleMainEventChange}
                     multiline
                     rows={4}
@@ -232,6 +239,7 @@ const AddEvents = () => {
                     name="registration_deadline"
                     type="datetime-local"
                     value={formData.registration_deadline}
+                    size="small"
                     onChange={handleMainEventChange}
                     InputLabelProps={{ shrink: true }}
                     required
@@ -250,6 +258,7 @@ const AddEvents = () => {
                         label="Sub Event Name"
                         name="name"
                         value={subEvent.name}
+                        size="small"
                         onChange={(e) => handleSubEventChange(index, e)}
                         required
                       />
@@ -260,6 +269,7 @@ const AddEvents = () => {
                         label="Location"
                         name="location"
                         value={subEvent.location}
+                        size="small"
                         onChange={(e) => handleSubEventChange(index, e)}
                         required
                       />
@@ -271,6 +281,7 @@ const AddEvents = () => {
                         name="date"
                         type="date"
                         value={subEvent.date}
+                        size="small"
                         onChange={(e) => handleSubEventChange(index, e)}
                         InputLabelProps={{ shrink: true }}
                         required
@@ -283,6 +294,7 @@ const AddEvents = () => {
                         name="start_time"
                         type="time"
                         value={subEvent.start_time}
+                        size="small"
                         onChange={(e) => handleSubEventChange(index, e)}
                         InputLabelProps={{ shrink: true }}
                         required
@@ -295,6 +307,7 @@ const AddEvents = () => {
                         name="end_time"
                         type="time"
                         value={subEvent.end_time}
+                        size="small"
                         onChange={(e) => handleSubEventChange(index, e)}
                         InputLabelProps={{ shrink: true }}
                         required
@@ -307,6 +320,7 @@ const AddEvents = () => {
                         name="max_participants"
                         type="number"
                         value={subEvent.max_participants}
+                        size="small"
                         onChange={(e) => handleSubEventChange(index, e)}
                         required
                       />
@@ -317,6 +331,7 @@ const AddEvents = () => {
                         label="Description"
                         name="description"
                         value={subEvent.description}
+                        size="small"
                         onChange={(e) => handleSubEventChange(index, e)}
                         multiline
                         rows={4}
