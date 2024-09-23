@@ -9,6 +9,7 @@ import {
   Paper,
   Box,
   createTheme,
+  CircularProgress,
 } from "@mui/material";
 import { RemoveCircle } from "@mui/icons-material";
 import ajaxCall from "../../../helpers/ajaxCall";
@@ -24,59 +25,44 @@ const theme = createTheme({
     },
   },
 });
+const InitialData = {
+  name: "",
+  description: "",
+  start_date: "",
+  end_date: "",
+  start_time: "",
+  end_time: "",
+  registration_deadline: "",
+  location: "",
+  qr_code: null,
+  subevents: [
+    {
+      name: "",
+      description: "",
+      date: "",
+      start_time: "",
+      end_time: "",
+      location: "",
+      max_participants: "",
+      qr_code: null,
+      main_event: 1,
+    },
+  ],
+};
 
 const AddEvents = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    start_date: "",
-    end_date: "",
-    start_time: "",
-    end_time: "",
-    registration_deadline: "",
-    location: "",
-    qr_code: null,
-    subevents: [
-      {
-        name: "",
-        description: "",
-        date: "",
-        start_time: "",
-        end_time: "",
-        location: "",
-        max_participants: "",
-        qr_code: null,
-        main_event: 1,
-      },
-    ],
-  });
-
-  console.log("------SubEvent---", formData);
+  const [formData, setFormData] = useState(InitialData);
+  const [loading, setLoading] = useState(false);
 
   const handleMainEventChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setFormData((prevData) => ({
-      ...prevData,
-      qr_code: file,
-    }));
-  };
-
   const handleSubEventChange = (index, e) => {
     const { name, value } = e.target;
     const updatedSubevents = [...formData.subevents];
     updatedSubevents[index][name] = value;
-    setFormData((prevData) => ({ ...prevData, subevents: updatedSubevents }));
-  };
-
-  const handleSubEventFileChange = (index, e) => {
-    const file = e.target.files[0];
-    const updatedSubevents = [...formData.subevents];
-    updatedSubevents[index].qr_code = file;
     setFormData((prevData) => ({ ...prevData, subevents: updatedSubevents }));
   };
 
@@ -107,6 +93,7 @@ const AddEvents = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       const response = await ajaxCall(
@@ -116,20 +103,20 @@ const AddEvents = () => {
           body: JSON.stringify(formData),
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${
-              JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
-            }`,
           },
         },
         8000
       );
       if ([200, 201].includes(response.status)) {
         toast.success("Event Created Successfully");
+        setFormData(InitialData);
       } else {
         toast.error("Some Problem Occurred. Please try again.");
       }
     } catch (error) {
       toast.error("Some Problem Occurred. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -363,14 +350,18 @@ const AddEvents = () => {
               </Grid>
 
               <Grid item xs={12} container justifyContent="flex-end" mt={2}>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  size="small"
-                >
-                  Submit Event
-                </Button>
+                {loading ? (
+                  <CircularProgress sx={{ ml: "auto" }} />
+                ) : (
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    size="small"
+                  >
+                    Submit Event
+                  </Button>
+                )}
               </Grid>
             </Grid>
           </form>

@@ -35,9 +35,6 @@ const Footers = () => {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            Authorization: `Bearer ${
-              JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
-            }`,
           },
           method: "GET",
         },
@@ -105,10 +102,10 @@ const Footers = () => {
               Events
             </FooterLink>
             <FooterLink variant="body2" color="text.secondary">
-              Gallery
+              About Us
             </FooterLink>
             <FooterLink variant="body2" color="text.secondary">
-              Donate
+              Committee
             </FooterLink>
             <FooterLink
               variant="body2"

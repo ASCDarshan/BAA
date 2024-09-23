@@ -15,11 +15,9 @@ const LandingPage = () => {
   const [heroImages, setHeroImages] = useState([]);
   const [achievements, setAchievements] = useState([]);
   const [testimonialsData, setTestimonialsData] = useState([]);
-  const [footerData, setFooterData] = useState([]);
   const [eventsData, setEventsData] = useState([]);
   const [InitiativesData, setInitiativesData] = useState([]);
   const [committeeData, setCommitteeData] = useState([]);
-  const [contactData, setContactData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchData = async (url, setData) => {
@@ -30,9 +28,6 @@ const LandingPage = () => {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            Authorization: `Bearer ${
-              JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
-            }`,
           },
           method: "GET",
         },
@@ -57,9 +52,7 @@ const LandingPage = () => {
         fetchData("website/testimonials/", setTestimonialsData),
         fetchData("events/events/", setEventsData),
         fetchData("initiatives/initiatives/", setInitiativesData),
-        fetchData("website/footer/", setFooterData),
         fetchData("website/committee", setCommitteeData),
-        fetchData("website/reach-us/", setContactData),
       ]);
       setLoading(false);
     };
