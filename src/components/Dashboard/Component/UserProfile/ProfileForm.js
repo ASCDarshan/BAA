@@ -71,44 +71,6 @@ const ProfileForm = ({ userID }) => {
     fetchData(`profiles/user-profile/${userID}/`, setUserProfileData);
   }, []);
 
-  // const Data = {
-  //   school_graduation_year: userProfileData.school_graduation_year,
-  //   birth_date: userProfileData.birth_date,
-  //   bio: userProfileData.bio,
-  //   profile_picture: userProfileData.profile_picture,
-  //   phone_number: userProfileData.phone_number,
-  //   alternative_email: userProfileData.alternative_email,
-  //   street_address: userProfileData.street_address,
-  //   city: userProfileData.city,
-  //   state: userProfileData.state,
-  //   country: userProfileData.country,
-  //   postal_code: userProfileData.postal_code,
-  //   Education: userProfileData.Education,
-  //   degree: userProfileData.degree,
-  //   major: userProfileData.major,
-  //   year_of_graduation: userProfileData.year_of_graduation,
-  //   company: userProfileData.company,
-  //   company_address: userProfileData.company_address,
-  //   company_website: userProfileData.company_website,
-  //   job_title: userProfileData.job_title,
-  //   industry: userProfileData.industry,
-  //   company_portfolio: null,
-  //   linkedin_profile: userProfileData.linkedin_profile,
-  //   twitter_profile: userProfileData.twitter_profile,
-  //   facebook_profile: userProfileData.facebook_profile,
-  //   is_mentor: false,
-  //   mentorship_areas: userProfileData.mentorship_areas,
-  //   show_email: false,
-  //   show_phone: false,
-  //   interests: userProfileData.interests,
-  //   skills: userProfileData.skills,
-  //   achievements: userProfileData.achievements,
-  //   publications: userProfileData.publications,
-  //   created_at: new Date().toISOString(),
-  //   updated_at: new Date().toISOString(),
-  //   user: userID,
-  // };
-
   const [activeStep, setActiveStep] = useState(0);
   const [formData, setFormData] = useState({
     school_graduation_year: userProfileData.school_graduation_year,

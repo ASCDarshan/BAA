@@ -8,6 +8,7 @@ import {
   Box,
   Paper,
   createTheme,
+  CircularProgress,
 } from "@mui/material";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 
@@ -25,19 +26,21 @@ const theme = createTheme({
     },
   },
 });
+const InitialData = {
+  name: "",
+  purpose: "",
+  start_date: "",
+  end_date: "",
+  total_funds_required: "",
+  funds_deadline: "",
+  status: "",
+  current_funds: "",
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+};
 const AddInitiatives = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    purpose: "",
-    start_date: "",
-    end_date: "",
-    total_funds_required: "",
-    funds_deadline: "",
-    status: "",
-    current_funds: "",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  });
+  const [formData, setFormData] = useState(InitialData);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -46,6 +49,7 @@ const AddInitiatives = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     const formDataToSend = new FormData();
     formDataToSend.append("name", formData.name);
@@ -72,12 +76,15 @@ const AddInitiatives = () => {
         8000
       );
       if ([200, 201].includes(response.status)) {
-        toast.success("Event Created Successfully");
+        toast.success("Initiatives Created Successfully");
+        setFormData(InitialData);
       } else {
         toast.error("Some Problem Occurred. Please try again.");
       }
     } catch (error) {
       toast.error("Some Problem Occurred. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -199,15 +206,19 @@ const AddInitiatives = () => {
                 />
               </Grid>
               <Grid item xs={12} container justifyContent="flex-end">
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  onClick={handleSubmit}
-                  size="small"
-                >
-                  Submit
-                </Button>
+                {loading ? (
+                  <CircularProgress sx={{ ml: "auto" }} />
+                ) : (
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    onClick={handleSubmit}
+                    size="small"
+                  >
+                    Submit
+                  </Button>
+                )}
               </Grid>
             </Grid>
           </form>
