@@ -69,7 +69,7 @@ const Navbar = ({ onDrawerToggle, userProfileData }) => {
           component="img"
           src={LogoImg}
           alt="BAA Logo"
-          sx={{ height: 40 }}
+          sx={{ height: 60 }}
           ml={2}
         />
 

@@ -5,9 +5,11 @@ import {
   CardMedia,
   Container,
   Grid,
+  Button,
   styled,
   Typography,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import ajaxCall from "../../../helpers/ajaxCall";
 import HeroBanner from "../Content/HeroBanner";
 
@@ -29,6 +31,7 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
 const Event = () => {
   const [eventData, setEventData] = useState([]);
   const [heroImages, setHeroImages] = useState([]);
+  const navigate = useNavigate(); // To programmatically navigate to a new URL
 
   const fetchData = async (url, setData) => {
     try {
@@ -52,6 +55,7 @@ const Event = () => {
       console.error("Network error:", error);
     }
   };
+
   useEffect(() => {
     fetchData("events/events/", setEventData);
     fetchData("website/hero-images/", setHeroImages);
@@ -61,6 +65,11 @@ const Event = () => {
     const [hours, minutes] = timeString.split(":");
     return `${hours}:${minutes}`;
   };
+
+  const handleKnowMore = (eventId) => {
+    navigate(`/events/${eventId}/`);
+  };
+
   return (
     <>
       <HeroBanner heroImages={heroImages} />
@@ -90,6 +99,16 @@ const Event = () => {
                     At {formatTime(event.start_time)} to{" "}
                     {formatTime(event.end_time)}
                   </Typography>
+                  <Grid item xs={12} container justifyContent="flex-end" mt={2}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      size="small"
+                      onClick={() => handleKnowMore(event.id)}
+                    >
+                      Know More
+                    </Button>
+                  </Grid>
                 </CardContent>
               </Grid>
             </Grid>

@@ -89,11 +89,11 @@ const LandingPage = () => {
       <div id="events">
         <Initiatives InitiativesData={InitiativesData} />
       </div>
-      <div id="achievements">
-        <Achievements achievements={achievements} />
-      </div>
       <div id="committee">
         <Committee committeeData={committeeData} />
+      </div>
+      <div id="achievements">
+        <Achievements achievements={achievements} />
       </div>
       <div id="testimonials">
         <Testimonials testimonialsData={testimonialsData} />

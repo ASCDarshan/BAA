@@ -14,6 +14,7 @@ import {
 import { RemoveCircle } from "@mui/icons-material";
 import ajaxCall from "../../../helpers/ajaxCall";
 import { toast } from "react-toastify";
+import EventTable from "./EventTable";
 const theme = createTheme({
   palette: {
     primary: {
@@ -46,6 +47,14 @@ const InitialData = {
       max_participants: "",
       qr_code: null,
       main_event: 1,
+      pricing: [
+        {
+          location: "To be announced",
+          alumni_price: "",
+          guest_price: "",
+          subevent: "",
+        },
+      ],
     },
   ],
 };
@@ -122,7 +131,8 @@ const AddEvents = () => {
 
   return (
     <Container sx={{ mt: 10 }}>
-      <Box>
+      <EventTable />
+      <Box sx={{ mt: 5 }}>
         <Paper
           elevation={3}
           sx={{ p: 3, backgroundColor: theme.palette.background.paper }}
@@ -261,6 +271,28 @@ const AddEvents = () => {
                         required
                       />
                     </Grid>
+                    {/* <Grid item xs={6}>
+                      <TextField
+                        fullWidth
+                        label="Alumni Amount"
+                        name="name"
+                        value={subEvent.name}
+                        size="small"
+                        onChange={(e) => handleSubEventChange(index, e)}
+                        required
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <TextField
+                        fullWidth
+                        label="Guest Amount"
+                        name="name"
+                        value={subEvent.name}
+                        size="small"
+                        onChange={(e) => handleSubEventChange(index, e)}
+                        required
+                      />
+                    </Grid> */}
                     <Grid item xs={6}>
                       <TextField
                         fullWidth
