@@ -14,6 +14,7 @@ import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 
 import ajaxCall from "../../../helpers/ajaxCall";
 import { toast } from "react-toastify";
+import InitiativesTable from "./InitiativesTable";
 
 const theme = createTheme({
   palette: {
@@ -90,7 +91,8 @@ const AddInitiatives = () => {
 
   return (
     <Container sx={{ mt: 10 }}>
-      <Box>
+      <InitiativesTable />
+      <Box sx={{ mt: 5 }}>
         <Paper
           elevation={3}
           sx={{ p: 3, backgroundColor: theme.palette.background.paper }}

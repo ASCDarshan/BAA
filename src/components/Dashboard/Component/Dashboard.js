@@ -4,7 +4,6 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { Home as HomeIcon, ExitToApp as LogoutIcon } from "@mui/icons-material";
 import Navbar from "./Navbar/Navbar";
 import {
-  ContactPhone as DirectoryIcon,
   Event as EventIcon,
   Description as ResourcesIcon,
 } from "@mui/icons-material";

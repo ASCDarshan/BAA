@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Slider from "react-slick";
 import {
   Button,
   Card,
@@ -33,7 +34,6 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
 const Committee = ({ committeeData }) => {
   const [open, setOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
-  const [visibleCount, setVisibleCount] = useState(3); // Show only 3 initially
 
   const handleClickOpen = (member) => {
     setSelectedMember(member);
@@ -44,24 +44,44 @@ const Committee = ({ committeeData }) => {
     setOpen(false);
   };
 
-  const handleViewMore = () => {
-    setVisibleCount(visibleCount + 3);
+  const sliderSettings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 2000,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 2,
+        },
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 1,
+        },
+      },
+    ],
   };
 
   return (
     <Container sx={{ mt: 4 }}>
       <SectionTitle variant="h4">Committee</SectionTitle>
-      <Grid container spacing={3}>
-        {committeeData.slice(0, visibleCount).map((member, index) => (
-          <Grid item xs={8} sm={4} key={index}>
-            <Card>
+
+      <Slider {...sliderSettings}>
+        {committeeData.map((member, index) => (
+          <div key={index}>
+            <Card sx={{ mx: 2 }}>
               <CardMedia
                 component="img"
                 image={member.image}
                 alt={member.title}
                 sx={{ objectFit: "contain" }}
               />
-
               <CardContent>
                 <Typography gutterBottom variant="h5" component="div">
                   {member.name}
@@ -79,24 +99,15 @@ const Committee = ({ committeeData }) => {
                 </Button>
               </CardContent>
             </Card>
-          </Grid>
+          </div>
         ))}
-      </Grid>
+      </Slider>
 
-      {visibleCount < committeeData.length && (
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-          <Button variant="contained" onClick={handleViewMore}>
-            View More
-          </Button>
-        </Box>
-      )}
-
+      {/* Dialog for selected member */}
       <Dialog open={open} onClose={handleClose} maxWidth="lg" fullWidth>
         <DialogTitle>{selectedMember?.name}</DialogTitle>
         <DialogContent>
           <Typography>{selectedMember?.description}</Typography>
-        </DialogContent>
-        <DialogContent>
           {selectedMember?.phone && (
             <Typography>Contact: {selectedMember.phone}</Typography>
           )}

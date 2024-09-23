@@ -105,27 +105,49 @@ const Navbar = () => {
   return (
     <AppBar position="fixed" color="default" elevation={1}>
       <Container maxWidth="xl">
-        <Toolbar disableGutters sx={{ justifyContent: "space-between" }}>
+        <Toolbar
+          disableGutters
+          sx={{
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
           <Box
             component="img"
             src={LogoImg}
             alt="BAA Logo"
-            sx={{ height: 40 }}
+            sx={{
+              height: 110,
+              position: "absolute",
+              top: "10px",
+              left: "20px",
+              zIndex: 1,
+              opacity: 0.8,
+              pointerEvents: "none",
+              backgroundColor: "rgba(255, 255, 255, 0.5)",
+              borderRadius: "8px",
+              padding: "8px",
+            }}
           />
+
           {isMobile ? (
-            <>
-              <IconButton
-                color="inherit"
-                aria-label="open drawer"
-                edge="start"
-                onClick={handleDrawerToggle}
-                sx={{ display: { sm: "none" } }}
-              >
-                <MenuIcon />
-              </IconButton>
-            </>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ display: { sm: "none" } }}
+            >
+              <MenuIcon />
+            </IconButton>
           ) : (
-            <Box sx={{ display: { xs: "none", sm: "flex" }, gap: 2 }}>
+            <Box
+              sx={{
+                display: "flex",
+                gap: 2,
+                ml: "auto",
+              }}
+            >
               <Button href="/" sx={{ color: "inherit" }}>
                 Home
               </Button>

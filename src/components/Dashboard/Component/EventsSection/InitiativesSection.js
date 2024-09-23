@@ -8,7 +8,6 @@ import {
 import { Home as HomeIcon, ExitToApp as LogoutIcon } from "@mui/icons-material";
 import Navbar from "../Navbar/Navbar";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import CalendarViewMonthIcon from "@mui/icons-material/CalendarViewMonth";
 import Sidebar from "../SideBar/Sidebar";
 import ajaxCall from "../../../helpers/ajaxCall";
 import AddInitiatives from "./AddInitiatives";

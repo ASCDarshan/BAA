@@ -5,7 +5,6 @@ import {
   Event as EventIcon,
   Description as ResourcesIcon,
 } from "@mui/icons-material";
-import CalendarViewMonthIcon from "@mui/icons-material/CalendarViewMonth";
 import { Home as HomeIcon, ExitToApp as LogoutIcon } from "@mui/icons-material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Sidebar from "../SideBar/Sidebar";
