@@ -35,13 +35,13 @@ const Login = () => {
       );
       if (response?.status === 200) {
         const result = response?.data;
-        console.log(result);
         localStorage.setItem(
           "loginInfo",
           JSON.stringify({
             accessToken: result?.access,
             refreshToken: result?.refresh,
             userId: result?.user_id,
+            userRole: result?.user_type,
           })
         );
         toast.success("Login Successful");

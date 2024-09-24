@@ -53,20 +53,21 @@ const Register = () => {
     initialValues: {
       email: "",
       password: "",
-      alumni_no: "",
+      username: "",
+      batchyear: "",
     },
     validationSchema: Yup.object({
       email: Yup.string().required("Email is required"),
       password: Yup.string().required("Password is required"),
-      alumni_no: Yup.string()
-        .required("Alumni Number is required")
-        .matches(/^\d+$/, "Alumni Number must be a number"),
+      batchyear: Yup.string().required("batchyear is required"),
+      username: Yup.string().required("Username is required"),
     }),
     onSubmit: (values) => {
       const signupData = {
-        username: values.email,
+        email: values.email,
         password: values.password,
-        alumni_no: values.alumni_no,
+        username: values.username,
+        batchyear: values.batchyear,
       };
       fetchData("accounts/signup/", signupData);
     },
@@ -121,6 +122,19 @@ const Register = () => {
               margin="normal"
               required
               fullWidth
+              name="username"
+              label="User Name"
+              type="text"
+              value={formik.values.username}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.username && Boolean(formik.errors.username)}
+              helperText={formik.touched.username && formik.errors.username}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
               label="Email"
               name="email"
               value={formik.values.email}
@@ -143,20 +157,21 @@ const Register = () => {
               error={formik.touched.password && Boolean(formik.errors.password)}
               helperText={formik.touched.password && formik.errors.password}
             />
+
             <TextField
               margin="normal"
               required
               fullWidth
-              name="alumni_no"
-              label="Alumni Number"
+              name="batchyear"
+              label="Batch Year"
               type="text"
-              value={formik.values.alumni_no}
+              value={formik.values.batchyear}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               error={
-                formik.touched.alumni_no && Boolean(formik.errors.alumni_no)
+                formik.touched.batchyear && Boolean(formik.errors.batchyear)
               }
-              helperText={formik.touched.alumni_no && formik.errors.alumni_no}
+              helperText={formik.touched.batchyear && formik.errors.batchyear}
             />
             {isLoading ? (
               <Button variant="contained" color="primary" fullWidth disabled>

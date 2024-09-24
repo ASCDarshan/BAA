@@ -5,28 +5,11 @@ import {
   CardMedia,
   Container,
   Grid,
-  Button,
-  styled,
   Typography,
 } from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import ajaxCall from "../../../helpers/ajaxCall";
 import HeroBanner from "../Content/HeroBanner";
-
-const SectionTitle = styled(Typography)(({ theme }) => ({
-  marginBottom: theme.spacing(4),
-  fontWeight: "bold",
-  position: "relative",
-  "&::after": {
-    content: '""',
-    position: "absolute",
-    bottom: "-10px",
-    left: 0,
-    width: "50px",
-    height: "3px",
-    backgroundColor: theme.palette.primary.main,
-  },
-}));
 
 const EventData = () => {
   const [eventData, setEventData] = useState([]);

@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Button,
   Card,
   CardContent,
   CardMedia,
@@ -8,6 +9,7 @@ import {
   styled,
   Typography,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const SectionTitle = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(4),
@@ -25,9 +27,14 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
 }));
 
 const Events = ({ eventsData }) => {
+  const navigate = useNavigate();
   const formatTime = (timeString) => {
     const [hours, minutes] = timeString.split(":");
     return `${hours}:${minutes}`;
+  };
+
+  const handleKnowMore = (eventId) => {
+    navigate(`/events/${eventId}/`);
   };
   return (
     <Container sx={{ mt: 4 }}>
@@ -56,6 +63,16 @@ const Events = ({ eventsData }) => {
                   At {formatTime(event.start_time)} to{" "}
                   {formatTime(event.end_time)}
                 </Typography>
+                <Grid item xs={12} container justifyContent="flex-end" mt={2}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    size="small"
+                    onClick={() => handleKnowMore(event.id)}
+                  >
+                    Know More
+                  </Button>
+                </Grid>
               </CardContent>
             </Grid>
           </Grid>

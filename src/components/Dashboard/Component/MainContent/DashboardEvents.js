@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Paper,
   Typography,
@@ -15,6 +15,10 @@ import {
   Box,
   TextField,
   Grid,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import ajaxCall from "../../../helpers/ajaxCall";
 import { toast } from "react-toastify";
@@ -29,6 +33,11 @@ const DashboardEvents = ({ eventsData }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
   const [formData, setFormData] = useState({ name: "", email: "" });
+  const [eventData, setEventData] = useState();
+  const [guests, setGuests] = useState([{ name: "", phone: "", image: null }]);
+
+  const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
+  const userID = loginInfo?.userId;
 
   const handleOpenDialog = () => setOpenDialog(true);
   const handleCloseDialog = () => {
@@ -92,6 +101,42 @@ const DashboardEvents = ({ eventsData }) => {
   };
   // end registration
 
+  const fetchData = async (url, setData) => {
+    try {
+      const response = await ajaxCall(
+        url,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
+            }`,
+          },
+          method: "GET",
+        },
+        8000
+      );
+      if (response?.status === 200) {
+        setData(response?.data || []);
+      } else {
+        console.error("Fetch error:", response);
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData(`events/events/`, setEventData);
+  }, []);
+
+  const handleGuestChange = (index, field, value) => {
+    const updatedGuests = [...guests];
+    updatedGuests[index][field] = value;
+    setGuests(updatedGuests); // Update specific guest form data
+  };
+
   const isStepComplete = () => activeStep === steps.length - 1;
 
   return (
@@ -154,24 +199,24 @@ const DashboardEvents = ({ eventsData }) => {
                   <Grid>
                     <Grid container spacing={2} sx={{ mt: 2 }}>
                       <Grid item xs={6}>
-                        <TextField
-                          fullWidth
-                          label="Event Name"
-                          name="name"
-                          value={formData.name}
-                          required
-                        />
+                        <FormControl fullWidth required>
+                          <InputLabel id="purpose-label">Event</InputLabel>
+                          <Select
+                            fullWidth
+                            label="Event"
+                            size="small"
+                            name="name"
+                            value={formData.name}
+                            required
+                          >
+                            <MenuItem value="PLANNED">Planned</MenuItem>
+                            <MenuItem value="IN_PROGRESS">In Progress</MenuItem>
+                            <MenuItem value="COMPLETED">Completed</MenuItem>
+                            <MenuItem value="CANCELLED">Cancelled</MenuItem>
+                          </Select>
+                        </FormControl>
                       </Grid>
-                      <Grid item xs={6}>
-                        <TextField
-                          fullWidth
-                          label="Alumni"
-                          name="location"
-                          type="text"
-                          value={formData.location}
-                          required
-                        />
-                      </Grid>
+
                       <Grid item xs={6}>
                         <TextField
                           fullWidth
@@ -180,16 +225,7 @@ const DashboardEvents = ({ eventsData }) => {
                           type="number"
                           value={formData.start_date}
                           required
-                        />
-                      </Grid>
-                      <Grid item xs={6}>
-                        <TextField
-                          fullWidth
-                          label="Payment status"
-                          name="end_date"
-                          type="text"
-                          value={formData.end_date}
-                          required
+                          size="small"
                         />
                       </Grid>
                     </Grid>
@@ -199,12 +235,21 @@ const DashboardEvents = ({ eventsData }) => {
                   <Grid>
                     <Grid container spacing={2} sx={{ mt: 2 }}>
                       <Grid item xs={6}>
-                        <TextField
-                          fullWidth
-                          label="Subevent"
-                          name="name"
-                          value={formData.name}
-                        />
+                        <FormControl fullWidth required>
+                          <InputLabel id="purpose-label">Sub Event</InputLabel>
+                          <Select
+                            fullWidth
+                            label="Subevent"
+                            name="name"
+                            value={formData.name}
+                            size="small"
+                          >
+                            <MenuItem value="PLANNED">Planned</MenuItem>
+                            <MenuItem value="IN_PROGRESS">In Progress</MenuItem>
+                            <MenuItem value="COMPLETED">Completed</MenuItem>
+                            <MenuItem value="CANCELLED">Cancelled</MenuItem>
+                          </Select>
+                        </FormControl>
                       </Grid>
                       <Grid item xs={6}>
                         <TextField
@@ -213,6 +258,7 @@ const DashboardEvents = ({ eventsData }) => {
                           name="location"
                           type="text"
                           value={formData.location}
+                          size="small"
                         />
                       </Grid>
                       <Grid item xs={6}>
@@ -222,6 +268,7 @@ const DashboardEvents = ({ eventsData }) => {
                           name="start_date"
                           type="number"
                           value={formData.start_date}
+                          size="small"
                         />
                       </Grid>
                     </Grid>
@@ -235,6 +282,7 @@ const DashboardEvents = ({ eventsData }) => {
                           fullWidth
                           label="Name"
                           name="name"
+                          size="small"
                           value={formData.name}
                         />
                       </Grid>
@@ -244,6 +292,7 @@ const DashboardEvents = ({ eventsData }) => {
                           label="Phone"
                           name="location"
                           type="number"
+                          size="small"
                           value={formData.location}
                         />
                       </Grid>
@@ -253,11 +302,37 @@ const DashboardEvents = ({ eventsData }) => {
                           label="Image"
                           name="start_date"
                           type="file"
+                          size="small"
                           value={formData.start_date}
                           InputLabelProps={{ shrink: true }}
                         />
                       </Grid>
                     </Grid>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        mt: 3,
+                      }}
+                    >
+                      <Button
+                        variant="contained"
+                        onClick={handleBack}
+                        sx={{ mt: 1, mr: 1 }}
+                        disabled={activeStep === 0}
+                        size="small"
+                      >
+                        Back
+                      </Button>
+                      <Button
+                        variant="contained"
+                        onClick={handleNext}
+                        sx={{ mt: 1, mr: 1 }}
+                        size="small"
+                      >
+                        {isStepComplete() ? "Submit" : "Next"}
+                      </Button>
+                    </Box>
                   </Grid>
                 )}
               </form>

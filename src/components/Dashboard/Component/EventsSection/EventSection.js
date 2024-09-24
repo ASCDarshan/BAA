@@ -31,6 +31,7 @@ const EventSection = () => {
 
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
   const userID = loginInfo?.userId;
+  const UserRole = loginInfo?.userRole;
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -46,6 +47,7 @@ const EventSection = () => {
     { text: "Profile", icon: <AccountCircleIcon />, link: "/userProfile" },
     { text: "Log Out", icon: <LogoutIcon />, link: "/login" },
   ];
+
   const fetchData = async (url, setData) => {
     try {
       const response = await ajaxCall(
@@ -74,7 +76,7 @@ const EventSection = () => {
 
   useEffect(() => {
     fetchData(`profiles/user-profile/${userID}/`, setUserProfileData);
-  }, []);
+  }, [userID]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -87,7 +89,7 @@ const EventSection = () => {
           menuItems={menuItems}
           drawerWidth={drawerWidth}
         />
-        <AddEvents userID={userID} />
+        {UserRole == "Superuser" && <AddEvents userID={userID} />}
       </Box>
     </ThemeProvider>
   );
