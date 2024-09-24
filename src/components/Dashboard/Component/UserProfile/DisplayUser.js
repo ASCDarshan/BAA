@@ -43,7 +43,6 @@ const UserProfile = () => {
   const userID = loginInfo?.userId;
   const [drawerOpen, setDrawerOpen] = useState(false);
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
-
   const handleDrawerToggle = () => {
     setDrawerOpen(!drawerOpen);
   };
@@ -100,13 +99,26 @@ const UserProfile = () => {
     linkedin_profile,
     twitter_profile,
     facebook_profile,
-    job_title,
     Education,
     degree,
     birth_date,
     phone_number,
     school_graduation_year,
     year_of_graduation,
+    company,
+    company_address,
+    job_title,
+    company_portfolio,
+    company_website,
+    alternative_email,
+    industry,
+    publications,
+    city,
+    country,
+    interests,
+    postal_code,
+    state,
+    street_address,
     user: { username },
   } = userProfileData;
 
@@ -178,6 +190,17 @@ const UserProfile = () => {
                 </Grid>
 
                 <Grid item xs={12}>
+                  <Typography variant="h6">Address</Typography>
+
+                  <Typography variant="body1">
+                    Address:{street_address}, {city},{state},{country}
+                  </Typography>
+                  <Typography variant="body1">
+                    Postal Code:{postal_code}
+                  </Typography>
+                  <Divider sx={{ my: 2 }} />
+                </Grid>
+                <Grid item xs={12}>
                   <Typography variant="h6">Education</Typography>
                   <Typography variant="body1">
                     {Education
@@ -188,9 +211,17 @@ const UserProfile = () => {
                     Graduation Year :{year_of_graduation}
                   </Typography>
                   <Divider sx={{ my: 2 }} />
+                </Grid>
+                <Grid item xs={12}>
                   <Typography variant="h6">Contact Details</Typography>
-                  <Typography variant="body1" paragraph>
+                  <Typography variant="body1">
                     Phone Number: {phone_number}
+                  </Typography>
+                  <Typography variant="body1">
+                    Email: {alternative_email}
+                  </Typography>
+                  <Typography variant="body1">
+                    Alternate Email: {alternative_email}
                   </Typography>
                 </Grid>
 
@@ -200,7 +231,37 @@ const UserProfile = () => {
                     Birth Date: {birth_date}
                   </Typography>
                   <Typography variant="body1">
-                    Graduation Year: {school_graduation_year || "N/A"}
+                    Interests: {interests}
+                  </Typography>
+                  <Typography variant="body1">
+                    School Graduation Year: {school_graduation_year || "N/A"}
+                  </Typography>
+                  <Typography variant="body1">Industry: {industry}</Typography>
+                  <Typography variant="body1">
+                    Publications: {publications}
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12}>
+                  <Typography variant="h6">Company Information</Typography>
+                  <Typography variant="body1">Company: {company}</Typography>
+                  <Typography variant="body1">
+                    Company Address: {company_address}
+                  </Typography>
+                  <Typography variant="body1">
+                    Company Website: {company_website}
+                  </Typography>
+                  <Typography variant="body1">
+                    Company Portfolio:{" "}
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      href={company_portfolio}
+                      target="_blank"
+                      size="small"
+                    >
+                      View Portfolio
+                    </Button>
                   </Typography>
                 </Grid>
               </Grid>

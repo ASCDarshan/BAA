@@ -31,6 +31,7 @@ const InitiativesSection = () => {
 
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
   const userID = loginInfo?.userId;
+  const UserRole = loginInfo?.userRole;
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -87,7 +88,7 @@ const InitiativesSection = () => {
           menuItems={menuItems}
           drawerWidth={drawerWidth}
         />
-        <AddInitiatives userID={userID} />
+        {UserRole == "Superuser" && <AddInitiatives userID={userID} />}
       </Box>
     </ThemeProvider>
   );

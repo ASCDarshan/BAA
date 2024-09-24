@@ -15,6 +15,7 @@ import { RemoveCircle } from "@mui/icons-material";
 import ajaxCall from "../../../helpers/ajaxCall";
 import { toast } from "react-toastify";
 import EventTable from "./EventTable";
+
 const theme = createTheme({
   palette: {
     primary: {
@@ -26,6 +27,7 @@ const theme = createTheme({
     },
   },
 });
+
 const InitialData = {
   name: "",
   description: "",
@@ -75,6 +77,14 @@ const AddEvents = () => {
     setFormData((prevData) => ({ ...prevData, subevents: updatedSubevents }));
   };
 
+  const handlePricingChange = (index, e, fieldName) => {
+    const value = e.target.value;
+    const updatedSubevents = [...formData.subevents];
+    updatedSubevents[index].pricing[0][fieldName] = value;
+
+    setFormData((prevData) => ({ ...prevData, subevents: updatedSubevents }));
+  };
+
   const addSubEvent = () => {
     setFormData((prevData) => ({
       ...prevData,
@@ -90,6 +100,14 @@ const AddEvents = () => {
           max_participants: "",
           qr_code: null,
           main_event: 1,
+          pricing: [
+            {
+              location: "To be announced",
+              alumni_price: "",
+              guest_price: "",
+              subevent: "",
+            },
+          ],
         },
       ],
     }));
@@ -271,28 +289,7 @@ const AddEvents = () => {
                         required
                       />
                     </Grid>
-                    {/* <Grid item xs={6}>
-                      <TextField
-                        fullWidth
-                        label="Alumni Amount"
-                        name="name"
-                        value={subEvent.name}
-                        size="small"
-                        onChange={(e) => handleSubEventChange(index, e)}
-                        required
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <TextField
-                        fullWidth
-                        label="Guest Amount"
-                        name="name"
-                        value={subEvent.name}
-                        size="small"
-                        onChange={(e) => handleSubEventChange(index, e)}
-                        required
-                      />
-                    </Grid> */}
+
                     <Grid item xs={6}>
                       <TextField
                         fullWidth
@@ -344,6 +341,33 @@ const AddEvents = () => {
                         required
                       />
                     </Grid>
+                    <Grid item xs={6}>
+                      <TextField
+                        fullWidth
+                        label="Alumni Price"
+                        name="alumni_price"
+                        value={subEvent.pricing[0].alumni_price}
+                        size="small"
+                        onChange={(e) =>
+                          handlePricingChange(index, e, "alumni_price")
+                        }
+                        required
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <TextField
+                        fullWidth
+                        label="Guest Price"
+                        name="guest_price"
+                        value={subEvent.pricing[0].guest_price}
+                        size="small"
+                        onChange={(e) =>
+                          handlePricingChange(index, e, "guest_price")
+                        }
+                        required
+                      />
+                    </Grid>
+
                     <Grid item xs={6}>
                       <TextField
                         fullWidth
