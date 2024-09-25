@@ -40,6 +40,7 @@ const theme = createTheme({
 const UserProfile = () => {
   const [userProfileData, setUserProfileData] = useState(null);
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
+  console.log(userProfileData);
   const userID = loginInfo?.userId;
   const [drawerOpen, setDrawerOpen] = useState(false);
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -218,7 +219,7 @@ const UserProfile = () => {
                     Phone Number: {phone_number}
                   </Typography>
                   <Typography variant="body1">
-                    Email: {alternative_email}
+                    Email: {userProfileData.user.email}
                   </Typography>
                   <Typography variant="body1">
                     Alternate Email: {alternative_email}

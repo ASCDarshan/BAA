@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Paper,
   Typography,
@@ -16,128 +16,89 @@ import {
   TextField,
   Grid,
   FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
+  Checkbox,
+  FormControlLabel,
 } from "@mui/material";
-import ajaxCall from "../../../helpers/ajaxCall";
-import { toast } from "react-toastify";
 
 const steps = [
   "Event Registration",
   "Sub Event Registration",
-  "Accompanying guests",
+  "Accompanying Guests",
 ];
 
 const DashboardEvents = ({ eventsData }) => {
-  const [openDialog, setOpenDialog] = useState(false);
-  const [activeStep, setActiveStep] = useState(0);
-  const [formData, setFormData] = useState({ name: "", email: "" });
-  const [eventData, setEventData] = useState();
-  const [guests, setGuests] = useState([{ name: "", phone: "", image: null }]);
-
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
   const userID = loginInfo?.userId;
 
-  const handleOpenDialog = () => setOpenDialog(true);
+  const initialData = {
+    registration_date: new Date().toISOString(),
+    total_amount: "",
+    payment_status: "",
+    full_event_access: true,
+    event: "",
+    alumni: userID,
+  };
+
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [subEvents, setSubEvents] = useState([]);
+  const [selectedSubEvents, setSelectedSubEvents] = useState([]);
+  const [guestsCount, setGuestsCount] = useState({});
+  const [totalAmount, setTotalAmount] = useState(0);
+
+  const handleOpenDialog = (event) => {
+    setSelectedEvent(event);
+    setSubEvents(event.subevents || []);
+    setOpenDialog(true);
+    setGuestsCount({});
+    setSelectedSubEvents([]);
+    setTotalAmount(event.price || 0);
+  };
+
   const handleCloseDialog = () => {
     setOpenDialog(false);
     setActiveStep(0);
-    setFormData({ name: "", email: "" });
+    setFormData(initialData);
   };
 
+  const handleSubEventSelection = (subEventId, isChecked) => {
+    const updatedSelectedSubEvents = isChecked
+      ? [...selectedSubEvents, subEventId]
+      : selectedSubEvents.filter((id) => id !== subEventId);
+    setSelectedSubEvents(updatedSelectedSubEvents);
+
+    // Recalculate the total amount when sub-event is selected/unselected
+    calculateTotalAmount(updatedSelectedSubEvents, guestsCount);
+  };
+
+  const handleGuestChange = (subEventId, count) => {
+    const updatedGuestsCount = { ...guestsCount, [subEventId]: count };
+    setGuestsCount(updatedGuestsCount);
+
+    // Recalculate the total amount when guest count changes
+    calculateTotalAmount(selectedSubEvents, updatedGuestsCount);
+  };
+
+  const calculateTotalAmount = (selectedSubEvents, guestsCount) => {
+    let amount = selectedEvent?.amount || 0; // Base event price
+    selectedSubEvents.forEach((subEventId) => {
+      const subEvent = subEvents.find((sub) => sub.id === subEventId);
+      const alumniPrice = parseFloat(subEvent.pricing[0].alumni_price);
+      const guestPrice = parseFloat(subEvent.pricing[0].guest_price);
+      const guestCount = parseInt(guestsCount[subEventId] || 0);
+
+      amount += alumniPrice + guestPrice * guestCount;
+    });
+    setTotalAmount(amount);
+  };
+
+  const [activeStep, setActiveStep] = useState(0);
   const handleNext = () => setActiveStep((prevStep) => prevStep + 1);
   const handleBack = () => setActiveStep((prevStep) => prevStep - 1);
   const handleReset = () => setActiveStep(0);
-
-  //for register
-  const [data, setData] = useState({
-    name: "",
-    purpose: "",
-    start_date: "",
-    end_date: "",
-    total_funds_required: "",
-    funds_deadline: "",
-    status: "",
-    current_funds: "",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    const file = e.target.files[0];
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-      profile_picture: file,
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const formDataToSend = new FormData();
-    formDataToSend.append("name", data.name);
-    formDataToSend.append("purpose", data.purpose);
-
-    try {
-      const response = await ajaxCall(
-        `initiatives/initiatives/`,
-        {
-          method: "POST",
-          body: formDataToSend,
-        },
-        8000
-      );
-      if ([200, 201].includes(response.status)) {
-        toast.success("Event Created Successfully");
-      } else {
-        toast.error("Some Problem Occurred. Please try again.");
-      }
-    } catch (error) {
-      toast.error("Some Problem Occurred. Please try again.");
-    }
-  };
-  // end registration
-
-  const fetchData = async (url, setData) => {
-    try {
-      const response = await ajaxCall(
-        url,
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${
-              JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
-            }`,
-          },
-          method: "GET",
-        },
-        8000
-      );
-      if (response?.status === 200) {
-        setData(response?.data || []);
-      } else {
-        console.error("Fetch error:", response);
-      }
-    } catch (error) {
-      console.error("Network error:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchData(`events/events/`, setEventData);
-  }, []);
-
-  const handleGuestChange = (index, field, value) => {
-    const updatedGuests = [...guests];
-    updatedGuests[index][field] = value;
-    setGuests(updatedGuests); // Update specific guest form data
-  };
-
   const isStepComplete = () => activeStep === steps.length - 1;
+
+  const [formData, setFormData] = useState(initialData);
 
   return (
     <>
@@ -157,7 +118,7 @@ const DashboardEvents = ({ eventsData }) => {
               />
               <Button
                 variant="contained"
-                onClick={handleOpenDialog}
+                onClick={() => handleOpenDialog(event)}
                 size="small"
               >
                 Register
@@ -200,80 +161,94 @@ const DashboardEvents = ({ eventsData }) => {
                     <Grid container spacing={2} sx={{ mt: 2 }}>
                       <Grid item xs={6}>
                         <FormControl fullWidth required>
-                          <InputLabel id="purpose-label">Event</InputLabel>
-                          <Select
-                            fullWidth
+                          <TextField
                             label="Event"
+                            value={selectedEvent?.name || ""}
+                            InputProps={{
+                              readOnly: true,
+                            }}
                             size="small"
-                            name="name"
-                            value={formData.name}
-                            required
-                          >
-                            <MenuItem value="PLANNED">Planned</MenuItem>
-                            <MenuItem value="IN_PROGRESS">In Progress</MenuItem>
-                            <MenuItem value="COMPLETED">Completed</MenuItem>
-                            <MenuItem value="CANCELLED">Cancelled</MenuItem>
-                          </Select>
+                          />
                         </FormControl>
                       </Grid>
-
                       <Grid item xs={6}>
                         <TextField
                           fullWidth
                           label="Total Amount"
-                          name="start_date"
-                          type="number"
-                          value={formData.start_date}
-                          required
+                          name="total_amount"
+                          value={selectedEvent?.amount}
+                          InputProps={{
+                            readOnly: true,
+                          }}
                           size="small"
                         />
                       </Grid>
                     </Grid>
                   </Grid>
                 )}
+
                 {activeStep === 1 && (
-                  <Grid>
-                    <Grid container spacing={2} sx={{ mt: 2 }}>
-                      <Grid item xs={6}>
-                        <FormControl fullWidth required>
-                          <InputLabel id="purpose-label">Sub Event</InputLabel>
-                          <Select
-                            fullWidth
-                            label="Subevent"
-                            name="name"
-                            value={formData.name}
-                            size="small"
-                          >
-                            <MenuItem value="PLANNED">Planned</MenuItem>
-                            <MenuItem value="IN_PROGRESS">In Progress</MenuItem>
-                            <MenuItem value="COMPLETED">Completed</MenuItem>
-                            <MenuItem value="CANCELLED">Cancelled</MenuItem>
-                          </Select>
-                        </FormControl>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <TextField
-                          fullWidth
-                          label="Num guests"
-                          name="location"
-                          type="text"
-                          value={formData.location}
-                          size="small"
+                  <>
+                    {subEvents.map((subEvent) => (
+                      <Grid key={subEvent.id} mt={2}>
+                        <Typography variant="subtitle1" gutterBottom>
+                          Sub Event: {subEvent.name}
+                        </Typography>
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={selectedSubEvents.includes(subEvent.id)}
+                              onChange={(e) =>
+                                handleSubEventSelection(
+                                  subEvent.id,
+                                  e.target.checked
+                                )
+                              }
+                            />
+                          }
+                          label="Select Sub Event"
                         />
+                        <Grid container spacing={2} sx={{ mt: 1 }}>
+                          <Grid item xs={6}>
+                            <TextField
+                              fullWidth
+                              label="Num Guests"
+                              name={`subEventGuests_${subEvent.id}`}
+                              type="number"
+                              size="small"
+                              onChange={(e) =>
+                                handleGuestChange(subEvent.id, e.target.value)
+                              }
+                            />
+                          </Grid>
+                          <Grid item xs={6}>
+                            <TextField
+                              fullWidth
+                              label="Alumni Price"
+                              value={subEvent.pricing[0]?.alumni_price || ""}
+                              InputProps={{
+                                readOnly: true,
+                              }}
+                              size="small"
+                            />
+                          </Grid>
+                          <Grid item xs={6}>
+                            <TextField
+                              fullWidth
+                              label="Guest Price"
+                              value={subEvent.pricing[0]?.guest_price || ""}
+                              InputProps={{
+                                readOnly: true,
+                              }}
+                              size="small"
+                            />
+                          </Grid>
+                        </Grid>
                       </Grid>
-                      <Grid item xs={6}>
-                        <TextField
-                          fullWidth
-                          label="Amount paid"
-                          name="start_date"
-                          type="number"
-                          value={formData.start_date}
-                          size="small"
-                        />
-                      </Grid>
-                    </Grid>
-                  </Grid>
+                    ))}
+                  </>
                 )}
+
                 {activeStep === 2 && (
                   <Grid>
                     <Grid container spacing={2} sx={{ mt: 2 }}>
@@ -290,49 +265,23 @@ const DashboardEvents = ({ eventsData }) => {
                         <TextField
                           fullWidth
                           label="Phone"
-                          name="location"
+                          name="phone"
                           type="number"
                           size="small"
-                          value={formData.location}
+                          value={formData.phone}
                         />
                       </Grid>
                       <Grid item xs={6}>
                         <TextField
                           fullWidth
                           label="Image"
-                          name="start_date"
+                          name="image"
                           type="file"
                           size="small"
-                          value={formData.start_date}
                           InputLabelProps={{ shrink: true }}
                         />
                       </Grid>
                     </Grid>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        mt: 3,
-                      }}
-                    >
-                      <Button
-                        variant="contained"
-                        onClick={handleBack}
-                        sx={{ mt: 1, mr: 1 }}
-                        disabled={activeStep === 0}
-                        size="small"
-                      >
-                        Back
-                      </Button>
-                      <Button
-                        variant="contained"
-                        onClick={handleNext}
-                        sx={{ mt: 1, mr: 1 }}
-                        size="small"
-                      >
-                        {isStepComplete() ? "Submit" : "Next"}
-                      </Button>
-                    </Box>
                   </Grid>
                 )}
               </form>
@@ -349,13 +298,14 @@ const DashboardEvents = ({ eventsData }) => {
                 >
                   Back
                 </Button>
+                <Typography variant="h6">Total: {totalAmount}</Typography>
                 <Button
                   variant="contained"
                   onClick={handleNext}
                   sx={{ mt: 1, mr: 1 }}
                   size="small"
                 >
-                  {isStepComplete() ? "Submit" : "Next"}
+                  {isStepComplete() ? `Pay: ${totalAmount}` : "Next"}
                 </Button>
               </Box>
             </>

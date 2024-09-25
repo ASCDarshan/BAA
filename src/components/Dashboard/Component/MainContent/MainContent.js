@@ -274,6 +274,7 @@ const MainContent = ({
                   postId={data.id}
                   userId={userID}
                   shareCounts={data.shares}
+                  postContent={gettingData}
                 />
               </CardActions>
             </Box>
