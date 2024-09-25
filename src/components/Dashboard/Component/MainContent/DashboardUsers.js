@@ -60,7 +60,11 @@ const DashboardUsers = () => {
               </ListItemAvatar>
               <ListItemText
                 primary={data.user.username}
-                secondary={`Batch of ${data.school_graduation_year}`}
+                secondary={
+                  data.school_graduation_year
+                    ? `Batch of ${data.school_graduation_year}`
+                    : null
+                }
               />
               <ListItemText primary={data.phone_number} />
             </ListItem>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, useMediaQuery } from "@mui/material";
+import { Box, Container, useMediaQuery } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import {
   Event as EventIcon,
@@ -11,6 +11,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Sidebar from "../SideBar/Sidebar";
 import ajaxCall from "../../../helpers/ajaxCall";
 import AddInitiatives from "./AddInitiatives";
+import InitiativesTable from "./InitiativesTable";
 
 const drawerWidth = 240;
 
@@ -88,7 +89,10 @@ const InitiativesSection = () => {
           menuItems={menuItems}
           drawerWidth={drawerWidth}
         />
-        {UserRole == "Superuser" && <AddInitiatives userID={userID} />}
+        <Container sx={{ mt: 10 }}>
+          <InitiativesTable />
+          {UserRole == "Superuser" && <AddInitiatives userID={userID} />}
+        </Container>
       </Box>
     </ThemeProvider>
   );

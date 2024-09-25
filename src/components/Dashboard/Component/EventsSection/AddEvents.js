@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-  Container,
   Typography,
   TextField,
   Button,
@@ -14,7 +13,6 @@ import {
 import { RemoveCircle } from "@mui/icons-material";
 import ajaxCall from "../../../helpers/ajaxCall";
 import { toast } from "react-toastify";
-import EventTable from "./EventTable";
 
 const theme = createTheme({
   palette: {
@@ -148,282 +146,279 @@ const AddEvents = () => {
   };
 
   return (
-    <Container sx={{ mt: 10 }}>
-      <EventTable />
-      <Box sx={{ mt: 5 }}>
-        <Paper
-          elevation={3}
-          sx={{ p: 3, backgroundColor: theme.palette.background.paper }}
-        >
-          <Typography variant="h5">Add Events</Typography>
-          <form onSubmit={handleSubmit}>
-            <Grid>
-              <Grid container spacing={2} sx={{ mt: 2 }}>
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    label="Event Name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleMainEventChange}
-                    size="small"
-                    required
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    label="Location"
-                    name="location"
-                    type="text"
-                    value={formData.location}
-                    size="small"
-                    onChange={handleMainEventChange}
-                    required
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    label="Start Date"
-                    name="start_date"
-                    type="date"
-                    value={formData.start_date}
-                    onChange={handleMainEventChange}
-                    size="small"
-                    InputLabelProps={{ shrink: true }}
-                    required
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    label="End Date"
-                    name="end_date"
-                    type="date"
-                    value={formData.end_date}
-                    size="small"
-                    onChange={handleMainEventChange}
-                    InputLabelProps={{ shrink: true }}
-                    required
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    label="Start Time"
-                    name="start_time"
-                    type="time"
-                    value={formData.start_time}
-                    size="small"
-                    onChange={handleMainEventChange}
-                    InputLabelProps={{ shrink: true }}
-                    required
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    label="End Time"
-                    name="end_time"
-                    type="time"
-                    value={formData.end_time}
-                    size="small"
-                    onChange={handleMainEventChange}
-                    InputLabelProps={{ shrink: true }}
-                    required
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    label="Description"
-                    name="description"
-                    value={formData.description}
-                    size="small"
-                    onChange={handleMainEventChange}
-                    multiline
-                    rows={4}
-                    required
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    label="Registration Deadline"
-                    name="registration_deadline"
-                    type="datetime-local"
-                    value={formData.registration_deadline}
-                    size="small"
-                    onChange={handleMainEventChange}
-                    InputLabelProps={{ shrink: true }}
-                    required
-                  />
-                </Grid>
-              </Grid>
-
-              <Grid mt={2}>
-                <Typography variant="h5">Add Sub Events</Typography>
-                {/* Sub Event Fields */}
-                {formData.subevents.map((subEvent, index) => (
-                  <Grid container spacing={2} key={index} sx={{ mt: 2 }}>
-                    <Grid item xs={6}>
-                      <TextField
-                        fullWidth
-                        label="Sub Event Name"
-                        name="name"
-                        value={subEvent.name}
-                        size="small"
-                        onChange={(e) => handleSubEventChange(index, e)}
-                        required
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <TextField
-                        fullWidth
-                        label="Location"
-                        name="location"
-                        value={subEvent.location}
-                        size="small"
-                        onChange={(e) => handleSubEventChange(index, e)}
-                        required
-                      />
-                    </Grid>
-
-                    <Grid item xs={6}>
-                      <TextField
-                        fullWidth
-                        label="Date"
-                        name="date"
-                        type="date"
-                        value={subEvent.date}
-                        size="small"
-                        onChange={(e) => handleSubEventChange(index, e)}
-                        InputLabelProps={{ shrink: true }}
-                        required
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <TextField
-                        fullWidth
-                        label="Start Time"
-                        name="start_time"
-                        type="time"
-                        value={subEvent.start_time}
-                        size="small"
-                        onChange={(e) => handleSubEventChange(index, e)}
-                        InputLabelProps={{ shrink: true }}
-                        required
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <TextField
-                        fullWidth
-                        label="End Time"
-                        name="end_time"
-                        type="time"
-                        value={subEvent.end_time}
-                        size="small"
-                        onChange={(e) => handleSubEventChange(index, e)}
-                        InputLabelProps={{ shrink: true }}
-                        required
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <TextField
-                        fullWidth
-                        label="Max Participants"
-                        name="max_participants"
-                        type="number"
-                        value={subEvent.max_participants}
-                        size="small"
-                        onChange={(e) => handleSubEventChange(index, e)}
-                        required
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <TextField
-                        fullWidth
-                        label="Alumni Price"
-                        name="alumni_price"
-                        value={subEvent.pricing[0].alumni_price}
-                        size="small"
-                        onChange={(e) =>
-                          handlePricingChange(index, e, "alumni_price")
-                        }
-                        required
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <TextField
-                        fullWidth
-                        label="Guest Price"
-                        name="guest_price"
-                        value={subEvent.pricing[0].guest_price}
-                        size="small"
-                        onChange={(e) =>
-                          handlePricingChange(index, e, "guest_price")
-                        }
-                        required
-                      />
-                    </Grid>
-
-                    <Grid item xs={6}>
-                      <TextField
-                        fullWidth
-                        label="Description"
-                        name="description"
-                        value={subEvent.description}
-                        size="small"
-                        onChange={(e) => handleSubEventChange(index, e)}
-                        multiline
-                        rows={4}
-                        required
-                      />
-                    </Grid>
-                    <Grid item xs={12} container justifyContent="flex-end">
-                      <IconButton
-                        onClick={() => removeSubEvent(index)}
-                        color="error"
-                      >
-                        <RemoveCircle />
-                      </IconButton>
-                    </Grid>
-                  </Grid>
-                ))}
-              </Grid>
-
-              <Grid item xs={12} container justifyContent="flex-end">
-                <Button
-                  type="button"
-                  variant="contained"
-                  color="secondary"
-                  onClick={addSubEvent}
+    <Box sx={{ mt: 5 }}>
+      <Paper
+        elevation={3}
+        sx={{ p: 3, backgroundColor: theme.palette.background.paper }}
+      >
+        <Typography variant="h5">Add Events</Typography>
+        <form onSubmit={handleSubmit}>
+          <Grid>
+            <Grid container spacing={2} sx={{ mt: 2 }}>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label="Event Name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleMainEventChange}
                   size="small"
-                >
-                  Add Sub Event
-                </Button>
+                  required
+                />
               </Grid>
-
-              <Grid item xs={12} container justifyContent="flex-end" mt={2}>
-                {loading ? (
-                  <CircularProgress sx={{ ml: "auto" }} />
-                ) : (
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    size="small"
-                  >
-                    Submit Event
-                  </Button>
-                )}
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label="Location"
+                  name="location"
+                  type="text"
+                  value={formData.location}
+                  size="small"
+                  onChange={handleMainEventChange}
+                  required
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label="Start Date"
+                  name="start_date"
+                  type="date"
+                  value={formData.start_date}
+                  onChange={handleMainEventChange}
+                  size="small"
+                  InputLabelProps={{ shrink: true }}
+                  required
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label="End Date"
+                  name="end_date"
+                  type="date"
+                  value={formData.end_date}
+                  size="small"
+                  onChange={handleMainEventChange}
+                  InputLabelProps={{ shrink: true }}
+                  required
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label="Start Time"
+                  name="start_time"
+                  type="time"
+                  value={formData.start_time}
+                  size="small"
+                  onChange={handleMainEventChange}
+                  InputLabelProps={{ shrink: true }}
+                  required
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label="End Time"
+                  name="end_time"
+                  type="time"
+                  value={formData.end_time}
+                  size="small"
+                  onChange={handleMainEventChange}
+                  InputLabelProps={{ shrink: true }}
+                  required
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label="Description"
+                  name="description"
+                  value={formData.description}
+                  size="small"
+                  onChange={handleMainEventChange}
+                  multiline
+                  rows={4}
+                  required
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label="Registration Deadline"
+                  name="registration_deadline"
+                  type="datetime-local"
+                  value={formData.registration_deadline}
+                  size="small"
+                  onChange={handleMainEventChange}
+                  InputLabelProps={{ shrink: true }}
+                  required
+                />
               </Grid>
             </Grid>
-          </form>
-        </Paper>
-      </Box>
-    </Container>
+
+            <Grid mt={2}>
+              <Typography variant="h5">Add Sub Events</Typography>
+              {/* Sub Event Fields */}
+              {formData.subevents.map((subEvent, index) => (
+                <Grid container spacing={2} key={index} sx={{ mt: 2 }}>
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      label="Sub Event Name"
+                      name="name"
+                      value={subEvent.name}
+                      size="small"
+                      onChange={(e) => handleSubEventChange(index, e)}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      label="Location"
+                      name="location"
+                      value={subEvent.location}
+                      size="small"
+                      onChange={(e) => handleSubEventChange(index, e)}
+                      required
+                    />
+                  </Grid>
+
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      label="Date"
+                      name="date"
+                      type="date"
+                      value={subEvent.date}
+                      size="small"
+                      onChange={(e) => handleSubEventChange(index, e)}
+                      InputLabelProps={{ shrink: true }}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      label="Start Time"
+                      name="start_time"
+                      type="time"
+                      value={subEvent.start_time}
+                      size="small"
+                      onChange={(e) => handleSubEventChange(index, e)}
+                      InputLabelProps={{ shrink: true }}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      label="End Time"
+                      name="end_time"
+                      type="time"
+                      value={subEvent.end_time}
+                      size="small"
+                      onChange={(e) => handleSubEventChange(index, e)}
+                      InputLabelProps={{ shrink: true }}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      label="Max Participants"
+                      name="max_participants"
+                      type="number"
+                      value={subEvent.max_participants}
+                      size="small"
+                      onChange={(e) => handleSubEventChange(index, e)}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      label="Alumni Price"
+                      name="alumni_price"
+                      value={subEvent.pricing[0].alumni_price}
+                      size="small"
+                      onChange={(e) =>
+                        handlePricingChange(index, e, "alumni_price")
+                      }
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      label="Guest Price"
+                      name="guest_price"
+                      value={subEvent.pricing[0].guest_price}
+                      size="small"
+                      onChange={(e) =>
+                        handlePricingChange(index, e, "guest_price")
+                      }
+                      required
+                    />
+                  </Grid>
+
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      label="Description"
+                      name="description"
+                      value={subEvent.description}
+                      size="small"
+                      onChange={(e) => handleSubEventChange(index, e)}
+                      multiline
+                      rows={4}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={12} container justifyContent="flex-end">
+                    <IconButton
+                      onClick={() => removeSubEvent(index)}
+                      color="error"
+                    >
+                      <RemoveCircle />
+                    </IconButton>
+                  </Grid>
+                </Grid>
+              ))}
+            </Grid>
+
+            <Grid item xs={12} container justifyContent="flex-end">
+              <Button
+                type="button"
+                variant="contained"
+                color="secondary"
+                onClick={addSubEvent}
+                size="small"
+              >
+                Add Sub Event
+              </Button>
+            </Grid>
+
+            <Grid item xs={12} container justifyContent="flex-end" mt={2}>
+              {loading ? (
+                <CircularProgress sx={{ ml: "auto" }} />
+              ) : (
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="small"
+                >
+                  Submit Event
+                </Button>
+              )}
+            </Grid>
+          </Grid>
+        </form>
+      </Paper>
+    </Box>
   );
 };
 

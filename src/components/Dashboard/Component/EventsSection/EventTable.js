@@ -66,9 +66,8 @@ const EventTable = () => {
     fetchData("events/events/", setEventData);
   }, []);
 
-  // Map eventData to add an id field
   const rows = eventData.map((event, index) => ({
-    id: event.id || index, // Assign unique id
+    id: event.id || index,
     ...event,
   }));
 

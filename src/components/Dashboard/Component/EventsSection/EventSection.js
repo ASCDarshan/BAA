@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, useMediaQuery } from "@mui/material";
+import { Box, Container, useMediaQuery } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import {
   Event as EventIcon,
@@ -11,6 +11,7 @@ import Sidebar from "../SideBar/Sidebar";
 import Navbar from "../Navbar/Navbar";
 import AddEvents from "./AddEvents";
 import ajaxCall from "../../../helpers/ajaxCall";
+import EventTable from "./EventTable";
 
 const drawerWidth = 240;
 
@@ -89,7 +90,10 @@ const EventSection = () => {
           menuItems={menuItems}
           drawerWidth={drawerWidth}
         />
-        {UserRole == "Superuser" && <AddEvents userID={userID} />}
+        <Container sx={{ mt: 10 }}>
+          <EventTable />
+          {UserRole == "Superuser" && <AddEvents userID={userID} />}
+        </Container>
       </Box>
     </ThemeProvider>
   );
