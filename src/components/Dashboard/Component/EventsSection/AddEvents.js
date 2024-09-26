@@ -98,6 +98,7 @@ const AddEvents = () => {
           max_participants: "",
           qr_code: null,
           main_event: 1,
+          amount: "",
           pricing: [
             {
               location: "To be announced",
@@ -233,14 +234,12 @@ const AddEvents = () => {
               <Grid item xs={6}>
                 <TextField
                   fullWidth
-                  label="Description"
-                  name="description"
-                  value={formData.description}
+                  type="text"
+                  label="Amount"
+                  name="amount"
+                  value={formData.amount}
                   size="small"
                   onChange={handleMainEventChange}
-                  multiline
-                  rows={4}
-                  required
                 />
               </Grid>
               <Grid item xs={6}>
@@ -253,6 +252,19 @@ const AddEvents = () => {
                   size="small"
                   onChange={handleMainEventChange}
                   InputLabelProps={{ shrink: true }}
+                  required
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label="Description"
+                  name="description"
+                  value={formData.description}
+                  size="small"
+                  onChange={handleMainEventChange}
+                  multiline
+                  rows={4}
                   required
                 />
               </Grid>

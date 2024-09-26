@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Grid,
@@ -6,24 +7,22 @@ import {
   Typography,
   Divider,
   Paper,
-  useMediaQuery,
   Button,
   Container,
+  Card,
+  IconButton,
+  Tabs,
+  Tab,
 } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import {
-  Event as EventIcon,
-  Description as ResourcesIcon,
-  Home as HomeIcon,
-  ExitToApp as LogoutIcon,
-  AccountCircle as AccountCircleIcon,
+  LinkedIn as LinkedInIcon,
+  Twitter as TwitterIcon,
+  Facebook as FacebookIcon,
+  School as SchoolIcon,
+  Work as WorkIcon,
 } from "@mui/icons-material";
-import Navbar from "../Navbar/Navbar";
-import Sidebar from "../SideBar/Sidebar";
 import ajaxCall from "../../../helpers/ajaxCall";
-import { useNavigate } from "react-router-dom";
-
-const drawerWidth = 240;
 
 const theme = createTheme({
   palette: {
@@ -40,27 +39,14 @@ const theme = createTheme({
 const UserProfile = () => {
   const [userProfileData, setUserProfileData] = useState(null);
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
-  console.log(userProfileData);
   const userID = loginInfo?.userId;
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
-  const handleDrawerToggle = () => {
-    setDrawerOpen(!drawerOpen);
-  };
+  const [tabValue, setTabValue] = useState(0);
 
   const navigate = useNavigate();
 
   const handleUpdateProfile = () => {
-    navigate("/updateProfile");
+    navigate("/dashboard/updateProfile");
   };
-
-  const menuItems = [
-    { text: "Home", icon: <HomeIcon />, link: "/dashboard" },
-    { text: "Events", icon: <EventIcon />, link: "/addEvents" },
-    { text: "Initiatives", icon: <ResourcesIcon />, link: "/addInitiatives" },
-    { text: "Profile", icon: <AccountCircleIcon />, link: "/userProfile" },
-    { text: "Log Out", icon: <LogoutIcon />, link: "/login" },
-  ];
 
   const fetchData = async (url, setData) => {
     try {
@@ -91,7 +77,6 @@ const UserProfile = () => {
   useEffect(() => {
     fetchData(`profiles/user-profile/${userID}/`, setUserProfileData);
   }, [userID]);
-
   if (!userProfileData) return null;
 
   const {
@@ -114,6 +99,8 @@ const UserProfile = () => {
     alternative_email,
     industry,
     publications,
+    achievements,
+    skills,
     city,
     country,
     interests,
@@ -123,161 +110,179 @@ const UserProfile = () => {
     user: { username },
   } = userProfileData;
 
+  // Function to handle tab change
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ display: "flex" }}>
-        <Navbar userProfileData={userProfileData} />
-        <Sidebar
-          isSmallScreen={isSmallScreen}
-          drawerOpen={drawerOpen}
-          handleDrawerToggle={handleDrawerToggle}
-          menuItems={menuItems}
-          drawerWidth={drawerWidth}
-        />
         <Container sx={{ mt: 10 }}>
-          <Box>
-            <Paper
-              elevation={3}
-              sx={{ p: 3, backgroundColor: theme.palette.background.paper }}
-            >
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={4} textAlign="center">
-                  <Avatar
-                    alt={username}
-                    src={profile_picture}
-                    sx={{ width: 150, height: 150, margin: "auto" }}
-                  />
-                  <Typography variant="h6" mt={2}>
-                    {username}
-                  </Typography>
-                  <Typography variant="body1" color="textSecondary">
-                    {job_title} From {school_graduation_year} Batch
-                  </Typography>
-                </Grid>
+          <Grid container spacing={4}>
+            <Grid item xs={12} sm={4} textAlign="center">
+              <Card elevation={4} sx={{ padding: 1 }}>
+                <Avatar
+                  alt={username}
+                  src={profile_picture}
+                  sx={{ width: 130, height: 130, margin: "auto" }}
+                />
+                <Typography variant="h6" mt={2}>
+                  {username}
+                </Typography>
+                <Typography variant="body1" color="textSecondary">
+                  {job_title || "Add Job-Title"} | Batch of{" "}
+                  {school_graduation_year}
+                </Typography>
+                <Divider sx={{ my: 2 }} />
+                <Box display="flex" justifyContent="center" gap={2}>
+                  <IconButton href={linkedin_profile} target="_blank">
+                    <LinkedInIcon fontSize="medium" color="primary" />
+                  </IconButton>
+                  <IconButton href={twitter_profile} target="_blank">
+                    <TwitterIcon fontSize="medium" color="primary" />
+                  </IconButton>
+                  <IconButton href={facebook_profile} target="_blank">
+                    <FacebookIcon fontSize="medium" color="primary" />
+                  </IconButton>
+                </Box>
+              </Card>
+            </Grid>
 
-                <Grid item xs={12} sm={8}>
-                  <Typography variant="h6">Bio</Typography>
-                  <Typography variant="body1" paragraph>
-                    {bio || "Update Profile"}
-                  </Typography>
-                  <Divider sx={{ my: 2 }} />
-                  <Typography variant="h6">Social Profiles</Typography>
-                  <Box sx={{ display: "flex", gap: 2, mt: 1 }}>
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      href={linkedin_profile}
-                      target="_blank"
-                    >
-                      LinkedIn
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      href={twitter_profile}
-                      target="_blank"
-                    >
-                      Twitter
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      href={facebook_profile}
-                      target="_blank"
-                    >
-                      Facebook
-                    </Button>
+            <Grid item xs={12} sm={8}>
+              <Paper elevation={4} sx={{ p: 3 }}>
+                <Tabs value={tabValue} onChange={handleTabChange} centered>
+                  <Tab label="Bio" />
+                  <Tab label="Contact Info" />
+                  <Tab label="Education" />
+                  <Tab label="Company Info" />
+                  <Tab label="Additional Info" />
+                </Tabs>
+
+                {/* Tab Panels */}
+                {tabValue === 0 && (
+                  <Box sx={{ mt: 2 }}>
+                    <Typography variant="h6" sx={{ mb: 2 }}>
+                      Bio
+                    </Typography>
+                    <Typography variant="body1" paragraph>
+                      {bio || "No bio available"}
+                    </Typography>
+                    <Typography variant="body1">
+                      Birth Date: {birth_date}
+                    </Typography>
+                    <Typography variant="body1">
+                      School Graduation Year: {school_graduation_year}
+                    </Typography>
                   </Box>
-                </Grid>
+                )}
+                {tabValue === 1 && (
+                  <Box sx={{ mt: 2 }}>
+                    <Typography variant="h6" sx={{ mb: 2 }}>
+                      Contact Information
+                    </Typography>
+                    <Typography variant="body1">
+                      Email: {userProfileData.user.email}
+                    </Typography>
+                    <Typography variant="body1">
+                      Alternate Email: {alternative_email}
+                    </Typography>
+                    <Typography variant="body1">
+                      Phone: {phone_number}
+                    </Typography>
+                    <Typography variant="body1">
+                      Address:{street_address}, {city}, {state}, {country},{" "}
+                      {postal_code}
+                    </Typography>
+                  </Box>
+                )}
+                {tabValue === 2 && (
+                  <Box sx={{ mt: 2 }}>
+                    <Typography variant="h6" sx={{ mb: 2 }}>
+                      Education <SchoolIcon fontSize="small" />
+                    </Typography>
+                    <Typography variant="body1">
+                      Degree:{" "}
+                      {Education
+                        ? `${Education}, ${degree}`
+                        : "No education details available"}
+                    </Typography>
+                    <Typography variant="body1">
+                      Graduation Year: {year_of_graduation || "N/A"}
+                    </Typography>
+                  </Box>
+                )}
+                {tabValue === 3 && (
+                  <Box sx={{ mt: 2 }}>
+                    <Typography variant="h6" sx={{ mb: 2 }}>
+                      Company Information <WorkIcon fontSize="small" />
+                    </Typography>
+                    <Typography variant="body1">Company: {company}</Typography>
+                    <Typography variant="body1">
+                      Job Title: {job_title}
+                    </Typography>
+                    <Typography variant="body1">
+                      Industry: {industry}
+                    </Typography>
+                    <Typography variant="body1">Company: {company}</Typography>
+                    <Typography variant="body1">
+                      Address: {company_address}
+                    </Typography>
+                    <Typography variant="body1">
+                      Company Website:{" "}
+                      <Button
+                        variant="text"
+                        color="primary"
+                        href={company_website}
+                        target="_blank"
+                      >
+                        Visit Website
+                      </Button>
+                    </Typography>
+                    <Typography variant="body1">
+                      Portfolio:{" "}
+                      <Button
+                        variant="text"
+                        color="primary"
+                        href={company_portfolio}
+                        target="_blank"
+                      >
+                        View Portfolio
+                      </Button>
+                    </Typography>
+                  </Box>
+                )}
 
-                <Grid item xs={12}>
-                  <Typography variant="h6">Address</Typography>
+                {tabValue === 4 && (
+                  <Box sx={{ mt: 2 }}>
+                    <Typography variant="h6" sx={{ mb: 2 }}>
+                      Additional Information
+                    </Typography>
+                    <Typography variant="body1">
+                      Interest: {interests}
+                    </Typography>
+                    <Typography variant="body1">Skills: {skills}</Typography>
+                    <Typography variant="body1">
+                      Achievements: {achievements}
+                    </Typography>
+                    <Typography variant="body1">
+                      Publications: {publications}
+                    </Typography>
+                  </Box>
+                )}
 
-                  <Typography variant="body1">
-                    Address:{street_address}, {city},{state},{country}
-                  </Typography>
-                  <Typography variant="body1">
-                    Postal Code:{postal_code}
-                  </Typography>
-                  <Divider sx={{ my: 2 }} />
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography variant="h6">Education</Typography>
-                  <Typography variant="body1">
-                    {Education
-                      ? `${Education} in ${degree}`
-                      : "No education details"}
-                  </Typography>
-                  <Typography variant="body1">
-                    Graduation Year :{year_of_graduation}
-                  </Typography>
-                  <Divider sx={{ my: 2 }} />
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography variant="h6">Contact Details</Typography>
-                  <Typography variant="body1">
-                    Phone Number: {phone_number}
-                  </Typography>
-                  <Typography variant="body1">
-                    Email: {userProfileData.user.email}
-                  </Typography>
-                  <Typography variant="body1">
-                    Alternate Email: {alternative_email}
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={12}>
-                  <Typography variant="h6">Additional Information</Typography>
-                  <Typography variant="body1">
-                    Birth Date: {birth_date}
-                  </Typography>
-                  <Typography variant="body1">
-                    Interests: {interests}
-                  </Typography>
-                  <Typography variant="body1">
-                    School Graduation Year: {school_graduation_year || "N/A"}
-                  </Typography>
-                  <Typography variant="body1">Industry: {industry}</Typography>
-                  <Typography variant="body1">
-                    Publications: {publications}
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={12}>
-                  <Typography variant="h6">Company Information</Typography>
-                  <Typography variant="body1">Company: {company}</Typography>
-                  <Typography variant="body1">
-                    Company Address: {company_address}
-                  </Typography>
-                  <Typography variant="body1">
-                    Company Website: {company_website}
-                  </Typography>
-                  <Typography variant="body1">
-                    Company Portfolio:{" "}
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      href={company_portfolio}
-                      target="_blank"
-                      size="small"
-                    >
-                      View Portfolio
-                    </Button>
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Paper>
-          </Box>
-          <Grid item xs={12} container justifyContent="flex-end" mt={2}>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              size="small"
-              onClick={handleUpdateProfile}
-            >
-              Update Profile
-            </Button>
+                <Box mt={3} textAlign="right">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleUpdateProfile}
+                    size="small"
+                  >
+                    Update Profile
+                  </Button>
+                </Box>
+              </Paper>
+            </Grid>
           </Grid>
         </Container>
       </Box>

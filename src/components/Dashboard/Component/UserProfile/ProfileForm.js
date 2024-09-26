@@ -2,9 +2,6 @@ import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
-  Stepper,
-  Step,
-  StepLabel,
   TextField,
   Grid,
   Checkbox,
@@ -13,6 +10,8 @@ import {
   Typography,
   Paper,
   createTheme,
+  Tabs,
+  Tab,
 } from "@mui/material";
 import { toast } from "react-toastify";
 import ajaxCall from "../../../helpers/ajaxCall";
@@ -29,7 +28,7 @@ const theme = createTheme({
   },
 });
 
-const steps = [
+const tabLabels = [
   "Personal Information",
   "Address",
   "Education",
@@ -40,143 +39,79 @@ const steps = [
 ];
 
 const ProfileForm = ({ userID }) => {
-  const [userProfileData, setUserProfileData] = useState([]);
-  const fetchData = async (url, setData) => {
-    try {
-      const response = await ajaxCall(
-        url,
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${
-              JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
-            }`,
-          },
-          method: "GET",
-        },
-        8000
-      );
-      if (response?.status === 200) {
-        setData(response?.data || []);
-      } else {
-        console.error("Fetch error:", response);
-      }
-    } catch (error) {
-      console.error("Network error:", error);
-    }
-  };
+  const [userProfileData, setUserProfileData] = useState({});
+  const [activeTab, setActiveTab] = useState(0);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    fetchData(`profiles/user-profile/${userID}/`, setUserProfileData);
+    const fetchData = async () => {
+      try {
+        const response = await ajaxCall(
+          `profiles/user-profile/${userID}/`,
+          {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${
+                JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
+              }`,
+            },
+            method: "GET",
+          },
+          8000
+        );
+        if (response?.status === 200) {
+          setUserProfileData(response?.data || []);
+        } else {
+          console.error("Fetch error:", response);
+        }
+      } catch (error) {
+        console.error("Network error:", error);
+      }
+    };
+    fetchData();
   }, []);
-
-  const [activeStep, setActiveStep] = useState(0);
-  const [formData, setFormData] = useState({
-    school_graduation_year: userProfileData.school_graduation_year,
-    birth_date: userProfileData.birth_date,
-    bio: userProfileData.bio,
-    profile_picture: userProfileData.profile_picture,
-    phone_number: userProfileData.phone_number,
-    alternative_email: userProfileData.alternative_email,
-    street_address: userProfileData.street_address,
-    city: userProfileData.city,
-    state: userProfileData.state,
-    country: userProfileData.country,
-    postal_code: userProfileData.postal_code,
-    Education: userProfileData.Education,
-    degree: userProfileData.degree,
-    major: userProfileData.major,
-    year_of_graduation: userProfileData.year_of_graduation,
-    company: userProfileData.company,
-    company_address: userProfileData.company_address,
-    company_website: userProfileData.company_website,
-    job_title: userProfileData.job_title,
-    industry: userProfileData.industry,
-    company_portfolio: null,
-    linkedin_profile: userProfileData.linkedin_profile,
-    twitter_profile: userProfileData.twitter_profile,
-    facebook_profile: userProfileData.facebook_profile,
-    is_mentor: false,
-    mentorship_areas: userProfileData.mentorship_areas,
-    show_email: false,
-    show_phone: false,
-    interests: userProfileData.interests,
-    skills: userProfileData.skills,
-    achievements: userProfileData.achievements,
-    publications: userProfileData.publications,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    user: userID,
-  });
-
-  const handleNext = () => {
-    setActiveStep((prevStep) => prevStep + 1);
-  };
-
-  const handleBack = () => {
-    setActiveStep((prevStep) => prevStep - 1);
-  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    setUserProfileData((prevData) => ({ ...prevData, [name]: value }));
+    if (errors[name]) {
+      setErrors((prevErrors) => ({ ...prevErrors, [name]: null }));
+    }
   };
-
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      profile_picture: file,
-      company_portfolio: file,
-    }));
+    const { name, files } = e.target;
+    if (files.length > 0) {
+      setUserProfileData((prevData) => ({ ...prevData, [name]: files[0] }));
+      if (errors[name]) {
+        setErrors((prevErrors) => ({ ...prevErrors, [name]: null }));
+      }
+    }
   };
 
   const handleCheckboxChange = (e) => {
     const { name, checked } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: checked }));
+    setUserProfileData((prevData) => ({ ...prevData, [name]: checked }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const formDataToSend = new FormData();
-    formDataToSend.append(
-      "school_graduation_year",
-      formData.school_graduation_year
-    );
-    formDataToSend.append("birth_date", formData.birth_date);
-    formDataToSend.append("bio", formData.bio);
-    formDataToSend.append("profile_picture", formData.profile_picture);
-    formDataToSend.append("phone_number", formData.phone_number);
-    formDataToSend.append("alternative_email", formData.alternative_email);
-    formDataToSend.append("street_address", formData.street_address);
-    formDataToSend.append("city", formData.city);
-    formDataToSend.append("state", formData.state);
-    formDataToSend.append("country", formData.country);
-    formDataToSend.append("postal_code", formData.postal_code);
-    formDataToSend.append("Education", formData.Education);
-    formDataToSend.append("degree", formData.degree);
-    formDataToSend.append("year_of_graduation", formData.year_of_graduation);
-    formDataToSend.append("company", formData.company);
-    formDataToSend.append("company_address", formData.company_address);
-    formDataToSend.append("company_website", formData.company_website);
-    formDataToSend.append("job_title", formData.job_title);
-    formDataToSend.append("company_portfolio", formData.company_portfolio);
-    formDataToSend.append("linkedin_profile", formData.linkedin_profile);
-    formDataToSend.append("twitter_profile", formData.twitter_profile);
-    formDataToSend.append("facebook_profile", formData.facebook_profile);
-    formDataToSend.append("is_mentor", formData.is_mentor);
-    formDataToSend.append("mentorship_areas", formData.mentorship_areas);
-    formDataToSend.append("show_phone", formData.show_phone);
-    formDataToSend.append("show_email", formData.show_email);
-    formDataToSend.append("interests", formData.interests);
-    formDataToSend.append("skills", formData.skills);
-    formDataToSend.append("achievements", formData.achievements);
-    formDataToSend.append("publications", formData.publications);
-    formDataToSend.append("created_at", formData.created_at);
-    formDataToSend.append("updated_at", formData.updated_at);
-    formDataToSend.append("user", userID);
+    Object.keys(userProfileData).forEach((key) => {
+      if (userProfileData[key] !== null && userProfileData[key] !== undefined) {
+        if (key === "school_graduation_year") {
+          formDataToSend.append(key, parseInt(userProfileData[key], 10));
+        } else if (key === "profile_picture" || key === "company_portfolio") {
+          if (userProfileData[key] instanceof File) {
+            formDataToSend.append(key, userProfileData[key]);
+          }
+        } else {
+          formDataToSend.append(key, userProfileData[key]);
+        }
+      }
+    });
+
     try {
       const response = await ajaxCall(
         `profiles/user-profile/${userID}/`,
@@ -184,7 +119,6 @@ const ProfileForm = ({ userID }) => {
           method: "PATCH",
           body: formDataToSend,
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${
               JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
             }`,
@@ -193,51 +127,58 @@ const ProfileForm = ({ userID }) => {
         8000
       );
       if ([200, 201].includes(response.status)) {
-        toast.success("Post Created Successfully");
+        toast.success("Profile Updated Successfully");
+        setErrors({});
       } else {
-        toast.error("Some Problem Occurred. Please try again.");
+        if (response.data && typeof response.data === "object") {
+          setErrors(response.data);
+          toast.error("Please correct the errors in the form.");
+        } else {
+          toast.error("An error occurred. Please try again.");
+        }
       }
     } catch (error) {
-      toast.error("Some Problem Occurred. Please try again.");
+      toast.error("Network error. Please try again.");
     }
   };
 
-  const renderStepContent = (step) => {
-    switch (step) {
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue);
+  };
+  const renderTabContent = (tab) => {
+    switch (tab) {
       case 0:
         return (
           <Grid container spacing={2} mt={2}>
             <Grid item xs={6}>
               <TextField
                 fullWidth
+                type="number"
                 label="School Graduation Year"
                 name="school_graduation_year"
-                value={formData.school_graduation_year}
+                value={userProfileData.school_graduation_year || ""}
                 onChange={handleChange}
                 size="small"
               />
             </Grid>
             <Grid item xs={6}>
-              <Grid item xs={12}>
-                <TextField
-                  type="date"
-                  fullWidth
-                  InputLabelProps={{ shrink: true }}
-                  label="Birth Date"
-                  name="birth_date"
-                  value={formData.birth_date}
-                  onChange={handleChange}
-                  size="small"
-                />
-              </Grid>
+              <TextField
+                type="date"
+                fullWidth
+                InputLabelProps={{ shrink: true }}
+                label="Birth Date"
+                name="birth_date"
+                value={userProfileData.birth_date || ""}
+                onChange={handleChange}
+                size="small"
+              />
             </Grid>
-
             <Grid item xs={6}>
               <TextField
                 fullWidth
                 label="Phone Number"
                 name="phone_number"
-                value={formData.phone_number}
+                value={userProfileData.phone_number || ""}
                 onChange={handleChange}
                 size="small"
               />
@@ -247,7 +188,7 @@ const ProfileForm = ({ userID }) => {
                 fullWidth
                 label="Alternative Email"
                 name="alternative_email"
-                value={formData.alternative_email}
+                value={userProfileData.alternative_email || ""}
                 onChange={handleChange}
                 size="small"
               />
@@ -257,7 +198,7 @@ const ProfileForm = ({ userID }) => {
                 fullWidth
                 label="Bio"
                 name="bio"
-                value={formData.bio}
+                value={userProfileData.bio || ""}
                 onChange={handleChange}
                 size="small"
                 multiline
@@ -285,7 +226,7 @@ const ProfileForm = ({ userID }) => {
                 fullWidth
                 label="Street Address"
                 name="street_address"
-                value={formData.street_address}
+                value={userProfileData.street_address}
                 onChange={handleChange}
                 size="small"
               />
@@ -295,7 +236,7 @@ const ProfileForm = ({ userID }) => {
                 fullWidth
                 label="City"
                 name="city"
-                value={formData.city}
+                value={userProfileData.city}
                 onChange={handleChange}
                 size="small"
               />
@@ -305,7 +246,7 @@ const ProfileForm = ({ userID }) => {
                 fullWidth
                 label="State"
                 name="state"
-                value={formData.state}
+                value={userProfileData.state}
                 onChange={handleChange}
                 size="small"
               />
@@ -315,7 +256,7 @@ const ProfileForm = ({ userID }) => {
                 fullWidth
                 label="Country"
                 name="country"
-                value={formData.country}
+                value={userProfileData.country}
                 onChange={handleChange}
                 size="small"
               />
@@ -325,7 +266,7 @@ const ProfileForm = ({ userID }) => {
                 fullWidth
                 label="Postal Code"
                 name="postal_code"
-                value={formData.postal_code}
+                value={userProfileData.postal_code}
                 onChange={handleChange}
                 size="small"
               />
@@ -340,7 +281,7 @@ const ProfileForm = ({ userID }) => {
                 fullWidth
                 label="Education"
                 name="Education"
-                value={formData.Education}
+                value={userProfileData.Education}
                 onChange={handleChange}
                 size="small"
               />
@@ -350,7 +291,7 @@ const ProfileForm = ({ userID }) => {
                 fullWidth
                 label="Degree"
                 name="degree"
-                value={formData.degree}
+                value={userProfileData.degree}
                 onChange={handleChange}
                 size="small"
               />
@@ -360,7 +301,7 @@ const ProfileForm = ({ userID }) => {
                 fullWidth
                 label="Major"
                 name="major"
-                value={formData.major}
+                value={userProfileData.major}
                 onChange={handleChange}
                 size="small"
               />
@@ -370,7 +311,7 @@ const ProfileForm = ({ userID }) => {
                 fullWidth
                 label="Year of Graduation"
                 name="year_of_graduation"
-                value={formData.year_of_graduation}
+                value={userProfileData.year_of_graduation}
                 onChange={handleChange}
                 size="small"
               />
@@ -385,7 +326,7 @@ const ProfileForm = ({ userID }) => {
                 fullWidth
                 label="Company"
                 name="company"
-                value={formData.company}
+                value={userProfileData.company}
                 onChange={handleChange}
                 size="small"
               />
@@ -395,7 +336,7 @@ const ProfileForm = ({ userID }) => {
                 fullWidth
                 label="Company Address"
                 name="company_address"
-                value={formData.company_address}
+                value={userProfileData.company_address}
                 onChange={handleChange}
                 size="small"
               />
@@ -405,7 +346,7 @@ const ProfileForm = ({ userID }) => {
                 fullWidth
                 label="Company Website"
                 name="company_website"
-                value={formData.company_website}
+                value={userProfileData.company_website}
                 onChange={handleChange}
                 size="small"
               />
@@ -415,7 +356,7 @@ const ProfileForm = ({ userID }) => {
                 fullWidth
                 label="Job Title"
                 name="job_title"
-                value={formData.job_title}
+                value={userProfileData.job_title}
                 onChange={handleChange}
                 size="small"
               />
@@ -425,7 +366,7 @@ const ProfileForm = ({ userID }) => {
                 fullWidth
                 label="Industry"
                 name="industry"
-                value={formData.industry}
+                value={userProfileData.industry}
                 onChange={handleChange}
                 size="small"
               />
@@ -451,7 +392,7 @@ const ProfileForm = ({ userID }) => {
                 fullWidth
                 label="LinkedIn Profile"
                 name="linkedin_profile"
-                value={formData.linkedin_profile}
+                value={userProfileData.linkedin_profile}
                 onChange={handleChange}
                 size="small"
               />
@@ -461,7 +402,7 @@ const ProfileForm = ({ userID }) => {
                 fullWidth
                 label="Twitter"
                 name="twitter_profile"
-                value={formData.twitter_profile}
+                value={userProfileData.twitter_profile}
                 onChange={handleChange}
                 size="small"
               />
@@ -471,7 +412,7 @@ const ProfileForm = ({ userID }) => {
                 fullWidth
                 label="Facebook"
                 name="facebook_profile"
-                value={formData.facebook_profile}
+                value={userProfileData.facebook_profile}
                 onChange={handleChange}
                 size="small"
               />
@@ -486,7 +427,7 @@ const ProfileForm = ({ userID }) => {
                 fullWidth
                 label="Mentorship Areas"
                 name="mentorship_areas"
-                value={formData.mentorship_areas}
+                value={userProfileData.mentorship_areas}
                 onChange={handleChange}
                 size="small"
               />
@@ -495,7 +436,7 @@ const ProfileForm = ({ userID }) => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={formData.is_mentor}
+                    checked={userProfileData.is_mentor}
                     onChange={handleCheckboxChange}
                     size="small"
                     name="is_mentor"
@@ -509,7 +450,7 @@ const ProfileForm = ({ userID }) => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={formData.show_email}
+                    checked={userProfileData.show_email}
                     onChange={handleCheckboxChange}
                     size="small"
                     name="show_email"
@@ -522,7 +463,7 @@ const ProfileForm = ({ userID }) => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={formData.show_phone}
+                    checked={userProfileData.show_phone}
                     onChange={handleCheckboxChange}
                     size="small"
                     name="show_phone"
@@ -541,7 +482,7 @@ const ProfileForm = ({ userID }) => {
                 fullWidth
                 label="Interest"
                 name="interests"
-                value={formData.interests}
+                value={userProfileData.interests}
                 size="small"
                 onChange={handleChange}
               />
@@ -551,7 +492,7 @@ const ProfileForm = ({ userID }) => {
                 fullWidth
                 label="Skills"
                 name="skills"
-                value={formData.skills}
+                value={userProfileData.skills}
                 size="small"
                 onChange={handleChange}
               />
@@ -561,7 +502,7 @@ const ProfileForm = ({ userID }) => {
                 fullWidth
                 label="Achievements"
                 name="achievements"
-                value={formData.achievements}
+                value={userProfileData.achievements}
                 size="small"
                 onChange={handleChange}
               />
@@ -571,7 +512,7 @@ const ProfileForm = ({ userID }) => {
                 fullWidth
                 label="Publications"
                 name="publications"
-                value={formData.publications}
+                value={userProfileData.publications}
                 size="small"
                 onChange={handleChange}
               />
@@ -590,59 +531,49 @@ const ProfileForm = ({ userID }) => {
           elevation={3}
           sx={{ p: 3, backgroundColor: theme.palette.background.paper }}
         >
-          <Typography variant="h5">Update Profile</Typography>
-          <Grid item xs={12} md={8}>
-            <Box sx={{ width: "100%" }} mt={2}>
-              <Stepper activeStep={activeStep} alternativeLabel>
-                {steps.map((label, index) => (
-                  <Step key={label}>
-                    <StepLabel>{label}</StepLabel>
-                  </Step>
-                ))}
-              </Stepper>
-
-              {renderStepContent(activeStep)}
-
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  mt: 2,
-                }}
+          <Typography variant="h5" mb={2}>
+            Update Profile
+          </Typography>
+          <Tabs
+            value={activeTab}
+            onChange={handleTabChange}
+            variant="scrollable"
+            scrollButtons="auto"
+            aria-label="Profile form tabs"
+          >
+            {tabLabels.map((label, index) => (
+              <Tab key={index} label={label} />
+            ))}
+          </Tabs>
+          <Box sx={{ mt: 3 }}>{renderTabContent(activeTab)}</Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              mt: 3,
+            }}
+          >
+            {activeTab < tabLabels.length - 1 ? (
+              <Button
+                size="small"
+                variant="contained"
+                color="primary"
+                onClick={() => setActiveTab((prevTab) => prevTab + 1)}
               >
-                {activeStep !== 0 && (
-                  <Button size="small" onClick={handleBack} sx={{ mr: 1 }}>
-                    Back
-                  </Button>
-                )}
-                {activeStep === steps.length - 1 ? (
-                  <Grid item xs={12} container justifyContent="flex-end">
-                    <Button
-                      size="small"
-                      variant="contained"
-                      color="primary"
-                      type="submit"
-                      disabled={formData.isSubmitting}
-                      onClick={handleSubmit}
-                    >
-                      Submit
-                    </Button>
-                  </Grid>
-                ) : (
-                  <Grid item xs={12} container justifyContent="flex-end">
-                    <Button
-                      size="small"
-                      variant="contained"
-                      color="primary"
-                      onClick={handleNext}
-                    >
-                      Next
-                    </Button>
-                  </Grid>
-                )}
-              </Box>
-            </Box>
-          </Grid>
+                Next
+              </Button>
+            ) : (
+              <Button
+                size="small"
+                variant="contained"
+                color="primary"
+                type="submit"
+                onClick={handleSubmit}
+              >
+                Submit
+              </Button>
+            )}
+          </Box>
         </Paper>
       </Box>
     </Container>

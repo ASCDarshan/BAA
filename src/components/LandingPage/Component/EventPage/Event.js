@@ -31,7 +31,7 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
 const Event = () => {
   const [eventData, setEventData] = useState([]);
   const [heroImages, setHeroImages] = useState([]);
-  const navigate = useNavigate(); // To programmatically navigate to a new URL
+  const navigate = useNavigate();
 
   const fetchData = async (url, setData) => {
     try {
