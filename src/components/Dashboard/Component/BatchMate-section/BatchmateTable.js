@@ -22,26 +22,15 @@ const theme = createTheme({
   },
 });
 
-const InitiativesTable = () => {
+const BatchmateTable = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [InitiativesData, setInitiativesData] = useState([]);
+  const [eventData, setEventData] = useState([]);
 
   const columns = [
-    {
-      headerName: "Name",
-      field: "name",
-      width: 250,
-    },
-    {
-      headerName: "Description",
-      field: "purpose",
-      width: 600,
-    },
-    {
-      headerName: "Total Funds Required",
-      field: "total_funds_required",
-      width: 300,
-    },
+    { headerName: "Name", field: "name", width: 250 },
+    { headerName: "Start Date", field: "start_date", width: 170 },
+    { headerName: "End Date", field: "end_date", width: 170 },
+    { headerName: "Description", field: "description", width: 500 },
   ];
 
   const fetchData = async (url, setData) => {
@@ -70,17 +59,22 @@ const InitiativesTable = () => {
       }
     } catch (error) {
       console.error("Network error:", error);
-      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchData("initiatives/initiatives/", setInitiativesData);
+    fetchData("events/events/", setEventData);
   }, []);
+
+  const rows = eventData.map((event, index) => ({
+    id: event.id || index,
+    ...event,
+  }));
 
   return (
     <>
-      <Typography variant="h5">Initiatives</Typography>
+      <Typography variant="h5">Batchmates</Typography>
+
       <Paper
         elevation={3}
         sx={{ backgroundColor: theme.palette.background.paper, mt: 2 }}
@@ -90,10 +84,10 @@ const InitiativesTable = () => {
             <Box display="flex" justifyContent="center" alignItems="center">
               <CircularProgress />
             </Box>
-          ) : InitiativesData?.length > 0 ? (
+          ) : eventData?.length > 0 ? (
             <Box sx={{ height: "100%", width: "100%" }}>
               <DataGrid
-                rows={InitiativesData}
+                rows={rows}
                 columns={columns}
                 disableColumnFilter
                 disableDensitySelector
@@ -118,7 +112,7 @@ const InitiativesTable = () => {
               variant="h6"
               component="div"
             >
-              No Initiatives Available !!
+              No Data Available !!
             </Typography>
           )}
         </CardContent>
@@ -127,4 +121,4 @@ const InitiativesTable = () => {
   );
 };
 
-export default InitiativesTable;
+export default BatchmateTable;

@@ -10,10 +10,8 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Grid,
   styled,
   Typography,
-  Box,
 } from "@mui/material";
 
 const SectionTitle = styled(Typography)(({ theme }) => ({

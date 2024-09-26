@@ -30,7 +30,7 @@ const EventTable = () => {
     { headerName: "Name", field: "name", width: 250 },
     { headerName: "Start Date", field: "start_date", width: 170 },
     { headerName: "End Date", field: "end_date", width: 170 },
-    { headerName: "Description", field: "description", width: 300 },
+    { headerName: "Description", field: "description", width: 500 },
   ];
 
   const fetchData = async (url, setData) => {
@@ -72,48 +72,52 @@ const EventTable = () => {
   }));
 
   return (
-    <Paper
-      elevation={3}
-      sx={{ backgroundColor: theme.palette.background.paper }}
-    >
-      <CardContent>
-        {isLoading ? (
-          <Box display="flex" justifyContent="center" alignItems="center">
-            <CircularProgress />
-          </Box>
-        ) : eventData?.length > 0 ? (
-          <Box sx={{ height: "100%", width: "100%" }}>
-            <DataGrid
-              rows={rows}
-              columns={columns}
-              disableColumnFilter
-              disableDensitySelector
-              getRowClassName={(params) =>
-                params.indexRelativeToCurrentPage % 2 === 0
-                  ? "evenRow"
-                  : "oddRow"
-              }
-              slots={{ toolbar: GridToolbar }}
-              slotProps={{
-                toolbar: {
-                  showQuickFilter: true,
-                },
-              }}
-            />
-          </Box>
-        ) : (
-          <Typography
-            color="error"
-            sx={{ mt: 2 }}
-            align="center"
-            variant="h6"
-            component="div"
-          >
-            No Events Available !!
-          </Typography>
-        )}
-      </CardContent>
-    </Paper>
+    <>
+      <Typography variant="h5">Upcoming Events</Typography>
+
+      <Paper
+        elevation={3}
+        sx={{ backgroundColor: theme.palette.background.paper, mt: 2 }}
+      >
+        <CardContent>
+          {isLoading ? (
+            <Box display="flex" justifyContent="center" alignItems="center">
+              <CircularProgress />
+            </Box>
+          ) : eventData?.length > 0 ? (
+            <Box sx={{ height: "100%", width: "100%" }}>
+              <DataGrid
+                rows={rows}
+                columns={columns}
+                disableColumnFilter
+                disableDensitySelector
+                getRowClassName={(params) =>
+                  params.indexRelativeToCurrentPage % 2 === 0
+                    ? "evenRow"
+                    : "oddRow"
+                }
+                slots={{ toolbar: GridToolbar }}
+                slotProps={{
+                  toolbar: {
+                    showQuickFilter: true,
+                  },
+                }}
+              />
+            </Box>
+          ) : (
+            <Typography
+              color="error"
+              sx={{ mt: 2 }}
+              align="center"
+              variant="h6"
+              component="div"
+            >
+              No Events Available !!
+            </Typography>
+          )}
+        </CardContent>
+      </Paper>
+    </>
   );
 };
 

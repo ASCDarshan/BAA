@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   AppBar,
   Toolbar,
@@ -14,8 +14,13 @@ import { useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import LogoImg from "../../../../images/BAA.png";
+import ajaxCall from "../../../helpers/ajaxCall";
 
-const Navbar = ({ onDrawerToggle, userProfileData }) => {
+const Navbar = ({ handleDrawerToggle }) => {
+  const [userProfileData, setUserProfileData] = useState([]);
+  const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
+  const userID = loginInfo?.userId;
+
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
   const navigate = useNavigate();
@@ -35,7 +40,7 @@ const Navbar = ({ onDrawerToggle, userProfileData }) => {
 
   const handleViewProfile = () => {
     handleMenuClose();
-    navigate("/userProfile");
+    navigate("/dashboard/userProfile");
   };
 
   const handleLogout = () => {
@@ -43,6 +48,36 @@ const Navbar = ({ onDrawerToggle, userProfileData }) => {
     localStorage.removeItem("loginInfo");
     navigate("/login");
   };
+
+  const fetchData = async (url, setData) => {
+    try {
+      const response = await ajaxCall(
+        url,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
+            }`,
+          },
+          method: "GET",
+        },
+        8000
+      );
+      if (response?.status === 200) {
+        setData(response?.data || []);
+      } else {
+        console.error("Fetch error:", response);
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData(`profiles/user-profile/${userID}/`, setUserProfileData);
+  }, []);
 
   return (
     <AppBar
@@ -59,7 +94,7 @@ const Navbar = ({ onDrawerToggle, userProfileData }) => {
             color="inherit"
             aria-label="open drawer"
             edge="start"
-            onClick={onDrawerToggle}
+            onClick={handleDrawerToggle}
             sx={{ mr: 2 }}
           >
             <MenuIcon />
@@ -70,14 +105,16 @@ const Navbar = ({ onDrawerToggle, userProfileData }) => {
           src={LogoImg}
           alt="BAA Logo"
           sx={{ height: 60 }}
-          ml={2}
+          ml={7}
         />
 
-        <Box display="flex" alignItems="center" mr={2}>
+        <Box display="flex" alignItems="center" mr={4}>
           <IconButton onClick={handleAvatarClick}>
             <Avatar>{username.charAt(0).toUpperCase()}</Avatar>
           </IconButton>
-          <Typography variant="body1">{username}</Typography>
+          <Typography variant="body1" sx={{ ml: 1 }}>
+            {username}
+          </Typography>
         </Box>
 
         <Menu
@@ -95,6 +132,7 @@ const Navbar = ({ onDrawerToggle, userProfileData }) => {
             },
           }}
         >
+          <MenuItem>Alumni Number : {userID}</MenuItem>
           <MenuItem onClick={handleViewProfile}>View Profile</MenuItem>
           <MenuItem onClick={handleLogout}>Logout</MenuItem>
         </Menu>

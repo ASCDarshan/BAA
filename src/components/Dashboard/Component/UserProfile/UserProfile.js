@@ -1,18 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Box, useMediaQuery } from "@mui/material";
+import { Box } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import {
-  Event as EventIcon,
-  Description as ResourcesIcon,
-} from "@mui/icons-material";
-import { Home as HomeIcon, ExitToApp as LogoutIcon } from "@mui/icons-material";
-import Navbar from "../Navbar/Navbar";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import Sidebar from "../SideBar/Sidebar";
 import ajaxCall from "../../../helpers/ajaxCall";
 import ProfileForm from "./ProfileForm";
-
-const drawerWidth = 240;
 
 const theme = createTheme({
   palette: {
@@ -33,20 +23,6 @@ const UserProfile = () => {
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
   const userID = loginInfo?.userId;
 
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
-
-  const handleDrawerToggle = () => {
-    setDrawerOpen(!drawerOpen);
-  };
-
-  const menuItems = [
-    { text: "Home", icon: <HomeIcon />, link: "/dashboard" },
-    { text: "Events", icon: <EventIcon />, link: "/addEvents" },
-    { text: "Initiatives", icon: <ResourcesIcon />, link: "/addInitiatives" },
-    { text: "Profile", icon: <AccountCircleIcon />, link: "/userProfile" },
-    { text: "Log Out", icon: <LogoutIcon />, link: "/login" },
-  ];
   const fetchData = async (url, setData) => {
     try {
       const response = await ajaxCall(
@@ -84,14 +60,6 @@ const UserProfile = () => {
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ display: "flex" }}>
-        <Navbar userProfileData={userProfileData} />
-        <Sidebar
-          isSmallScreen={isSmallScreen}
-          drawerOpen={drawerOpen}
-          handleDrawerToggle={handleDrawerToggle}
-          menuItems={menuItems}
-          drawerWidth={drawerWidth}
-        />
         <ProfileForm
           userID={userID}
           userProfileData={userProfileData}

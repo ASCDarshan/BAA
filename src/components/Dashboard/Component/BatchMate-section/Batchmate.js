@@ -2,8 +2,7 @@ import React from "react";
 import { Box, Container } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
-import AddEvents from "./AddEvents";
-import EventTable from "./EventTable";
+import BatchmateTable from "./BatchmateTable";
 
 const theme = createTheme({
   palette: {
@@ -17,21 +16,16 @@ const theme = createTheme({
   },
 });
 
-const EventSection = () => {
-  const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
-  const userID = loginInfo?.userId;
-  const UserRole = loginInfo?.userRole;
-
+const Batchmate = () => {
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ display: "flex" }}>
         <Container sx={{ mt: 10 }}>
-          <EventTable />
-          {UserRole == "Superuser" && <AddEvents userID={userID} />}
+          <BatchmateTable />
         </Container>
       </Box>
     </ThemeProvider>
   );
 };
 
-export default EventSection;
+export default Batchmate;

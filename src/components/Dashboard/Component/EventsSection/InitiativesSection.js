@@ -1,19 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { Box, Container, useMediaQuery } from "@mui/material";
+import React from "react";
+import { Box, Container } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import {
-  Event as EventIcon,
-  Description as ResourcesIcon,
-} from "@mui/icons-material";
-import { Home as HomeIcon, ExitToApp as LogoutIcon } from "@mui/icons-material";
-import Navbar from "../Navbar/Navbar";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import Sidebar from "../SideBar/Sidebar";
-import ajaxCall from "../../../helpers/ajaxCall";
+
 import AddInitiatives from "./AddInitiatives";
 import InitiativesTable from "./InitiativesTable";
-
-const drawerWidth = 240;
 
 const theme = createTheme({
   palette: {
@@ -28,67 +18,13 @@ const theme = createTheme({
 });
 
 const InitiativesSection = () => {
-  const [userProfileData, setUserProfileData] = useState([]);
-
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
   const userID = loginInfo?.userId;
   const UserRole = loginInfo?.userRole;
 
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
-
-  const handleDrawerToggle = () => {
-    setDrawerOpen(!drawerOpen);
-  };
-
-  const menuItems = [
-    { text: "Home", icon: <HomeIcon />, link: "/dashboard" },
-    { text: "Events", icon: <EventIcon />, link: "/addEvents" },
-    { text: "Initiatives", icon: <ResourcesIcon />, link: "/addInitiatives" },
-    { text: "Profile", icon: <AccountCircleIcon />, link: "/userProfile" },
-    { text: "Log Out", icon: <LogoutIcon />, link: "/login" },
-  ];
-  const fetchData = async (url, setData) => {
-    try {
-      const response = await ajaxCall(
-        url,
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${
-              JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
-            }`,
-          },
-          method: "GET",
-        },
-        8000
-      );
-      if (response?.status === 200) {
-        setData(response?.data || []);
-      } else {
-        console.error("Fetch error:", response);
-      }
-    } catch (error) {
-      console.error("Network error:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchData(`profiles/user-profile/${userID}/`, setUserProfileData);
-  }, []);
-
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ display: "flex" }}>
-        <Navbar userProfileData={userProfileData} />
-        <Sidebar
-          isSmallScreen={isSmallScreen}
-          drawerOpen={drawerOpen}
-          handleDrawerToggle={handleDrawerToggle}
-          menuItems={menuItems}
-          drawerWidth={drawerWidth}
-        />
         <Container sx={{ mt: 10 }}>
           <InitiativesTable />
           {UserRole == "Superuser" && <AddInitiatives userID={userID} />}
