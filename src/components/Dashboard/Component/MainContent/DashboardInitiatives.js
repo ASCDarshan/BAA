@@ -76,7 +76,7 @@ const DashboardInitiatives = ({ initiativesData }) => {
         8000
       );
       if ([200, 201].includes(response.status)) {
-        toast.success("Donation Completed Successfully");
+        toast.success("Donate Successfully");
         setFormData(InitialData);
       } else {
         toast.error("Some Problem Occurred. Please try again.");
@@ -126,6 +126,7 @@ const DashboardInitiatives = ({ initiativesData }) => {
             name="amount"
             value={formData.amount}
             onChange={handlePaymentChange}
+            required
           />
           <Button
             variant="contained"

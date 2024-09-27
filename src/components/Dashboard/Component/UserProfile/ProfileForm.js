@@ -7,7 +7,6 @@ import {
   Checkbox,
   FormControlLabel,
   Container,
-  Typography,
   Paper,
   createTheme,
   Tabs,
@@ -15,6 +14,7 @@ import {
 } from "@mui/material";
 import { toast } from "react-toastify";
 import ajaxCall from "../../../helpers/ajaxCall";
+import Breadcrumb from "../../../../Ul/Breadcrumb";
 
 const theme = createTheme({
   palette: {
@@ -70,7 +70,7 @@ const ProfileForm = ({ userID }) => {
       }
     };
     fetchData();
-  }, []);
+  }, [userID]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -531,9 +531,7 @@ const ProfileForm = ({ userID }) => {
           elevation={3}
           sx={{ p: 3, backgroundColor: theme.palette.background.paper }}
         >
-          <Typography variant="h5" mb={2}>
-            Update Profile
-          </Typography>
+          <Breadcrumb title="Update Profile" main="Dashboard" />
           <Tabs
             value={activeTab}
             onChange={handleTabChange}

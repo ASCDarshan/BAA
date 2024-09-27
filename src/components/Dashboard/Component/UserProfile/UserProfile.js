@@ -18,7 +18,6 @@ const theme = createTheme({
 
 const UserProfile = () => {
   const [userProfileData, setUserProfileData] = useState([]);
-  const [count, setCount] = useState(0);
 
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
   const userID = loginInfo?.userId;
@@ -51,20 +50,12 @@ const UserProfile = () => {
 
   useEffect(() => {
     fetchData(`profiles/user-profile/${userID}/`, setUserProfileData);
-  }, [count]);
-
-  const handleCount = () => {
-    setCount(1);
-  };
+  }, [userID]);
 
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ display: "flex" }}>
-        <ProfileForm
-          userID={userID}
-          userProfileData={userProfileData}
-          handleCount={handleCount}
-        />
+        <ProfileForm userID={userID} userProfileData={userProfileData} />
       </Box>
     </ThemeProvider>
   );

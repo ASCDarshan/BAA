@@ -16,11 +16,12 @@ import Footers from "./components/LandingPage/Component/Footer/Footers";
 import Dashboard from "./components/Dashboard/Component/Dashboard";
 import AdminNavbar from "./components/Dashboard/Component/Navbar/Navbar";
 import AdminSidebar from "./components/Dashboard/Component/SideBar/Sidebar";
+import Profile from "./components/Dashboard/Component/UserProfile/Profile";
 import UserProfile from "./components/Dashboard/Component/UserProfile/UserProfile";
-import DisplayUser from "./components/Dashboard/Component/UserProfile/DisplayUser";
 import EventSection from "./components/Dashboard/Component/EventsSection/EventSection";
 import InitiativesSection from "./components/Dashboard/Component/EventsSection/InitiativesSection";
 import Batchmate from "./components/Dashboard/Component/BatchMate-section/Batchmate";
+import CheckUser from "./components/Dashboard/Component/UserProfile/CheckUser";
 
 const theme = createTheme({
   palette: {
@@ -32,17 +33,7 @@ const theme = createTheme({
 
 function App() {
   const location = useLocation();
-  const hideFooterPaths = [
-    "/login",
-    "/register",
-    "/dashboard",
-    "/dashboard/addEvents",
-    "/dashboard/addInitiatives",
-    "/dashboard/updateProfile",
-    "/dashboard/subEvents",
-    "/dashboard/userProfile",
-    "/dashboard/batchmates",
-  ];
+  const hideFooterPaths = ["/login", "/register", "/dashboard"];
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const handleDrawerToggle = () => {
@@ -68,7 +59,6 @@ function App() {
           handleDrawerToggle={handleDrawerToggle}
         />
         <Outlet />
-        {!hideFooterPaths.includes(location.pathname) && <Footers />}
       </>
     );
   };
@@ -93,8 +83,12 @@ function App() {
             path="/dashboard/addInitiatives"
             element={<InitiativesSection />}
           />
-          <Route path="/dashboard/userProfile" element={<DisplayUser />} />
+          <Route path="/dashboard/userProfile" element={<Profile />} />
           <Route path="/dashboard/updateProfile" element={<UserProfile />} />
+          <Route
+            path="/dashboard/userProfile/:UserId"
+            element={<CheckUser />}
+          />
           <Route path="/dashboard/batchmates" element={<Batchmate />} />
         </Route>
       </Routes>

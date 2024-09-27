@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import ajaxCall from "../../../helpers/ajaxCall";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import Breadcrumb from "../../../../Ul/Breadcrumb";
 
 const theme = createTheme({
   palette: {
@@ -35,12 +36,17 @@ const InitiativesTable = () => {
     {
       headerName: "Description",
       field: "purpose",
-      width: 600,
+      width: 450,
     },
     {
       headerName: "Total Funds Required",
       field: "total_funds_required",
-      width: 300,
+      width: 250,
+    },
+    {
+      headerName: "Total Funds Raised",
+      field: "current_funds",
+      width: 250,
     },
   ];
 
@@ -80,7 +86,7 @@ const InitiativesTable = () => {
 
   return (
     <>
-      <Typography variant="h5">Initiatives</Typography>
+      <Breadcrumb title="Initiatives" main="Dashboard" />
       <Paper
         elevation={3}
         sx={{ backgroundColor: theme.palette.background.paper, mt: 2 }}

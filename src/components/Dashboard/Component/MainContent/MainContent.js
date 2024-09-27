@@ -17,7 +17,6 @@ import {
   InputAdornment,
   CircularProgress,
   CardMedia,
-  Chip,
 } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { Add as AddIcon } from "@mui/icons-material";
@@ -31,12 +30,7 @@ import DashboardEvents from "./DashboardEvents";
 import DashboardInitiatives from "./DashboardInitiatives";
 import DashboardUsers from "./DashboardUsers";
 
-const MainContent = ({
-  userID,
-  recommendedTopics,
-  eventsData,
-  initiativesData,
-}) => {
+const MainContent = ({ userID, eventsData, initiativesData }) => {
   const initialData = {
     images: [],
     likes: [],
@@ -381,16 +375,6 @@ const MainContent = ({
           )}
         </Grid>
         <Grid item xs={12} md={4}>
-          <Paper sx={{ p: 2, mb: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Recommended Topics
-            </Typography>
-            <Box sx={{ display: "flex", flexWrap: "wrap" }}>
-              {recommendedTopics.map((topic) => (
-                <Chip key={topic} label={topic} sx={{ m: 0.5 }} />
-              ))}
-            </Box>
-          </Paper>
           <DashboardEvents eventsData={eventsData} />
           <DashboardInitiatives initiativesData={initiativesData} />
           <DashboardUsers />

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   Box,
   Grid,
@@ -23,6 +23,7 @@ import {
   Work as WorkIcon,
 } from "@mui/icons-material";
 import ajaxCall from "../../../helpers/ajaxCall";
+import { toast } from "react-toastify";
 
 const theme = createTheme({
   palette: {
@@ -36,17 +37,12 @@ const theme = createTheme({
   },
 });
 
-const UserProfile = () => {
+const CheckUser = () => {
   const [userProfileData, setUserProfileData] = useState(null);
-  const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
-  const userID = loginInfo?.userId;
+  const { UserId } = useParams();
   const [tabValue, setTabValue] = useState(0);
-
-  const navigate = useNavigate();
-
-  const handleUpdateProfile = () => {
-    navigate("/dashboard/updateProfile");
-  };
+  const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
+  const LoginUserID = loginInfo?.userId;
 
   const fetchData = async (url, setData) => {
     try {
@@ -75,8 +71,8 @@ const UserProfile = () => {
   };
 
   useEffect(() => {
-    fetchData(`profiles/user-profile/${userID}/`, setUserProfileData);
-  }, [userID]);
+    fetchData(`profiles/user-profile/${UserId}/`, setUserProfileData);
+  }, [UserId]);
   if (!userProfileData) return null;
 
   const {
@@ -110,9 +106,36 @@ const UserProfile = () => {
     user: { username },
   } = userProfileData;
 
-  // Function to handle tab change
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
+  };
+
+  const handleFollow = async (e, LoginUserID) => {
+    e.preventDefault();
+    const formData = { id: LoginUserID };
+    const formDataToSend = JSON.stringify(formData);
+
+    try {
+      const response = await ajaxCall(
+        ``,
+        {
+          method: "POST",
+          body: formDataToSend,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${loginInfo?.accessToken}`,
+          },
+        },
+        8000
+      );
+      if ([200, 201].includes(response.status)) {
+        toast.success("Following Successfully");
+      } else {
+        toast.error("Some Problem Occurred. Please try again.");
+      }
+    } catch (error) {
+      toast.error("Some Problem Occurred. Please try again.");
+    }
   };
 
   return (
@@ -147,6 +170,17 @@ const UserProfile = () => {
                   </IconButton>
                 </Box>
               </Card>
+              <Grid>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="small"
+                  onClick={handleFollow}
+                  sx={{ mt: 2 }}
+                >
+                  Follow
+                </Button>
+              </Grid>
             </Grid>
 
             <Grid item xs={12} sm={8}>
@@ -159,7 +193,7 @@ const UserProfile = () => {
                   <Tab label="Additional Info" />
                 </Tabs>
 
-                {/* Tab Panels */}
+                {/* Tabs */}
                 {tabValue === 0 && (
                   <Box sx={{ mt: 2 }}>
                     <Typography variant="h6" sx={{ mb: 2 }}>
@@ -270,17 +304,6 @@ const UserProfile = () => {
                     </Typography>
                   </Box>
                 )}
-
-                <Box mt={3} textAlign="right">
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleUpdateProfile}
-                    size="small"
-                  >
-                    Update Profile
-                  </Button>
-                </Box>
               </Paper>
             </Grid>
           </Grid>
@@ -290,4 +313,4 @@ const UserProfile = () => {
   );
 };
 
-export default UserProfile;
+export default CheckUser;
