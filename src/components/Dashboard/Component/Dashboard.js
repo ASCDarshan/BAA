@@ -1,15 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Box, useMediaQuery } from "@mui/material";
+import { Box } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { Home as HomeIcon, ExitToApp as LogoutIcon } from "@mui/icons-material";
-import Navbar from "./Navbar/Navbar";
-import {
-  Event as EventIcon,
-  Description as ResourcesIcon,
-} from "@mui/icons-material";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import MainContent from "./MainContent/MainContent";
-import Sidebar from "./SideBar/Sidebar";
 import ajaxCall from "../../helpers/ajaxCall";
 
 const theme = createTheme({
@@ -30,15 +22,6 @@ const Dashboard = () => {
 
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
   const userID = loginInfo?.userId;
-
-  const recommendedTopics = [
-    "Freelance",
-    "Productivity",
-    "Business",
-    "Psychology",
-    "Tips",
-    "Mindfulness",
-  ];
 
   const fetchData = async (url, setData) => {
     try {
@@ -75,7 +58,6 @@ const Dashboard = () => {
     <ThemeProvider theme={theme}>
       <Box sx={{ display: "flex" }}>
         <MainContent
-          recommendedTopics={recommendedTopics}
           eventsData={eventsData}
           initiativesData={initiativesData}
           userID={userID}

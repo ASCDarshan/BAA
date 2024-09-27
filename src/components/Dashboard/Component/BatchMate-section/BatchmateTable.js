@@ -9,6 +9,8 @@ import {
 } from "@mui/material";
 import ajaxCall from "../../../helpers/ajaxCall";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import Breadcrumb from "../../../../Ul/Breadcrumb";
+import { Link } from "react-router-dom";
 
 const theme = createTheme({
   palette: {
@@ -27,10 +29,47 @@ const BatchmateTable = () => {
   const [eventData, setEventData] = useState([]);
 
   const columns = [
-    { headerName: "Name", field: "name", width: 250 },
-    { headerName: "Start Date", field: "start_date", width: 170 },
-    { headerName: "End Date", field: "end_date", width: 170 },
-    { headerName: "Description", field: "description", width: 500 },
+    {
+      headerName: "Username",
+      field: "username",
+      width: 150,
+      renderCell: (params) => {
+        const userId = params?.row?.user?.id;
+        const username = params?.row?.user?.username;
+        return userId ? (
+          <Link to={`/dashboard/userProfile/${userId}`}>{username}</Link>
+        ) : (
+          " - "
+        );
+      },
+      valueGetter: (params) => params?.row?.user?.username || " - ",
+    },
+    {
+      headerName: "Phone Number",
+      field: "phone_number",
+      width: 150,
+      valueGetter: (params) => params?.row?.phone_number || " - ",
+    },
+    {
+      headerName: "Batch Year",
+      field: "school_graduation_year",
+      width: 150,
+      renderCell: (params) => {
+        const email = params?.row?.school_graduation_year || " - ";
+        return email;
+      },
+      valueGetter: (params) => params?.row?.school_graduation_year || " - ",
+    },
+    {
+      headerName: "Email",
+      field: "email",
+      width: 200,
+      renderCell: (params) => {
+        const email = params?.row?.user?.email || " - ";
+        return email;
+      },
+      valueGetter: (params) => params?.row?.user?.email || " - ",
+    },
   ];
 
   const fetchData = async (url, setData) => {
@@ -51,7 +90,13 @@ const BatchmateTable = () => {
         8000
       );
       if (response?.status === 200) {
-        setData(response?.data || []);
+        const currentUserId = JSON.parse(
+          localStorage.getItem("loginInfo")
+        )?.userId;
+        const filteredData =
+          response?.data?.filter((user) => user.user.id !== currentUserId) ||
+          [];
+        setData(filteredData);
         setIsLoading(false);
       } else {
         console.error("Fetch error:", response);
@@ -63,7 +108,7 @@ const BatchmateTable = () => {
   };
 
   useEffect(() => {
-    fetchData("events/events/", setEventData);
+    fetchData("profiles/user-profile/", setEventData);
   }, []);
 
   const rows = eventData.map((event, index) => ({
@@ -73,8 +118,7 @@ const BatchmateTable = () => {
 
   return (
     <>
-      <Typography variant="h5">Batchmates</Typography>
-
+      <Breadcrumb title="Batchmates" main="Dashboard" />
       <Paper
         elevation={3}
         sx={{ backgroundColor: theme.palette.background.paper, mt: 2 }}

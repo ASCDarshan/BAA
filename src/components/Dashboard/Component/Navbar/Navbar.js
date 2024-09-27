@@ -77,7 +77,7 @@ const Navbar = ({ handleDrawerToggle }) => {
 
   useEffect(() => {
     fetchData(`profiles/user-profile/${userID}/`, setUserProfileData);
-  }, []);
+  }, [userID]);
 
   return (
     <AppBar
@@ -112,7 +112,11 @@ const Navbar = ({ handleDrawerToggle }) => {
           <IconButton onClick={handleAvatarClick}>
             <Avatar>{username.charAt(0).toUpperCase()}</Avatar>
           </IconButton>
-          <Typography variant="body1" sx={{ ml: 1 }}>
+          <Typography
+            variant="body1"
+            sx={{ ml: 1 }}
+            onClick={handleAvatarClick}
+          >
             {username}
           </Typography>
         </Box>

@@ -37,7 +37,7 @@ const Register = () => {
         8000
       );
       if (response?.status === 201) {
-        toast.success("Registration successful:");
+        toast.success("Registration successful");
         navigate("/login");
       } else {
         toast.error("Registration failed. Please try again");

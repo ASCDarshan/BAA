@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import ajaxCall from "../../../helpers/ajaxCall";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import Breadcrumb from "../../../../Ul/Breadcrumb";
 
 const theme = createTheme({
   palette: {
@@ -73,8 +74,7 @@ const EventTable = () => {
 
   return (
     <>
-      <Typography variant="h5">Upcoming Events</Typography>
-
+      <Breadcrumb title="Upcoming Events" main="Dashboard" />
       <Paper
         elevation={3}
         sx={{ backgroundColor: theme.palette.background.paper, mt: 2 }}
