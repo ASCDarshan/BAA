@@ -24,6 +24,13 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
 }));
 
 const Initiatives = ({ InitiativesData }) => {
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
   return (
     <Container sx={{ mt: 4 }}>
       <SectionTitle variant="h4">Initiatives</SectionTitle>
@@ -39,9 +46,9 @@ const Initiatives = ({ InitiativesData }) => {
                   {event.purpose}
                 </Typography>
                 <Typography variant="body1" paragraph>
-                  Starts from: {event.start_date} to {event.end_date} <br />
-                  Total Funds Required: {event.total_funds_required} <br />
-                  Fund Deadline: {event.funds_deadline}
+                  Starts from : {formatDate(event.start_date)} to{" "}
+                  {formatDate(event.end_date)} <br />
+                  Total Funds Required : {event.total_funds_required} <br />
                 </Typography>
               </CardContent>
             </Grid>

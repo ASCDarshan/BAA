@@ -9,6 +9,7 @@ import {
   TextField,
   Button,
   Box,
+  CircularProgress,
 } from "@mui/material";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "react-toastify";
@@ -29,6 +30,7 @@ const DashboardInitiatives = ({ initiativesData }) => {
 
   const [formData, setFormData] = useState(InitialData);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [loading, setLoading] = useState(false); // State for loading
 
   const handlePrevious = () => {
     setCurrentIndex((prevIndex) =>
@@ -65,23 +67,23 @@ const DashboardInitiatives = ({ initiativesData }) => {
   }
 
   const handlePay = async () => {
+    setLoading(true); // Set loading to true when starting to load the script
     const res = await loadScript(
       "https://checkout.razorpay.com/v1/checkout.js"
     );
+
+    setLoading(false); // Set loading to false after script is loaded
 
     if (!res) {
       alert("Razorpay SDK failed to load. Are you online?");
       return;
     }
 
-    // creating a new order
-
     const body = {
       category_id: 1,
+      event_id: 1,
       amount: formData.amount,
     };
-
-    // const result = await axios.post("http://localhost:5000/payment/orders");
 
     const response = await ajaxCall(
       "accounts/payment/initiate/",
@@ -106,8 +108,6 @@ const DashboardInitiatives = ({ initiativesData }) => {
     // Getting the order details back
     const order = response.data;
 
-    const userData = JSON.parse(localStorage.getItem("loginInfo"));
-
     const options = {
       key: "rzp_test_rVcN4qbDNcdN9s",
       amount: formData.amount,
@@ -115,15 +115,12 @@ const DashboardInitiatives = ({ initiativesData }) => {
       order_id: order.order_id,
       handler: async function (response) {
         const data = {
-          transaction_id: response.razorpay_order_id,
-          payment_id: response.razorpay_payment_id,
-          signature_id: response.razorpay_signature,
-          amount: formData.amount,
-          donor: userID,
-          initiative: initiativesData[currentIndex].id,
+          razorpay_order_id: response.razorpay_order_id,
+          razorpay_payment_id: response.razorpay_payment_id,
+          razorpay_signature: response.razorpay_order_id,
         };
         const result = await ajaxCall(
-          "initiatives/donations/",
+          "accounts/payment/success/",
           {
             headers: {
               Accept: "application/json",
@@ -143,15 +140,12 @@ const DashboardInitiatives = ({ initiativesData }) => {
         }
       },
       prefill: {
-        name: userData?.username,
-        // email: userDetails?.user?.email,
-        // contact: userDetails?.phone_no,
-      },
-      notes: {
-        address: "Razorpay Corporate Office",
+        name: "Darshan Patel",
+        email: "test.@example.com",
+        contact: "9999999999",
       },
       theme: {
-        color: "#61dafb",
+        color: "#F37254",
       },
     };
 
@@ -206,8 +200,9 @@ const DashboardInitiatives = ({ initiativesData }) => {
             color="primary"
             onClick={handlePay}
             size="small"
+            disabled={loading} // Disable button while loading
           >
-            Pay
+            {loading ? <CircularProgress size={24} /> : "Pay"}
           </Button>
         </Box>
       )}

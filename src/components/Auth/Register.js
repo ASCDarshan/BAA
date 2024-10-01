@@ -8,7 +8,7 @@ import {
   Paper,
   CircularProgress,
 } from "@mui/material";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import ajaxCall from "../helpers/ajaxCall";
@@ -16,7 +16,6 @@ import { toast } from "react-toastify";
 
 const Register = () => {
   const [isLoading, setIsLoading] = React.useState(false);
-  const navigate = useNavigate();
 
   const fetchData = async (url, data) => {
     setIsLoading(true);
@@ -37,8 +36,9 @@ const Register = () => {
         8000
       );
       if (response?.status === 201) {
-        toast.success("Registration successful");
-        navigate("/login");
+        toast.success(
+          "Mail send successfully. Please Check Your Mail and Verify"
+        );
       } else {
         toast.error("Registration failed. Please try again");
       }

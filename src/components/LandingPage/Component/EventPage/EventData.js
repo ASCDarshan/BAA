@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  Button,
   Card,
   CardContent,
   CardMedia,
@@ -7,11 +8,12 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ajaxCall from "../../../helpers/ajaxCall";
 import HeroBanner from "../Content/HeroBanner";
 
 const EventData = () => {
+  const navigate = useNavigate();
   const [eventData, setEventData] = useState([]);
   const [heroImages, setHeroImages] = useState([]);
   const { eventId } = useParams();
@@ -46,9 +48,23 @@ const EventData = () => {
     fetchData("website/hero-images/", setHeroImages);
   }, []);
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
   const formatTime = (timeString) => {
-    const [hours, minutes] = timeString.split(":");
-    return `${hours}:${minutes}`;
+    const [hour, minute] = timeString.split(":"); // Assuming time is in HH:mm format
+    const hour12 = hour % 12 || 12; // Convert to 12-hour format
+    const ampm = hour >= 12 ? "PM" : "AM"; // Determine AM/PM
+    return `${hour12}:${minute} ${ampm}`;
+  };
+
+  const handleRegistrations = () => {
+    navigate("/login");
   };
 
   return (
@@ -67,7 +83,8 @@ const EventData = () => {
                     {event.description}
                   </Typography>
                   <Typography variant="body1" paragraph>
-                    Starts from {event.start_date} to {event.end_date} <br />
+                    Starts from {formatDate(event.start_date)} to{" "}
+                    {formatDate(event.end_date)} <br />
                     At {formatTime(event.start_time)} to{" "}
                     {formatTime(event.end_time)}
                   </Typography>
@@ -127,6 +144,22 @@ const EventData = () => {
                               ))}
                             </>
                           )}
+                          <Grid
+                            item
+                            xs={12}
+                            container
+                            justifyContent="flex-start"
+                            mt={2}
+                          >
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              size="small"
+                              onClick={handleRegistrations}
+                            >
+                              Registrate
+                            </Button>
+                          </Grid>
                         </div>
                       ))}
                     </>

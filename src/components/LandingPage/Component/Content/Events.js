@@ -28,10 +28,6 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
 
 const Events = ({ eventsData }) => {
   const navigate = useNavigate();
-  const formatTime = (timeString) => {
-    const [hours, minutes] = timeString.split(":");
-    return `${hours}:${minutes}`;
-  };
 
   const handleKnowMore = (eventId) => {
     navigate(`/events/${eventId}/`);
@@ -58,11 +54,7 @@ const Events = ({ eventsData }) => {
                 <Typography variant="body1" paragraph>
                   {event.description}
                 </Typography>
-                <Typography variant="body1" paragraph>
-                  Starts from {event.start_date} to {event.end_date} <br />
-                  At {formatTime(event.start_time)} to{" "}
-                  {formatTime(event.end_time)}
-                </Typography>
+
                 <Grid item xs={12} container justifyContent="flex-end" mt={2}>
                   <Button
                     variant="contained"

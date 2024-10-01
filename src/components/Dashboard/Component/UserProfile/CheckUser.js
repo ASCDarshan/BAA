@@ -39,6 +39,7 @@ const theme = createTheme({
 
 const CheckUser = () => {
   const [userProfileData, setUserProfileData] = useState(null);
+  console.log(userProfileData);
   const { UserId } = useParams();
   const [tabValue, setTabValue] = useState(0);
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
@@ -110,14 +111,14 @@ const CheckUser = () => {
     setTabValue(newValue);
   };
 
-  const handleFollow = async (e, LoginUserID) => {
+  const handleFollow = async (e) => {
     e.preventDefault();
-    const formData = { id: LoginUserID };
+    const formData = { user_to_follow: LoginUserID };
     const formDataToSend = JSON.stringify(formData);
 
     try {
       const response = await ajaxCall(
-        ``,
+        `profiles/follow/`,
         {
           method: "POST",
           body: formDataToSend,
