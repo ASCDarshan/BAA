@@ -22,6 +22,9 @@ import {
   School as SchoolIcon,
   Work as WorkIcon,
 } from "@mui/icons-material";
+import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
+import CallIcon from "@mui/icons-material/Call";
+import BackupTableIcon from "@mui/icons-material/BackupTable";
 import ajaxCall from "../../../helpers/ajaxCall";
 
 const theme = createTheme({
@@ -38,6 +41,7 @@ const theme = createTheme({
 
 const Profile = () => {
   const [userProfileData, setUserProfileData] = useState(null);
+  console.log(userProfileData);
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
   const userID = loginInfo?.userId;
   const [tabValue, setTabValue] = useState(0);
@@ -162,7 +166,7 @@ const Profile = () => {
                 {tabValue === 0 && (
                   <Box sx={{ mt: 2 }}>
                     <Typography variant="h6" sx={{ mb: 2 }}>
-                      Bio
+                      Bio <LibraryBooksIcon fontSize="small" />
                     </Typography>
                     <Typography variant="body1" paragraph>
                       {bio || "No bio available"}
@@ -178,7 +182,7 @@ const Profile = () => {
                 {tabValue === 1 && (
                   <Box sx={{ mt: 2 }}>
                     <Typography variant="h6" sx={{ mb: 2 }}>
-                      Contact Information
+                      Contact Information <CallIcon fontSize="small" />
                     </Typography>
                     <Typography variant="body1">
                       Email: {userProfileData.user.email}
@@ -255,7 +259,8 @@ const Profile = () => {
                 {tabValue === 4 && (
                   <Box sx={{ mt: 2 }}>
                     <Typography variant="h6" sx={{ mb: 2 }}>
-                      Additional Information
+                      Additional Information{" "}
+                      <BackupTableIcon fontSize="small" />
                     </Typography>
                     <Typography variant="body1">
                       Interest: {interests}

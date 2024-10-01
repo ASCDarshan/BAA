@@ -84,7 +84,7 @@ const Committee = ({ committeeData }) => {
                 <Typography gutterBottom variant="h5" component="div">
                   {member.name}
                 </Typography>
-                <Typography variant="h6" color="text.secondary">
+                <Typography color="text.secondary">
                   {member.designation}
                 </Typography>
                 <Button

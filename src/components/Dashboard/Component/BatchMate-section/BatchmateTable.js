@@ -5,6 +5,7 @@ import {
   CircularProgress,
   CardContent,
   Paper,
+  TextField,
   createTheme,
 } from "@mui/material";
 import ajaxCall from "../../../helpers/ajaxCall";
@@ -25,8 +26,9 @@ const theme = createTheme({
 });
 
 const BatchmateTable = () => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [eventData, setEventData] = useState([]);
+  const [searchYear, setSearchYear] = useState("");
 
   const columns = [
     {
@@ -37,7 +39,12 @@ const BatchmateTable = () => {
         const userId = params?.row?.user?.id;
         const username = params?.row?.user?.username;
         return userId ? (
-          <Link to={`/dashboard/userProfile/${userId}`}>{username}</Link>
+          <Link
+            to={`/dashboard/userProfile/${userId}`}
+            style={{ textDecoration: "none" }}
+          >
+            {username}
+          </Link>
         ) : (
           " - "
         );
@@ -72,9 +79,12 @@ const BatchmateTable = () => {
     },
   ];
 
-  const fetchData = async (url, setData) => {
+  const fetchData = async (year = "", setData) => {
     setIsLoading(true);
     try {
+      const url = year
+        ? `profiles/year-user/?year=${year}`
+        : "profiles/user-profile/";
       const response = await ajaxCall(
         url,
         {
@@ -97,19 +107,31 @@ const BatchmateTable = () => {
           response?.data?.filter((user) => user.user.id !== currentUserId) ||
           [];
         setData(filteredData);
-        setIsLoading(false);
       } else {
         console.error("Fetch error:", response);
-        setIsLoading(false);
       }
     } catch (error) {
       console.error("Network error:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchData("profiles/user-profile/", setEventData);
+    // Fetch initial data without any filter
+    fetchData("", setEventData);
   }, []);
+
+  const handleSearchChange = (e) => {
+    const year = e.target.value;
+    setSearchYear(year);
+
+    if (year.length === 4) {
+      fetchData(year, setEventData); // Fetch data by year
+    } else if (year.length === 0) {
+      fetchData("", setEventData); // Fetch all data when input is cleared
+    }
+  };
 
   const rows = eventData.map((event, index) => ({
     id: event.id || index,
@@ -124,6 +146,20 @@ const BatchmateTable = () => {
         sx={{ backgroundColor: theme.palette.background.paper, mt: 2 }}
       >
         <CardContent>
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            mb={2}
+          >
+            <TextField
+              label="Search by Year"
+              variant="outlined"
+              value={searchYear}
+              onChange={handleSearchChange}
+              sx={{ width: 200 }}
+            />
+          </Box>
           {isLoading ? (
             <Box display="flex" justifyContent="center" alignItems="center">
               <CircularProgress />
@@ -143,7 +179,7 @@ const BatchmateTable = () => {
                 slots={{ toolbar: GridToolbar }}
                 slotProps={{
                   toolbar: {
-                    showQuickFilter: true,
+                    showQuickFilter: false, // Disabling default DataGrid quick filter
                   },
                 }}
               />

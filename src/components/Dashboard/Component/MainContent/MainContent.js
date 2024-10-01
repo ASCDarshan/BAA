@@ -29,6 +29,7 @@ import PostShare from "./Like-comment-share/PostShare";
 import DashboardEvents from "./DashboardEvents";
 import DashboardInitiatives from "./DashboardInitiatives";
 import DashboardUsers from "./DashboardUsers";
+import { Link } from "react-router-dom";
 
 const MainContent = ({ userID, eventsData, initiativesData }) => {
   const initialData = {
@@ -237,7 +238,12 @@ const MainContent = ({ userID, eventsData, initiativesData }) => {
                       : "A"}
                   </Avatar>
                   <Typography variant="subtitle1">
-                    {data.author?.username}
+                    <Link
+                      to={`/dashboard/userProfile/${data.author.id}`}
+                      style={{ textDecoration: "none", color: "inherit" }}
+                    >
+                      {data.author?.username}
+                    </Link>
                   </Typography>
                   <Typography
                     variant="body2"
