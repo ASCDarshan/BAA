@@ -29,6 +29,7 @@ const BatchmateTable = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [eventData, setEventData] = useState([]);
   const [searchYear, setSearchYear] = useState("");
+  const [isYearSearchActive, setIsYearSearchActive] = useState(false);
 
   const columns = [
     {
@@ -62,8 +63,8 @@ const BatchmateTable = () => {
       field: "school_graduation_year",
       width: 150,
       renderCell: (params) => {
-        const email = params?.row?.school_graduation_year || " - ";
-        return email;
+        const year = params?.row?.school_graduation_year || " - ";
+        return year;
       },
       valueGetter: (params) => params?.row?.school_graduation_year || " - ",
     },
@@ -76,6 +77,26 @@ const BatchmateTable = () => {
         return email;
       },
       valueGetter: (params) => params?.row?.user?.email || " - ",
+    },
+    {
+      headerName: "School Graduation Years",
+      field: "school_graduation_year",
+      width: 200,
+      renderCell: (params) => {
+        const year = params?.row?.school_graduation_year || " - ";
+        return year;
+      },
+      valueGetter: (params) => params?.row?.school_graduation_year || " - ",
+    },
+    {
+      headerName: "Education",
+      field: "Education",
+      width: 200,
+      renderCell: (params) => {
+        const education = params?.row?.education || " - ";
+        return education;
+      },
+      valueGetter: (params) => params?.row?.education || " - ",
     },
   ];
 
@@ -104,8 +125,10 @@ const BatchmateTable = () => {
           localStorage.getItem("loginInfo")
         )?.userId;
         const filteredData =
-          response?.data?.filter((user) => user.user.id !== currentUserId) ||
-          [];
+          response?.data?.filter(
+            (user) =>
+              user.user.id !== currentUserId && user.user_type !== "Superuser"
+          ) || [];
         setData(filteredData);
       } else {
         console.error("Fetch error:", response);
@@ -118,18 +141,21 @@ const BatchmateTable = () => {
   };
 
   useEffect(() => {
-    // Fetch initial data without any filter
-    fetchData("", setEventData);
-  }, []);
+    if (!isYearSearchActive) {
+      fetchData("", setEventData);
+    }
+  }, [isYearSearchActive]);
 
   const handleSearchChange = (e) => {
     const year = e.target.value;
     setSearchYear(year);
 
     if (year.length === 4) {
-      fetchData(year, setEventData); // Fetch data by year
+      setIsYearSearchActive(true);
+      fetchData(year, setEventData);
     } else if (year.length === 0) {
-      fetchData("", setEventData); // Fetch all data when input is cleared
+      setIsYearSearchActive(false);
+      fetchData("", setEventData);
     }
   };
 
@@ -148,7 +174,7 @@ const BatchmateTable = () => {
         <CardContent>
           <Box
             display="flex"
-            justifyContent="center"
+            justifyContent="flex-end"
             alignItems="center"
             mb={2}
           >
@@ -157,7 +183,8 @@ const BatchmateTable = () => {
               variant="outlined"
               value={searchYear}
               onChange={handleSearchChange}
-              sx={{ width: 200 }}
+              sx={{ width: 150 }}
+              size="small"
             />
           </Box>
           {isLoading ? (
@@ -179,7 +206,7 @@ const BatchmateTable = () => {
                 slots={{ toolbar: GridToolbar }}
                 slotProps={{
                   toolbar: {
-                    showQuickFilter: false, // Disabling default DataGrid quick filter
+                    showQuickFilter: false,
                   },
                 }}
               />

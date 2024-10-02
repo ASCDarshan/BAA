@@ -39,11 +39,11 @@ const theme = createTheme({
 
 const CheckUser = () => {
   const [userProfileData, setUserProfileData] = useState(null);
-  console.log(userProfileData);
   const { UserId } = useParams();
   const [tabValue, setTabValue] = useState(0);
+  const [isFollowing, setIsFollowing] = useState(false);
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
-  const LoginUserID = loginInfo?.userId;
+  const loginUserId = loginInfo?.userId;
 
   const fetchData = async (url, setData) => {
     try {
@@ -53,9 +53,7 @@ const CheckUser = () => {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            Authorization: `Bearer ${
-              JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
-            }`,
+            Authorization: `Bearer ${loginInfo?.accessToken}`,
           },
           method: "GET",
         },
@@ -74,6 +72,13 @@ const CheckUser = () => {
   useEffect(() => {
     fetchData(`profiles/user-profile/${UserId}/`, setUserProfileData);
   }, [UserId]);
+
+  useEffect(() => {
+    if (userProfileData) {
+      setIsFollowing(userProfileData.follow_user.includes(loginUserId));
+    }
+  }, [userProfileData, loginUserId]);
+
   if (!userProfileData) return null;
 
   const {
@@ -113,7 +118,7 @@ const CheckUser = () => {
 
   const handleFollow = async (e) => {
     e.preventDefault();
-    const formData = { user_to_follow: LoginUserID };
+    const formData = { user_to_follow: UserId };
     const formDataToSend = JSON.stringify(formData);
 
     try {
@@ -131,6 +136,7 @@ const CheckUser = () => {
       );
       if ([200, 201].includes(response.status)) {
         toast.success("Following Successfully");
+        setIsFollowing(true);
       } else {
         toast.error("Some Problem Occurred. Please try again.");
       }
@@ -173,13 +179,13 @@ const CheckUser = () => {
               </Card>
               <Grid>
                 <Button
-                  variant="contained"
-                  color="primary"
+                  variant={isFollowing ? "outlined" : "contained"}
+                  color={isFollowing ? "inherit" : "primary"}
                   size="small"
                   onClick={handleFollow}
                   sx={{ mt: 2 }}
                 >
-                  Follow
+                  {isFollowing ? "Following" : "Follow"}
                 </Button>
               </Grid>
             </Grid>

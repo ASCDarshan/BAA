@@ -149,7 +149,6 @@ const MainContent = ({ userID, eventsData, initiativesData }) => {
 
     const formDataToSend = new FormData();
     formDataToSend.append("content", postData.content);
-    // formDataToSend.append("images", postData.images[0]);
     formDataToSend.append("images", postData.images[0]);
     formDataToSend.append("category", postData.category);
     formDataToSend.append("allow_likes", postData.allow_likes);

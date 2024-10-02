@@ -10,6 +10,7 @@ import {
 import ajaxCall from "../../../helpers/ajaxCall";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Breadcrumb from "../../../../Ul/Breadcrumb";
+import { Link } from "react-router-dom";
 
 const theme = createTheme({
   palette: {
@@ -28,7 +29,25 @@ const EventTable = () => {
   const [eventData, setEventData] = useState([]);
 
   const columns = [
-    { headerName: "Name", field: "name", width: 250 },
+    {
+      headerName: "Name",
+      field: "name",
+      width: 250,
+      renderCell: (params) => {
+        const eventId = params?.row?.id;
+        const name = params?.row?.name;
+        return eventId ? (
+          <Link
+            to={`/dashboard/eventData/${eventId}`}
+            style={{ textDecoration: "none" }}
+          >
+            {name}
+          </Link>
+        ) : (
+          " - "
+        );
+      },
+    },
     { headerName: "Start Date", field: "start_date", width: 170 },
     { headerName: "End Date", field: "end_date", width: 170 },
     { headerName: "Description", field: "description", width: 500 },

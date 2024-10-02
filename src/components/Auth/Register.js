@@ -187,14 +187,15 @@ const Register = () => {
               </Button>
             )}
             <Box sx={{ textAlign: "center" }}>
-              <Link
-                to="/login"
-                style={{ textDecoration: "none", color: "inherit" }}
-              >
-                <Typography variant="body2">
+              <Typography variant="body2">
+                <Link
+                  to="/login"
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
+                  {" "}
                   Already have an account? Sign In
-                </Typography>
-              </Link>
+                </Link>
+              </Typography>
             </Box>
           </Box>
         </Paper>

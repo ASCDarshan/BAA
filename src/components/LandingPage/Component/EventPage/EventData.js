@@ -51,15 +51,15 @@ const EventData = () => {
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
     return `${day}-${month}-${year}`;
   };
 
   const formatTime = (timeString) => {
-    const [hour, minute] = timeString.split(":"); // Assuming time is in HH:mm format
-    const hour12 = hour % 12 || 12; // Convert to 12-hour format
-    const ampm = hour >= 12 ? "PM" : "AM"; // Determine AM/PM
+    const [hour, minute] = timeString.split(":");
+    const hour12 = hour % 12 || 12;
+    const ampm = hour >= 12 ? "PM" : "AM";
     return `${hour12}:${minute} ${ampm}`;
   };
 

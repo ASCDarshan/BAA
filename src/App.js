@@ -22,6 +22,8 @@ import EventSection from "./components/Dashboard/Component/EventsSection/EventSe
 import InitiativesSection from "./components/Dashboard/Component/EventsSection/InitiativesSection";
 import Batchmate from "./components/Dashboard/Component/BatchMate-section/Batchmate";
 import CheckUser from "./components/Dashboard/Component/UserProfile/CheckUser";
+import DashboardEventData from "./components/Dashboard/Component/EventsSection/EventData";
+import DashboardInitiativesData from "./components/Dashboard/Component/EventsSection/InitiativeData";
 
 const theme = createTheme({
   palette: {
@@ -80,8 +82,16 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="/dashboard/addEvents" element={<EventSection />} />
           <Route
+            path="/dashboard/eventData/:eventId"
+            element={<DashboardEventData />}
+          />
+          <Route
             path="/dashboard/addInitiatives"
             element={<InitiativesSection />}
+          />
+          <Route
+            path="/dashboard/addInitiatives/:InitiativeId"
+            element={<DashboardInitiativesData />}
           />
           <Route path="/dashboard/userProfile" element={<Profile />} />
           <Route path="/dashboard/updateProfile" element={<UserProfile />} />
