@@ -15,7 +15,7 @@ import {
   FormControl,
   Checkbox,
   FormControlLabel,
-  CircularProgress, // Import CircularProgress
+  CircularProgress,
 } from "@mui/material";
 import ajaxCall from "../../../helpers/ajaxCall";
 import { toast } from "react-toastify";
@@ -42,6 +42,7 @@ const DashboardEvents = ({ eventsData }) => {
     setSelectedEvent(event);
     setFormData({
       ...formData,
+
       total_amount: event.amount || "",
       event: event.id,
     });
@@ -101,7 +102,6 @@ const DashboardEvents = ({ eventsData }) => {
       },
       8000
     );
-
     if (!response) {
       alert("Server error. Are you online?");
       return;
@@ -120,7 +120,7 @@ const DashboardEvents = ({ eventsData }) => {
         const data = {
           razorpay_order_id: response.razorpay_order_id,
           razorpay_payment_id: response.razorpay_payment_id,
-          razorpay_signature: response.razorpay.signature,
+          razorpay_signature: response.razorpay_signature,
         };
 
         const result = await ajaxCall(
@@ -141,6 +141,7 @@ const DashboardEvents = ({ eventsData }) => {
 
         if (result?.status === 200) {
           toast.success("Payment Successful");
+          setOpenDialog(false);
         }
       },
       prefill: {
@@ -161,7 +162,7 @@ const DashboardEvents = ({ eventsData }) => {
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
     return `${day}-${month}-${year}`;
   };

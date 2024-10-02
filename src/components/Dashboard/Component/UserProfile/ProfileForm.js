@@ -40,6 +40,7 @@ const tabLabels = [
 
 const ProfileForm = ({ userID }) => {
   const [userProfileData, setUserProfileData] = useState({});
+  console.log(userProfileData);
   const [activeTab, setActiveTab] = useState(0);
   const [errors, setErrors] = useState({});
 
@@ -156,6 +157,7 @@ const ProfileForm = ({ userID }) => {
                 type="number"
                 label="School Graduation Year"
                 name="school_graduation_year"
+                InputLabelProps={{ shrink: true }}
                 value={userProfileData.school_graduation_year || ""}
                 onChange={handleChange}
                 size="small"

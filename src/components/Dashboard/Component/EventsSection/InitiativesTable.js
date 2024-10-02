@@ -10,6 +10,7 @@ import {
 import ajaxCall from "../../../helpers/ajaxCall";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Breadcrumb from "../../../../Ul/Breadcrumb";
+import { Link } from "react-router-dom";
 
 const theme = createTheme({
   palette: {
@@ -32,6 +33,20 @@ const InitiativesTable = () => {
       headerName: "Name",
       field: "name",
       width: 250,
+      renderCell: (params) => {
+        const InitiativeId = params?.row?.id;
+        const name = params?.row?.name;
+        return InitiativeId ? (
+          <Link
+            to={`/dashboard/addInitiatives/${InitiativeId}`}
+            style={{ textDecoration: "none" }}
+          >
+            {name}
+          </Link>
+        ) : (
+          " - "
+        );
+      },
     },
     {
       headerName: "Description",

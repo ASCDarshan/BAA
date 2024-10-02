@@ -12,7 +12,11 @@ import {
   DialogActions,
   styled,
   Typography,
+  Box,
 } from "@mui/material";
+import PhoneIcon from "@mui/icons-material/Phone";
+import EmailIcon from "@mui/icons-material/Email";
+import LanguageIcon from "@mui/icons-material/Language";
 
 const SectionTitle = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(4),
@@ -73,24 +77,47 @@ const Committee = ({ committeeData }) => {
       <Slider {...sliderSettings}>
         {committeeData.map((member, index) => (
           <div key={index}>
-            <Card sx={{ mx: 2 }}>
+            <Card
+              sx={{
+                mx: 2,
+                borderRadius: 4,
+                background: "linear-gradient(135deg, #f6d365 0%, #fda085 100%)",
+              }}
+            >
               <CardMedia
                 component="img"
                 image={member.image}
                 alt={member.title}
-                sx={{ objectFit: "contain" }}
+                sx={{
+                  objectFit: "cover",
+                  height: 370,
+                  borderTopLeftRadius: 4,
+                  borderTopRightRadius: 4,
+                }}
               />
-              <CardContent>
+              <CardContent
+                sx={{
+                  textAlign: "center",
+                  color: "#fff",
+                }}
+              >
                 <Typography gutterBottom variant="h5" component="div">
                   {member.name}
                 </Typography>
-                <Typography color="text.secondary">
+                <Typography color="black" sx={{ color: "black" }}>
                   {member.designation}
                 </Typography>
                 <Button
-                  variant="contained"
+                  variant="outlined"
                   onClick={() => handleClickOpen(member)}
-                  sx={{ mt: 2 }}
+                  sx={{
+                    mt: 2,
+                    color: "black",
+                    borderColor: "black",
+                    "&:hover": {
+                      backgroundColor: "rgba(255, 255, 255, 0.1)",
+                    },
+                  }}
                   size="small"
                 >
                   View Profile
@@ -103,17 +130,42 @@ const Committee = ({ committeeData }) => {
 
       {/* Dialog for selected member */}
       <Dialog open={open} onClose={handleClose} maxWidth="lg" fullWidth>
-        <DialogTitle>{selectedMember?.name}</DialogTitle>
+        <DialogTitle
+          sx={{
+            backgroundColor: "white",
+
+            color: "black",
+            fontWeight: "bold",
+            textAlign: "start",
+          }}
+        >
+          {selectedMember?.name}
+        </DialogTitle>
         <DialogContent>
           <Typography>{selectedMember?.description}</Typography>
           {selectedMember?.phone && (
-            <Typography>Contact: {selectedMember.phone}</Typography>
+            <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+              <PhoneIcon sx={{ mr: 1, color: "#fda085" }} />
+              <Typography variant="body2" color="text.secondary">
+                {selectedMember.phone}
+              </Typography>
+            </Box>
           )}
           {selectedMember?.email && (
-            <Typography>Email: {selectedMember.email}</Typography>
+            <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+              <EmailIcon sx={{ mr: 1, color: "#fda085" }} />
+              <Typography variant="body2" color="text.secondary">
+                {selectedMember.email}
+              </Typography>
+            </Box>
           )}
           {selectedMember?.websites && (
-            <Typography>Website: {selectedMember.websites}</Typography>
+            <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+              <LanguageIcon sx={{ mr: 1, color: "#fda085" }} />
+              <Typography variant="body2" color="text.secondary">
+                {selectedMember.websites}
+              </Typography>
+            </Box>
           )}
         </DialogContent>
         <DialogActions>

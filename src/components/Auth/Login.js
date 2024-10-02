@@ -165,14 +165,14 @@ const Login = () => {
               </Button>
             )}
             <Box sx={{ textAlign: "center" }}>
-              <Link
-                to="/register"
-                style={{ textDecoration: "none", color: "inherit" }}
-              >
-                <Typography variant="body2">
+              <Typography variant="body2">
+                <Link
+                  to="/register"
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
                   Don't have an account? SignUp
-                </Typography>
-              </Link>
+                </Link>
+              </Typography>
             </Box>
           </Box>
         </Paper>

@@ -30,7 +30,7 @@ const DashboardInitiatives = ({ initiativesData }) => {
 
   const [formData, setFormData] = useState(InitialData);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [loading, setLoading] = useState(false); // State for loading
+  const [loading, setLoading] = useState(false);
 
   const handlePrevious = () => {
     setCurrentIndex((prevIndex) =>
@@ -67,13 +67,12 @@ const DashboardInitiatives = ({ initiativesData }) => {
   }
 
   const handlePay = async () => {
-    setLoading(true); // Set loading to true when starting to load the script
+    setLoading(true);
     const res = await loadScript(
       "https://checkout.razorpay.com/v1/checkout.js"
     );
 
-    setLoading(false); // Set loading to false after script is loaded
-
+    setLoading(false);
     if (!res) {
       alert("Razorpay SDK failed to load. Are you online?");
       return;
@@ -105,7 +104,6 @@ const DashboardInitiatives = ({ initiativesData }) => {
       alert("Server error. Are you online?");
       return;
     }
-    // Getting the order details back
     const order = response.data;
 
     const options = {
@@ -117,7 +115,7 @@ const DashboardInitiatives = ({ initiativesData }) => {
         const data = {
           razorpay_order_id: response.razorpay_order_id,
           razorpay_payment_id: response.razorpay_payment_id,
-          razorpay_signature: response.razorpay_order_id,
+          razorpay_signature: response.razorpay_signature,
         };
         const result = await ajaxCall(
           "accounts/payment/success/",
@@ -140,12 +138,13 @@ const DashboardInitiatives = ({ initiativesData }) => {
         }
       },
       prefill: {
-        name: "Darshan Patel",
-        email: "test.@example.com",
-        contact: "9999999999",
+        name: loginInfo?.username,
+      },
+      notes: {
+        address: "Razorpay Corporate Office",
       },
       theme: {
-        color: "#F37254",
+        color: "#61dafb",
       },
     };
 
@@ -200,7 +199,7 @@ const DashboardInitiatives = ({ initiativesData }) => {
             color="primary"
             onClick={handlePay}
             size="small"
-            disabled={loading} // Disable button while loading
+            disabled={loading}
           >
             {loading ? <CircularProgress size={24} /> : "Pay"}
           </Button>

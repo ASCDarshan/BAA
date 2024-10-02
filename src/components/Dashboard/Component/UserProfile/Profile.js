@@ -41,7 +41,6 @@ const theme = createTheme({
 
 const Profile = () => {
   const [userProfileData, setUserProfileData] = useState(null);
-  console.log(userProfileData);
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
   const userID = loginInfo?.userId;
   const [tabValue, setTabValue] = useState(0);
