@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   TextField,
   Button,
@@ -17,6 +17,11 @@ import { toast } from "react-toastify";
 const Login = () => {
   const [isLoading, setIsLoading] = React.useState(false);
   const navigate = useNavigate();
+
+  // clear localStorage
+  useEffect(() => {
+    localStorage.clear();
+  }, []);
 
   const fetchData = async (url, data) => {
     setIsLoading(true);
