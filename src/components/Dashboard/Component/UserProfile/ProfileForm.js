@@ -40,7 +40,6 @@ const tabLabels = [
 
 const ProfileForm = ({ userID }) => {
   const [userProfileData, setUserProfileData] = useState({});
-  console.log(userProfileData);
   const [activeTab, setActiveTab] = useState(0);
   const [errors, setErrors] = useState({});
 
