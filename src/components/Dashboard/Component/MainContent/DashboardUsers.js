@@ -7,11 +7,16 @@ import {
   ListItemText,
   ListItemAvatar,
   Avatar,
+  Box,
+  Button,
 } from "@mui/material";
 import ajaxCall from "../../../helpers/ajaxCall";
+import { useNavigate } from "react-router-dom";
 
 const DashboardUsers = () => {
-  const [userProfileData, setUserProfileData] = useState();
+  const [userProfileData, setUserProfileData] = useState([]);
+  const navigate = useNavigate();
+
   const fetchData = async (url, setData) => {
     try {
       const response = await ajaxCall(
@@ -42,34 +47,47 @@ const DashboardUsers = () => {
     fetchData(`profiles/user-profile/`, setUserProfileData);
   }, []);
 
+  const handleViewAllClick = () => {
+    navigate("/dashboard/batchmates");
+  };
+
   return (
     <Paper sx={{ p: 2 }}>
       <Typography variant="h6" gutterBottom>
         People You May Know
       </Typography>
       <List>
-        {Array.isArray(userProfileData) &&
-          userProfileData.map((data) => (
-            <ListItem key={data.id}>
-              <ListItemAvatar>
-                <Avatar sx={{ mr: 1 }}>
-                  {data.user.username
-                    ? data.user.username.charAt(0).toUpperCase()
-                    : "A"}
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText
-                primary={data.user.username}
-                secondary={
-                  data.school_graduation_year
-                    ? `Batch of ${data.school_graduation_year}`
-                    : null
-                }
-              />
-              <ListItemText primary={data.phone_number} />
-            </ListItem>
-          ))}
+        {userProfileData.slice(0, 5).map((data) => (
+          <ListItem key={data.id}>
+            <ListItemAvatar>
+              <Avatar sx={{ mr: 1 }}>
+                {data.user.username
+                  ? data.user.username.charAt(0).toUpperCase()
+                  : "A"}
+              </Avatar>
+            </ListItemAvatar>
+            <ListItemText
+              primary={data.user.username}
+              secondary={
+                data.school_graduation_year
+                  ? `Batch of ${data.school_graduation_year}`
+                  : null
+              }
+            />
+            <ListItemText primary={data.phone_number} />
+          </ListItem>
+        ))}
       </List>
+      <Box textAlign="center" sx={{ mt: 1 }}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleViewAllClick}
+          size="small"
+        >
+          View All
+        </Button>
+      </Box>
     </Paper>
   );
 };
