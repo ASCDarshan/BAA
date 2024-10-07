@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 import ajaxCall from "../../../helpers/ajaxCall";
-import Breadcrumb from "../../../../Ul/Breadcrumb";
+import Breadcrumb from "../../../Ul/Breadcrumb";
 
 const theme = createTheme({
   palette: {

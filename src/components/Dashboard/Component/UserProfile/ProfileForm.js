@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { toast } from "react-toastify";
 import ajaxCall from "../../../helpers/ajaxCall";
-import Breadcrumb from "../../../../Ul/Breadcrumb";
+import Breadcrumb from "../../../Ul/Breadcrumb";
 
 const theme = createTheme({
   palette: {

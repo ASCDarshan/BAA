@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import ajaxCall from "../../../helpers/ajaxCall";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import Breadcrumb from "../../../../Ul/Breadcrumb";
+import Breadcrumb from "../../../Ul/Breadcrumb";
 import { Link } from "react-router-dom";
 
 const theme = createTheme({

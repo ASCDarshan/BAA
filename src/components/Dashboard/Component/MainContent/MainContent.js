@@ -30,6 +30,7 @@ import DashboardEvents from "./DashboardEvents";
 import DashboardInitiatives from "./DashboardInitiatives";
 import DashboardUsers from "./DashboardUsers";
 import { Link } from "react-router-dom";
+import Membership from "../Membership/Membership";
 
 const MainContent = ({ userID, eventsData, initiativesData }) => {
   const initialData = {
@@ -380,6 +381,7 @@ const MainContent = ({ userID, eventsData, initiativesData }) => {
           )}
         </Grid>
         <Grid item xs={12} md={4}>
+          <Membership />
           <DashboardEvents eventsData={eventsData} />
           <DashboardInitiatives initiativesData={initiativesData} />
           <DashboardUsers />

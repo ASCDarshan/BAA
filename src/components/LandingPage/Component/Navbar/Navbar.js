@@ -14,7 +14,7 @@ import {
   useTheme,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import LogoImg from "../../../../images/BAA.png";
+import LogoImg from "../../../images/BAA.png";
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
