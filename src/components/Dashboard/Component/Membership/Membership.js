@@ -5,7 +5,6 @@ import {
   Paper,
   TextField,
   Typography,
-  Badge,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import ajaxCall from "../../../helpers/ajaxCall";
@@ -146,9 +145,6 @@ const Membership = () => {
 
   return (
     <Paper sx={{ p: 2, mb: 3 }}>
-      <Typography variant="h6" gutterBottom>
-        Become A Lifetime Member
-      </Typography>
       {isLifetimeMember ? (
         <Box
           sx={{
@@ -196,6 +192,7 @@ const Membership = () => {
             alignItems: "center",
           }}
         >
+          <Typography variant="h6">Become A Lifetime Member</Typography>
           <TextField
             label="Amount"
             variant="outlined"
@@ -207,6 +204,7 @@ const Membership = () => {
             }}
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
+            sx={{ mr: 2 }}
           />
           <Button
             variant="contained"

@@ -110,7 +110,7 @@ const EventData = () => {
                       {event.subevents.map((subevent, subIndex) => (
                         <div key={subIndex}>
                           <Typography variant="h6">
-                            {subevent.name} ({subevent.date})
+                            {subevent.name} ({formatDate(subevent.date)} )
                           </Typography>
                           <Typography variant="body2" paragraph>
                             {subevent.description}
@@ -157,7 +157,7 @@ const EventData = () => {
                               size="small"
                               onClick={handleRegistrations}
                             >
-                              Registrate
+                              Register
                             </Button>
                           </Grid>
                         </div>

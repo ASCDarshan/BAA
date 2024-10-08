@@ -59,16 +59,6 @@ const BatchmateTable = () => {
       valueGetter: (params) => params?.row?.phone_number || " - ",
     },
     {
-      headerName: "Batch Year",
-      field: "school_graduation_year",
-      width: 150,
-      renderCell: (params) => {
-        const year = params?.row?.school_graduation_year || " - ";
-        return year;
-      },
-      valueGetter: (params) => params?.row?.school_graduation_year || " - ",
-    },
-    {
       headerName: "Email",
       field: "email",
       width: 200,
