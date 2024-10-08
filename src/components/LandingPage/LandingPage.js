@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CircularProgress, Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import HeroBanner from "./Component/Content/HeroBanner";
 import AboutUs from "./Component/Content/AboutUs";
 import Achievements from "./Component/Content/Achievements";
@@ -9,6 +9,8 @@ import ajaxCall from "../helpers/ajaxCall";
 import Events from "./Component/Content/Events";
 import Committee from "./Component/Content/Committee";
 import Initiatives from "./Component/Content/Initiatives";
+import { useNavigate } from "react-router-dom";
+import LogoImg from "../images/BAA.png";
 
 const LandingPage = () => {
   const [aboutusData, setAboutusData] = useState([]);
@@ -19,6 +21,7 @@ const LandingPage = () => {
   const [InitiativesData, setInitiativesData] = useState([]);
   const [committeeData, setCommitteeData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const fetchData = async (url, setData) => {
     try {
@@ -68,12 +71,26 @@ const LandingPage = () => {
           justifyContent: "center",
           alignItems: "center",
           height: "100vh",
+          position: "relative",
         }}
       >
-        <CircularProgress color="inherit" />
+        <img
+          src={LogoImg}
+          alt="Loading Logo"
+          style={{
+            width: "100px",
+            height: "100px",
+            position: "relative",
+            zIndex: 1,
+          }}
+        />
       </Box>
     );
   }
+
+  const handleLifetimeMembershipClick = () => {
+    navigate("/login");
+  };
 
   return (
     <>
@@ -101,6 +118,40 @@ const LandingPage = () => {
       <div id="contact-us">
         <ContactUs />
       </div>
+
+      <Box
+        sx={{
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 4,
+          width: "100%",
+          textAlign: "right",
+          padding: "16px 0",
+        }}
+      >
+        <Button
+          variant="contained"
+          color="primary"
+          size="small"
+          onClick={handleLifetimeMembershipClick}
+          sx={{
+            fontSize: "14px",
+            padding: "8px 20px",
+            marginRight: "20px", // Added margin-right to position the button with some space from the right side
+            borderRadius: "20px", // Rounded corners
+            backgroundColor: "#1976d2", // Unique blue color
+            color: "#fff", // White text
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)", // Add some shadow for depth
+            "&:hover": {
+              backgroundColor: "#1565c0", // Darker shade on hover
+            },
+            transition: "all 0.3s ease", // Smooth transition effect
+          }}
+        >
+          Lifetime Membership
+        </Button>
+      </Box>
     </>
   );
 };

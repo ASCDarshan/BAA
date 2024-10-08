@@ -95,17 +95,21 @@ const Footers = () => {
             <Typography variant="h6" color="text.primary" gutterBottom>
               Quick Links
             </Typography>
-            <FooterLink variant="body2" color="text.secondary">
+            <FooterLink
+              variant="body2"
+              color="text.secondary"
+              component={Link}
+              to="/"
+            >
               Home
             </FooterLink>
-            <FooterLink variant="body2" color="text.secondary">
+            <FooterLink
+              variant="body2"
+              color="text.secondary"
+              component={Link}
+              to="/events"
+            >
               Events
-            </FooterLink>
-            <FooterLink variant="body2" color="text.secondary">
-              About Us
-            </FooterLink>
-            <FooterLink variant="body2" color="text.secondary">
-              Committee
             </FooterLink>
             <FooterLink
               variant="body2"
@@ -128,7 +132,7 @@ const Footers = () => {
               rel="noopener noreferrer"
               style={{ margin: "0 8px" }}
             >
-              <IconButton color="inherit" aria-label="Facebook">
+              <IconButton aria-label="Facebook">
                 <FacebookIcon />
               </IconButton>
             </a>
@@ -138,7 +142,7 @@ const Footers = () => {
               rel="noopener noreferrer"
               style={{ margin: "0 8px" }}
             >
-              <IconButton color="inherit" aria-label="Instagram">
+              <IconButton aria-label="Instagram">
                 <InstagramIcon />
               </IconButton>
             </a>
@@ -148,7 +152,7 @@ const Footers = () => {
               rel="noopener noreferrer"
               style={{ margin: "0 8px" }}
             >
-              <IconButton color="inherit" aria-label="LinkedIn">
+              <IconButton aria-label="LinkedIn">
                 <LinkedInIcon />
               </IconButton>
             </a>
