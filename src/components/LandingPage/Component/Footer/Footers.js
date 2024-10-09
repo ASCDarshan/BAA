@@ -62,6 +62,7 @@ const Footers = () => {
         bgcolor: "background.paper",
         py: 6,
         mt: 4,
+        mb: 4,
         borderTop: `1px solid ${(theme) => theme.palette.divider}`,
       }}
     >

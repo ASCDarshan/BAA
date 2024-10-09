@@ -8,16 +8,17 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ajaxCall from "../../../helpers/ajaxCall";
 import HeroBanner from "../Content/HeroBanner";
+import { useLocation } from "react-router-dom";
 
 const EventData = () => {
   const navigate = useNavigate();
   const [eventData, setEventData] = useState([]);
   const [heroImages, setHeroImages] = useState([]);
-  const { eventId } = useParams();
-
+  const location = useLocation();
+  const eventId = location.state;
   const Event = eventData.filter((item) => item.id == eventId);
 
   const fetchData = async (url, setData) => {

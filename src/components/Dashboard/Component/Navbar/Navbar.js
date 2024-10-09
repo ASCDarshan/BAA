@@ -102,7 +102,9 @@ const Navbar = ({ handleDrawerToggle }) => {
         )}
         <Box
           component="img"
-          src={LogoImg}
+          src={
+            "https://bhavansalumniassociation.org/static/media/BAA.5bd3ecf42590eda7df8e.png"
+          }
           alt="BAA Logo"
           sx={{ height: 60 }}
           ml={7}

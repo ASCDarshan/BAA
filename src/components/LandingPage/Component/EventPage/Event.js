@@ -61,8 +61,8 @@ const Event = () => {
     fetchData("website/hero-images/", setHeroImages);
   }, []);
 
-  const handleKnowMore = (eventId) => {
-    navigate(`/events/${eventId}/`);
+  const handleKnowMore = (eventId, eventName) => {
+    navigate(`/events/${eventName}/`, { state: eventId });
   };
 
   return (
@@ -95,7 +95,7 @@ const Event = () => {
                       variant="contained"
                       color="primary"
                       size="small"
-                      onClick={() => handleKnowMore(event.id)}
+                      onClick={() => handleKnowMore(event.id, event.name)}
                     >
                       Know More
                     </Button>

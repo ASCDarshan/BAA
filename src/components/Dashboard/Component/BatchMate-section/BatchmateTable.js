@@ -9,7 +9,7 @@ import {
   createTheme,
 } from "@mui/material";
 import ajaxCall from "../../../helpers/ajaxCall";
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 import Breadcrumb from "../../../Ul/Breadcrumb";
 import { Link } from "react-router-dom";
 
@@ -27,7 +27,7 @@ const theme = createTheme({
 
 const BatchmateTable = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [eventData, setEventData] = useState([]);
+  const [batchMates, setBatchMates] = useState([]);
   const [searchYear, setSearchYear] = useState("");
   const [isYearSearchActive, setIsYearSearchActive] = useState(false);
 
@@ -37,8 +37,8 @@ const BatchmateTable = () => {
       field: "username",
       width: 150,
       renderCell: (params) => {
-        const userId = params?.row?.user?.id;
-        const username = params?.row?.user?.username;
+        const userId = params?.row?.["user-id"];
+        const username = params?.row?.username;
         return userId ? (
           <Link
             to={`/dashboard/userProfile/${userId}`}
@@ -50,7 +50,7 @@ const BatchmateTable = () => {
           " - "
         );
       },
-      valueGetter: (params) => params?.row?.user?.username || " - ",
+      valueGetter: (params) => params?.row?.username || " - ",
     },
     {
       headerName: "Phone Number",
@@ -63,13 +63,13 @@ const BatchmateTable = () => {
       field: "email",
       width: 200,
       renderCell: (params) => {
-        const email = params?.row?.user?.email || " - ";
+        const email = params?.row?.email || " - ";
         return email;
       },
-      valueGetter: (params) => params?.row?.user?.email || " - ",
+      valueGetter: (params) => params?.row?.email || " - ",
     },
     {
-      headerName: "School Graduation Years",
+      headerName: "School Graduation Year",
       field: "school_graduation_year",
       width: 200,
       renderCell: (params) => {
@@ -83,10 +83,10 @@ const BatchmateTable = () => {
       field: "Education",
       width: 200,
       renderCell: (params) => {
-        const education = params?.row?.education || " - ";
+        const education = params?.row?.Education || " - ";
         return education;
       },
-      valueGetter: (params) => params?.row?.education || " - ",
+      valueGetter: (params) => params?.row?.Education || " - ",
     },
   ];
 
@@ -95,7 +95,7 @@ const BatchmateTable = () => {
     try {
       const url = year
         ? `profiles/year-user/?year=${year}`
-        : "profiles/user-profile/";
+        : "profiles/year-user/";
       const response = await ajaxCall(
         url,
         {
@@ -117,7 +117,8 @@ const BatchmateTable = () => {
         const filteredData =
           response?.data?.filter(
             (user) =>
-              user.user.id !== currentUserId && user.user_type !== "Superuser"
+              user["user-id"] !== currentUserId &&
+              user.user_type !== "Superuser"
           ) || [];
         setData(filteredData);
       } else {
@@ -132,7 +133,7 @@ const BatchmateTable = () => {
 
   useEffect(() => {
     if (!isYearSearchActive) {
-      fetchData("", setEventData);
+      fetchData("", setBatchMates);
     }
   }, [isYearSearchActive]);
 
@@ -142,16 +143,16 @@ const BatchmateTable = () => {
 
     if (year.length === 4) {
       setIsYearSearchActive(true);
-      fetchData(year, setEventData);
+      fetchData(year, setBatchMates);
     } else if (year.length === 0) {
       setIsYearSearchActive(false);
-      fetchData("", setEventData);
+      fetchData("", setBatchMates);
     }
   };
 
-  const rows = eventData.map((event, index) => ({
-    id: event.id || index,
-    ...event,
+  const rows = batchMates.map((BatchMate, index) => ({
+    id: BatchMate["user-id"] || index,
+    ...BatchMate,
   }));
 
   return (
@@ -181,7 +182,7 @@ const BatchmateTable = () => {
             <Box display="flex" justifyContent="center" alignItems="center">
               <CircularProgress />
             </Box>
-          ) : eventData?.length > 0 ? (
+          ) : batchMates?.length > 0 ? (
             <Box sx={{ height: "100%", width: "100%" }}>
               <DataGrid
                 rows={rows}
@@ -193,12 +194,6 @@ const BatchmateTable = () => {
                     ? "evenRow"
                     : "oddRow"
                 }
-                slots={{ toolbar: GridToolbar }}
-                slotProps={{
-                  toolbar: {
-                    showQuickFilter: false,
-                  },
-                }}
               />
             </Box>
           ) : (
