@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button } from "@mui/material";
+import { Box, Button, CircularProgress } from "@mui/material";
 import HeroBanner from "./Component/Content/HeroBanner";
 import AboutUs from "./Component/Content/AboutUs";
 import Achievements from "./Component/Content/Achievements";
@@ -74,6 +74,15 @@ const LandingPage = () => {
           position: "relative",
         }}
       >
+        <CircularProgress
+          size={120}
+          sx={{
+            position: "absolute",
+            zIndex: 0,
+          }}
+        />
+
+        {/* Logo image */}
         <img
           src={LogoImg}
           alt="Loading Logo"
@@ -124,10 +133,13 @@ const LandingPage = () => {
           position: "fixed",
           bottom: 0,
           left: 0,
-          right: 4,
+          right: 0,
           width: "100%",
-          textAlign: "right",
-          padding: "16px 0",
+          textAlign: "center",
+          padding: "16px 20px",
+          backgroundColor: "rgba(255, 255, 255, 0.8)",
+          backdropFilter: "blur(10px)",
+          boxShadow: "0 -4px 20px rgba(0, 0, 0, 0.1)",
         }}
       >
         <Button
@@ -136,20 +148,26 @@ const LandingPage = () => {
           size="small"
           onClick={handleLifetimeMembershipClick}
           sx={{
-            fontSize: "14px",
-            padding: "8px 20px",
-            marginRight: "20px", // Added margin-right to position the button with some space from the right side
-            borderRadius: "20px", // Rounded corners
-            backgroundColor: "#1976d2", // Unique blue color
-            color: "#fff", // White text
-            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)", // Add some shadow for depth
+            fontSize: "10px",
+            padding: "8px 30px",
+            marginRight: "20px",
+            borderRadius: "25px",
+            background: "linear-gradient(45deg, #1976d2, #42a5f5)",
+            color: "#fff",
+            boxShadow: "0 6px 15px rgba(0, 0, 0, 0.2)",
+            transition: "all 0.4s ease",
             "&:hover": {
-              backgroundColor: "#1565c0", // Darker shade on hover
+              background: "linear-gradient(45deg, #1565c0, #2196f3)",
+              transform: "scale(1.05)",
+              boxShadow: "0 8px 20px rgba(0, 0, 0, 0.25)",
             },
-            transition: "all 0.3s ease", // Smooth transition effect
+            "&:focus": {
+              outline: "none",
+              boxShadow: "0 0 15px rgba(33, 150, 243, 0.6)",
+            },
           }}
         >
-          Lifetime Membership
+          Become A Lifetime Member
         </Button>
       </Box>
     </>

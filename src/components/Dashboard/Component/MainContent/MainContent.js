@@ -172,6 +172,8 @@ const MainContent = ({ userID, eventsData, initiativesData }) => {
           images: [],
           content: "",
         });
+      } else if (response?.status === 400) {
+        toast.error("Please Add Content");
       } else {
         toast.error("Some Problem Occurred. Please try again.");
       }

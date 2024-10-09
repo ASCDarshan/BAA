@@ -29,9 +29,10 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
 const Events = ({ eventsData }) => {
   const navigate = useNavigate();
 
-  const handleKnowMore = (eventId) => {
-    navigate(`/events/${eventId}/`);
+  const handleKnowMore = (eventId, eventName) => {
+    navigate(`/events/${eventName}/`, { state: eventId });
   };
+
   return (
     <Container sx={{ mt: 4 }}>
       <SectionTitle variant="h4">Upcoming Events</SectionTitle>
@@ -60,7 +61,7 @@ const Events = ({ eventsData }) => {
                     variant="contained"
                     color="primary"
                     size="small"
-                    onClick={() => handleKnowMore(event.id)}
+                    onClick={() => handleKnowMore(event.id, event.name)}
                   >
                     Know More
                   </Button>
