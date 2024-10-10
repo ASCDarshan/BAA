@@ -22,6 +22,7 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(4),
   fontWeight: "bold",
   position: "relative",
+  color: "#fba645",
   "&::after": {
     content: '""',
     position: "absolute",
@@ -82,6 +83,7 @@ const Committee = ({ committeeData }) => {
                 mx: 2,
                 borderRadius: 4,
                 background: "linear-gradient(135deg, #f6d365 0%, #fda085 100%)",
+                boxShadow: "0 4px 8px rgba(251, 166, 69, 0.5)",
               }}
             >
               <CardMedia

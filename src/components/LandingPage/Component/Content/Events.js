@@ -15,6 +15,7 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(4),
   fontWeight: "bold",
   position: "relative",
+  color: "#fba645",
   "&::after": {
     content: '""',
     position: "absolute",
@@ -29,15 +30,22 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
 const Events = ({ eventsData }) => {
   const navigate = useNavigate();
 
+  const slugify = (text) => {
+    return text.toLowerCase().replace(/\s+/g, "-");
+  };
+
   const handleKnowMore = (eventId, eventName) => {
-    navigate(`/events/${eventName}/`, { state: eventId });
+    navigate(`/events/${slugify(eventName)}/`, { state: eventId });
   };
 
   return (
     <Container sx={{ mt: 4 }}>
       <SectionTitle variant="h4">Upcoming Events</SectionTitle>
       {eventsData.map((event, index) => (
-        <Card key={index} sx={{ mt: 4 }}>
+        <Card
+          key={index}
+          sx={{ mt: 4, boxShadow: "0 4px 8px rgba(251, 166, 69, 0.5)" }}
+        >
           <Grid container>
             <Grid item xs={12} md={4}>
               <CardMedia

@@ -13,7 +13,6 @@ import { Menu as MenuIcon } from "@mui/icons-material";
 import { useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
-import LogoImg from "../../../images/BAA.png";
 import ajaxCall from "../../../helpers/ajaxCall";
 
 const Navbar = ({ handleDrawerToggle }) => {

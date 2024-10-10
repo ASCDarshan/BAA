@@ -20,7 +20,6 @@ import ContactMailIcon from "@mui/icons-material/Call";
 import HomeIcon from "@mui/icons-material/Home";
 import EventIcon from "@mui/icons-material/Event";
 import LoginIcon from "@mui/icons-material/Person";
-import LogoImg from "../../../images/BAA.png";
 import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {

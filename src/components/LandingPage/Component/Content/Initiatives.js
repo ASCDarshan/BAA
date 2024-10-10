@@ -12,6 +12,7 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(4),
   fontWeight: "bold",
   position: "relative",
+  color: "#fba645",
   "&::after": {
     content: '""',
     position: "absolute",
@@ -35,7 +36,12 @@ const Initiatives = ({ InitiativesData }) => {
     <Container sx={{ mt: 4 }}>
       <SectionTitle variant="h4">Initiatives</SectionTitle>
       {InitiativesData.map((event, index) => (
-        <Card key={index}>
+        <Card
+          key={index}
+          sx={{
+            boxShadow: "0 4px 8px rgba(251, 166, 69, 0.5)",
+          }}
+        >
           <Grid container>
             <Grid item xs={12} md={8}>
               <CardContent>

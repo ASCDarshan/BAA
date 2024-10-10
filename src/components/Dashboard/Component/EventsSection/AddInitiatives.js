@@ -91,7 +91,11 @@ const AddInitiatives = () => {
     <Box sx={{ mt: 5 }}>
       <Paper
         elevation={3}
-        sx={{ p: 3, backgroundColor: theme.palette.background.paper }}
+        sx={{
+          p: 3,
+          backgroundColor: theme.palette.background.paper,
+          boxShadow: "0 4px 8px rgba(251, 166, 69, 0.5)",
+        }}
       >
         <Typography variant="h5">Add Initiatives</Typography>
         <form onSubmit={handleSubmit}>

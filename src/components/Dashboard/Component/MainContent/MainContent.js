@@ -365,7 +365,9 @@ const MainContent = ({ userID, eventsData, initiativesData }) => {
               <CircularProgress />
             </Button>
           ) : (
-            <Paper sx={{ p: 2 }}>
+            <Paper
+              sx={{ p: 2, boxShadow: "0 4px 8px rgba(251, 166, 69, 0.5)" }}
+            >
               <Tabs
                 value={tabValue}
                 onChange={handleTabChange}

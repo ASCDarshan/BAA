@@ -144,7 +144,7 @@ const Membership = () => {
   };
 
   return (
-    <Paper sx={{ p: 2, mb: 3 }}>
+    <Paper sx={{ p: 2, mb: 3, boxShadow: "0 4px 8px rgba(251, 166, 69, 0.5)" }}>
       {isLifetimeMember ? (
         <Box
           sx={{

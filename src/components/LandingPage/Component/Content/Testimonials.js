@@ -18,6 +18,7 @@ const SectionTitle = ({ children }) => (
       marginBottom: 4,
       fontWeight: "bold",
       position: "relative",
+      color: "#fba645",
       "&::after": {
         content: '""',
         position: "absolute",
@@ -40,6 +41,7 @@ const TestimonialCard = ({ testimonial }) => (
       display: "flex",
       flexDirection: "column",
       margin: 2,
+      boxShadow: "0 4px 8px rgba(251, 166, 69, 0.5)",
     }}
   >
     {testimonial.image && (
