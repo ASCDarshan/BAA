@@ -123,7 +123,13 @@ const Profile = () => {
         <Container sx={{ mt: 10 }}>
           <Grid container spacing={4}>
             <Grid item xs={12} sm={4} textAlign="center">
-              <Card elevation={4} sx={{ padding: 1 }}>
+              <Card
+                elevation={4}
+                sx={{
+                  padding: 1,
+                  boxShadow: "0 4px 8px rgba(251, 166, 69, 0.5)",
+                }}
+              >
                 <Avatar
                   alt={username}
                   src={profile_picture}
@@ -152,7 +158,10 @@ const Profile = () => {
             </Grid>
 
             <Grid item xs={12} sm={8}>
-              <Paper elevation={4} sx={{ p: 3 }}>
+              <Paper
+                elevation={4}
+                sx={{ p: 3, boxShadow: "0 4px 8px rgba(251, 166, 69, 0.5)" }}
+              >
                 <Tabs value={tabValue} onChange={handleTabChange} centered>
                   <Tab label="Bio" />
                   <Tab label="Contact Info" />

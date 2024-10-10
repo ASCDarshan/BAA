@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import {
   Box,
   Grid,
@@ -10,8 +10,9 @@ import {
   Divider,
   Paper,
   CardContent,
+  Button,
 } from "@mui/material";
-import { createTheme } from "@mui/material/styles";
+import { createTheme, styled } from "@mui/material/styles";
 import ajaxCall from "../../../helpers/ajaxCall";
 import Breadcrumb from "../../../Ul/Breadcrumb";
 
@@ -78,13 +79,38 @@ const EventData = () => {
 
   const selectedEvent = eventData.find((item) => item.id === Number(eventId));
 
+  const handleRegistrations = () => {
+    Navigate("/login");
+  };
+
+  const handleShareEvent = () => {
+    const currentUrl = window.location.href;
+    const message = `Check out this event: ${currentUrl}`;
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, "_blank");
+  };
+
+  const BackgroundImage = styled("div")(({ bgImage }) => ({
+    width: "100%",
+    height: "400px",
+    backgroundImage: `url(${bgImage})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    position: "relative",
+  }));
+
   return (
     <Container maxWidth="lg" sx={{ mt: 10 }}>
       <Box>
         <Breadcrumb title="Event" main="Dashboard" />
         <Paper
           elevation={3}
-          sx={{ backgroundColor: theme.palette.background.paper, mt: 2, p: 2 }}
+          sx={{
+            backgroundColor: theme.palette.background.paper,
+            mt: 2,
+            p: 2,
+            boxShadow: "0 4px 8px rgba(251, 166, 69, 0.5)",
+          }}
         >
           <CardContent>
             {isLoading ? (
@@ -99,6 +125,11 @@ const EventData = () => {
             ) : (
               <>
                 <Grid container spacing={4}>
+                  {/* <Grid container>
+                    <Grid item xs={12}>
+                      <BackgroundImage bgImage={selectedEvent.qr_code} />
+                    </Grid>
+                  </Grid> */}
                   <Grid item xs={12} md={8}>
                     <Typography variant="h4" gutterBottom>
                       {selectedEvent.name}
@@ -111,20 +142,35 @@ const EventData = () => {
                       color="text.secondary"
                       paragraph
                     >
-                      Starts from {formatDate(selectedEvent.start_date)} to{" "}
-                      {formatDate(selectedEvent.end_date)}
-                      <br />
                       Time: {formatTime(selectedEvent.start_time)} -{" "}
                       {formatTime(selectedEvent.end_time)}
+                      <br />
+                      Starts from {formatDate(selectedEvent.start_date)} to{" "}
+                      {formatDate(selectedEvent.end_date)}
                     </Typography>
                   </Grid>
-                  <Grid item xs={12} md={4}>
+                  <Grid
+                    item
+                    xs={12}
+                    md={4}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      height: "250px",
+                      marginTop: 2,
+                    }}
+                  >
                     <CardMedia
                       component="img"
-                      height="100%"
+                      sx={{
+                        height: "80%",
+                        width: "80%",
+                        objectFit: "contain",
+                        borderRadius: "8px",
+                      }}
                       image={selectedEvent.qr_code}
                       alt={selectedEvent.title || "Upcoming Event"}
-                      sx={{ borderRadius: 2 }}
                     />
                   </Grid>
                 </Grid>
@@ -177,6 +223,34 @@ const EventData = () => {
                     ))}
                   </>
                 )}
+
+                <Grid
+                  item
+                  xs={12}
+                  container
+                  justifyContent="flex-end"
+                  mt={2}
+                  mb={3}
+                >
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    size="small"
+                    onClick={handleRegistrations}
+                    sx={{ mr: 2 }}
+                  >
+                    Register
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    size="small"
+                    onClick={handleShareEvent}
+                    sx={{ mr: 2 }}
+                  >
+                    Share Event
+                  </Button>
+                </Grid>
               </>
             )}
           </CardContent>

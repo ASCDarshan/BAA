@@ -153,7 +153,14 @@ const DashboardInitiatives = ({ initiativesData }) => {
   };
 
   return (
-    <Paper sx={{ p: 2, mb: 3, position: "relative" }}>
+    <Paper
+      sx={{
+        p: 2,
+        mb: 3,
+        position: "relative",
+        boxShadow: "0 4px 8px rgba(251, 166, 69, 0.5)",
+      }}
+    >
       <Typography variant="h6">Current Initiatives</Typography>
       {initiativesData.length > 0 && (
         <List>

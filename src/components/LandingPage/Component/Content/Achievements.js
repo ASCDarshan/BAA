@@ -13,6 +13,7 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(4),
   fontWeight: "bold",
   position: "relative",
+  color: "#fba645",
   "&::after": {
     content: '""',
     position: "absolute",
@@ -44,7 +45,12 @@ const Achievements = (props) => {
       <Grid container spacing={3}>
         {achievementsData.map((achievement, index) => (
           <Grid item xs={12} sm={4} key={index}>
-            <Card sx={{ padding: 2 }}>
+            <Card
+              sx={{
+                padding: 2,
+                boxShadow: "0 4px 8px rgba(251, 166, 69, 0.5)",
+              }}
+            >
               <CardMedia
                 component="img"
                 height="160"

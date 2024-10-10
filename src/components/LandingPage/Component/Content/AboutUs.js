@@ -13,6 +13,7 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(4),
   fontWeight: "bold",
   position: "relative",
+  color: "#fba645",
   "&::after": {
     content: '""',
     position: "absolute",
@@ -28,6 +29,7 @@ const StyledCard = styled(Card)({
   display: "flex",
   flexDirection: "column",
   height: "100%",
+  boxShadow: "0 4px 8px rgba(251, 166, 69, 0.5)",
 });
 
 const AboutUs = (props) => {

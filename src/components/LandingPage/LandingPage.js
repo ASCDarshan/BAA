@@ -87,8 +87,8 @@ const LandingPage = () => {
           src={LogoImg}
           alt="Loading Logo"
           style={{
-            width: "100px",
-            height: "100px",
+            width: "90px",
+            height: "90px",
             position: "relative",
             zIndex: 1,
           }}

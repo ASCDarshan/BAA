@@ -104,7 +104,11 @@ const InitiativesTable = () => {
       <Breadcrumb title="Initiatives" main="Dashboard" />
       <Paper
         elevation={3}
-        sx={{ backgroundColor: theme.palette.background.paper, mt: 2 }}
+        sx={{
+          backgroundColor: theme.palette.background.paper,
+          mt: 2,
+          boxShadow: "0 4px 8px rgba(251, 166, 69, 0.5)",
+        }}
       >
         <CardContent>
           {isLoading ? (

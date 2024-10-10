@@ -92,6 +92,7 @@ const Register = () => {
             flexDirection: "column",
             alignItems: "center",
             mb: 2,
+            boxShadow: "0 4px 8px rgba(251, 166, 69, 0.5)",
           }}
         >
           <img
@@ -107,6 +108,7 @@ const Register = () => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            boxShadow: "0 4px 8px rgba(251, 166, 69, 0.5)",
           }}
         >
           <Typography component="h1" variant="h5">
