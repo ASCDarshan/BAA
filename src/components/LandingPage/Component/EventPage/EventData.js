@@ -94,11 +94,11 @@ const EventData = () => {
             key={index}
             sx={{ mt: 4, boxShadow: "0 4px 8px rgba(251, 166, 69, 0.5)" }}
           >
-            {/* <Grid container>
+            <Grid container>
               <Grid item xs={12}>
-                <BackgroundImage bgImage={event.qr_code} />
+                <BackgroundImage bgImage={event.event_banner} />
               </Grid>
-            </Grid> */}
+            </Grid>
 
             <Grid container>
               <Grid item xs={12} md={8} mt={4}>
