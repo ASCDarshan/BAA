@@ -296,6 +296,11 @@ const EventData = () => {
               </Box>
             ) : (
               <>
+                <Grid container>
+                  <Grid item xs={12} mb={2}>
+                    <BackgroundImage bgImage={selectedEvent.event_banner} />
+                  </Grid>
+                </Grid>
                 <Grid container spacing={4}>
                   <Grid item xs={12} md={8}>
                     <Typography variant="h4" gutterBottom>

@@ -63,7 +63,7 @@ const Event = () => {
   }, []);
 
   const slugify = (text) => {
-    return text.toLowerCase().replace(/\s+/g, "-"); // Convert spaces to hyphens
+    return text.toLowerCase().replace(/\s+/g, "-");
   };
 
   const handleKnowMore = (eventId, eventName) => {
