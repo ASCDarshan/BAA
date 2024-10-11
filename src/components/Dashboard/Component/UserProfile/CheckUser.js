@@ -73,11 +73,11 @@ const CheckUser = () => {
     fetchData(`profiles/user-profile/${UserId}/`, setUserProfileData);
   }, [UserId]);
 
-  useEffect(() => {
-    if (userProfileData) {
-      setIsFollowing(userProfileData.follow_user.includes(loginUserId));
-    }
-  }, [userProfileData, loginUserId]);
+  // useEffect(() => {
+  //   if (userProfileData) {
+  //     setIsFollowing(userProfileData.follow_user.includes(loginUserId));
+  //   }
+  // }, [userProfileData, loginUserId]);
 
   if (!userProfileData) return null;
 
