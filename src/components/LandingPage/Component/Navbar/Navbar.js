@@ -57,8 +57,14 @@ const Navbar = () => {
         <ListItem disablePadding>
           <ListItemText>
             <Button
+              href="/"
               onClick={() => scrollToSection("hero-banner")}
-              sx={{ color: "inherit", display: "block", width: "100%" }}
+              sx={{
+                color: "inherit",
+                display: "block",
+                width: "100%",
+                textAlign: "center",
+              }}
             >
               Home
             </Button>
@@ -209,7 +215,7 @@ const Navbar = () => {
             } else if (newValue === 1) {
               navigate("/events");
             } else if (newValue === 2) {
-              scrollToSection("contact-us");
+              navigate("/Contact");
             } else if (newValue === 3) {
               navigate("/login");
             }

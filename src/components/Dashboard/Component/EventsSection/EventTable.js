@@ -10,7 +10,7 @@ import {
 import ajaxCall from "../../../helpers/ajaxCall";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Breadcrumb from "../../../Ul/Breadcrumb";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const theme = createTheme({
   palette: {
@@ -27,6 +27,7 @@ const theme = createTheme({
 const EventTable = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [eventData, setEventData] = useState([]);
+  const navigate = useNavigate();
 
   const columns = [
     {
@@ -35,14 +36,15 @@ const EventTable = () => {
       width: 250,
       renderCell: (params) => {
         const eventId = params?.row?.id;
-        const name = params?.row?.name;
+        const eventName = params?.row?.name;
         return eventId ? (
-          <Link
-            to={`/dashboard/eventData/${eventId}`}
-            style={{ textDecoration: "none" }}
+          <Typography
+            component="span"
+            onClick={() => handleKnowMore(eventId, eventName)}
+            style={{ cursor: "pointer", color: theme.palette.primary.main }}
           >
-            {name}
-          </Link>
+            {eventName}
+          </Typography>
         ) : (
           " - "
         );
@@ -90,6 +92,14 @@ const EventTable = () => {
     id: event.id || index,
     ...event,
   }));
+
+  const slugify = (text) => {
+    return text.toLowerCase().replace(/\s+/g, "-");
+  };
+
+  const handleKnowMore = (eventId, eventName) => {
+    navigate(`/dashboard/event/${slugify(eventName)}/`, { state: eventId });
+  };
 
   return (
     <>

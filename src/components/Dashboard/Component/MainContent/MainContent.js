@@ -52,6 +52,7 @@ const MainContent = ({ userID, eventsData, initiativesData }) => {
   const [postData, setPostData] = useState(initialData);
   const [refreshData, setRefreshData] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [shareCounts, setShareCounts] = useState([]);
 
   const [tabValue, setTabValue] = useState(1);
   const handleTabChange = (event, newValue) => {
@@ -145,8 +146,19 @@ const MainContent = ({ userID, eventsData, initiativesData }) => {
     }
   }, [tabValue, refreshData]);
 
+  const [validationError, setValidationError] = useState("");
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validation: Check if content and images are empty
+    if (!postData.content && postData.images.length === 0) {
+      setValidationError("Please add content or upload an image.");
+      return;
+    }
+
+    // Clear the validation error if the form is valid
+    setValidationError("");
 
     const formDataToSend = new FormData();
     formDataToSend.append("content", postData.content);
@@ -343,6 +355,9 @@ const MainContent = ({ userID, eventsData, initiativesData }) => {
               style={{ display: "none" }}
               onChange={handleFileChange}
             />
+            {validationError && (
+              <Box sx={{ color: "red", mb: 2 }}>{validationError}</Box>
+            )}
             <Box
               sx={{
                 display: "flex",
@@ -360,6 +375,7 @@ const MainContent = ({ userID, eventsData, initiativesData }) => {
               </Button>
             </Box>
           </form>
+
           {isLoading ? (
             <Button variant="contained" color="primary" fullWidth disabled>
               <CircularProgress />

@@ -9,8 +9,10 @@ import Navbar from "./components/LandingPage/Component/Navbar/Navbar";
 import LandingPage from "./components/LandingPage/LandingPage";
 import Event from "./components/LandingPage/Component/EventPage/Event";
 import EventData from "./components/LandingPage/Component/EventPage/EventData";
+import Contact from "./components/LandingPage/Component/ContactUs/ContactUs";
 import Login from "./components/Auth/Login";
 import Register from "./components/Auth/Register";
+import ForgotPassword from "./components/Auth/ForgotPassword";
 import Footers from "./components/LandingPage/Component/Footer/Footers";
 // dashboard components
 import Dashboard from "./components/Dashboard/Component/Dashboard";
@@ -35,7 +37,12 @@ const theme = createTheme({
 
 function App() {
   const location = useLocation();
-  const hideFooterPaths = ["/login", "/register", "/dashboard"];
+  const hideFooterPaths = [
+    "/login",
+    "/register",
+    "/dashboard",
+    "/forgotPassword",
+  ];
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const handleDrawerToggle = () => {
@@ -73,16 +80,18 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route path="/" element={<LandingPage />} />
           <Route path="/events" element={<Event />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="/events/:eventName" element={<EventData />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgotPassword" element={<ForgotPassword />} />
         </Route>
 
         <Route path="/dashboard" element={<AdminLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="/dashboard/addEvents" element={<EventSection />} />
           <Route
-            path="/dashboard/eventData/:eventId"
+            path="/dashboard/event/:eventName"
             element={<DashboardEventData />}
           />
           <Route

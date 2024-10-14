@@ -6,9 +6,11 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ajaxCall from "../../../helpers/ajaxCall";
 import { toast } from "react-toastify";
+import HeroBanner from "../Content/HeroBanner";
+import { useLocation } from "react-router-dom";
 
 const SectionTitle = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(4),
@@ -36,12 +38,42 @@ const StyledIframe = styled("iframe")(({ theme }) => ({
 }));
 
 const ContactUs = () => {
+  const location = useLocation();
+  const imageHide = ["/"];
+  const [heroImages, setHeroImages] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     address: "",
     phone: "",
   });
+
+  const fetchData = async (url, setData) => {
+    try {
+      const response = await ajaxCall(
+        url,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          method: "GET",
+        },
+        8000
+      );
+      if (response?.status === 200) {
+        setData(response?.data || []);
+      } else {
+        console.error("Fetch error:", response);
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData("website/hero-images/", setHeroImages);
+  }, []);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -79,69 +111,74 @@ const ContactUs = () => {
   };
 
   return (
-    <Container sx={{ mt: 6 }}>
-      <Grid container spacing={4}>
-        <Grid item xs={6}>
-          <SectionTitle variant="h4">Contact Us</SectionTitle>
-          <form onSubmit={handleSubmit}>
-            <TextField
-              label="Name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              variant="outlined"
+    <>
+      {!imageHide.includes(location.pathname) && (
+        <HeroBanner heroImages={heroImages} />
+      )}
+      <Container sx={{ mt: 6 }}>
+        <Grid container spacing={4}>
+          <Grid item xs={6}>
+            <SectionTitle variant="h4">Contact Us</SectionTitle>
+            <form onSubmit={handleSubmit}>
+              <TextField
+                label="Name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+              />
+              <TextField
+                label="Email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+              />
+              <TextField
+                label="Number"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+              />
+              <TextField
+                label="Address"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+              />
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                size="small"
+              >
+                Submit
+              </Button>
+            </form>
+          </Grid>
+          <Grid item xs={6} md={6} mt={11}>
+            <StyledIframe
+              src={
+                "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14882.181992377934!2d73.16385965!3d22.33736295!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395fc438ffffffff%3A0x9983a37a832dd134!2sBhavan's%20School%2C%20Vadodara!5e0!3m2!1sen!2sin!4v1694430824557!5m2!1sen!2sin"
+              }
+              allowFullScreen=""
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
             />
-            <TextField
-              label="Email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              variant="outlined"
-            />
-            <TextField
-              label="Number"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              variant="outlined"
-            />
-            <TextField
-              label="Address"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              variant="outlined"
-            />
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              size="small"
-            >
-              Submit
-            </Button>
-          </form>
+          </Grid>
         </Grid>
-        <Grid item xs={6} md={6} mt={11}>
-          <StyledIframe
-            src={
-              "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14882.181992377934!2d73.16385965!3d22.33736295!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395fc438ffffffff%3A0x9983a37a832dd134!2sBhavan's%20School%2C%20Vadodara!5e0!3m2!1sen!2sin!4v1694430824557!5m2!1sen!2sin"
-            }
-            allowFullScreen=""
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-          />
-        </Grid>
-      </Grid>
-    </Container>
+      </Container>
+    </>
   );
 };
 

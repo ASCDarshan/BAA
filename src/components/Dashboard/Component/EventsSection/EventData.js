@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import {
   Box,
   Grid,
@@ -14,7 +14,6 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
   Stepper,
   Step,
   StepLabel,
@@ -63,13 +62,18 @@ const BackgroundImage = styled("div")(({ bgImage }) => ({
   position: "relative",
 }));
 
-const steps = ["Event Registration", "Sub Event Registration"];
+const steps = [
+  "Event Registration",
+  "Sub Event Registration",
+  "Accompanying Guests",
+];
 
 const EventData = () => {
+  const location = useLocation();
+  const eventId = location.state;
   const [eventData, setEventData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
-  const { eventId } = useParams();
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [subEvents, setSubEvents] = useState([]);
   const [selectedSubEvents, setSelectedSubEvents] = useState([]);
@@ -207,12 +211,13 @@ const EventData = () => {
       },
       8000
     );
+
     if (!response) {
       alert("Server error. Are you online?");
       return;
     }
-    const order = response.data;
 
+    const order = response.data;
     const userData = JSON.parse(localStorage.getItem("loginInfo"));
 
     const options = {
@@ -222,31 +227,71 @@ const EventData = () => {
       description: "Test Transaction",
       order_id: order.order_id,
       handler: async function (response) {
-        const data = {
-          razorpay_order_id: response.razorpay_order_id,
-          razorpay_payment_id: response.razorpay_payment_id,
-          razorpay_signature: response.razorpay_signature,
-        };
+        try {
+          const data = {
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+          };
 
-        const result = await ajaxCall(
-          "accounts/payment/success/",
-          {
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${
-                JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
-              }`,
+          const result = await ajaxCall(
+            "accounts/payment/success/",
+            {
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${
+                  JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
+                }`,
+              },
+              method: "POST",
+              body: JSON.stringify(data),
             },
-            method: "POST",
-            body: JSON.stringify(data),
-          },
-          8000
-        );
+            8000
+          );
 
-        if (result?.status === 200) {
-          toast.success("Payment Successful");
-          setOpenDialog(false);
+          if (result?.status === 200) {
+            const registrationData = {
+              registration_date: new Date().toISOString(),
+              total_amount: totalAmount,
+              payment_status: "COMPLETED",
+              full_event_access: true,
+              event: selectedEvent.id,
+              alumni: userData.userId,
+            };
+
+            const registrationResult = await ajaxCall(
+              "events/registrations/",
+              {
+                headers: {
+                  Accept: "application/json",
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${
+                    JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
+                  }`,
+                },
+                method: "POST",
+                body: JSON.stringify(registrationData),
+              },
+              8000
+            );
+
+            if (registrationResult?.status === 200) {
+              toast.success("Payment Successful and Registration Completed");
+              setOpenDialog(false);
+            } else {
+              console.error("Registration API response:", registrationResult);
+              toast.error("Payment was successful, but registration failed.");
+            }
+          } else {
+            console.error("Payment success API response:", result);
+            toast.error("Payment failed. Please try again.");
+          }
+        } catch (error) {
+          console.error("Error in payment handler:", error);
+          toast.error(
+            "An unexpected error occurred during the payment process."
+          );
         }
       },
       prefill: {
@@ -264,10 +309,16 @@ const EventData = () => {
     paymentObject.open();
   };
 
-  const handleShareEvent = () => {
+  const handleShareEvent = (description) => {
     const currentUrl = window.location.href;
-    const message = `Check out this event: ${currentUrl}`;
-    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    const message = `Check out this event: ${currentUrl}\n${description}`;
+
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    const whatsappUrl = isMobile
+      ? `whatsapp://send?text=${encodeURIComponent(message)}`
+      : `https://web.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+
     window.open(whatsappUrl, "_blank");
   };
 
@@ -319,6 +370,25 @@ const EventData = () => {
                       <br />
                       Starts from {formatDate(selectedEvent.start_date)} to{" "}
                       {formatDate(selectedEvent.end_date)}
+                    </Typography>
+
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      paragraph
+                    >
+                      Event Location:{" "}
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        size="small"
+                        onClick={() =>
+                          window.open(selectedEvent.direction, "_blank")
+                        }
+                        sx={{ mr: 2 }}
+                      >
+                        Get Direction
+                      </Button>
                     </Typography>
                   </Grid>
                   <Grid
@@ -417,7 +487,7 @@ const EventData = () => {
                     variant="contained"
                     color="primary"
                     size="small"
-                    onClick={handleShareEvent}
+                    onClick={() => handleShareEvent(selectedEvent.description)}
                     sx={{ mr: 2 }}
                   >
                     Share Event
@@ -489,9 +559,6 @@ const EventData = () => {
                   <>
                     {subEvents.map((subEvent) => (
                       <Grid key={subEvent.id} mt={2}>
-                        <Typography variant="subtitle1" gutterBottom>
-                          Sub Event: {subEvent.name}
-                        </Typography>
                         <FormControlLabel
                           control={
                             <Checkbox
@@ -504,8 +571,11 @@ const EventData = () => {
                               }
                             />
                           }
-                          label="Select Sub Event"
+                          label="Select Event"
                         />
+                        <Typography variant="subtitle1" gutterBottom>
+                          Event : {subEvent.name}
+                        </Typography>
                         <Grid container spacing={2} sx={{ mt: 1 }}>
                           <Grid item xs={6}>
                             <TextField
@@ -545,6 +615,42 @@ const EventData = () => {
                       </Grid>
                     ))}
                   </>
+                )}
+
+                {activeStep === 2 && (
+                  <Grid>
+                    <Grid container spacing={2} sx={{ mt: 2 }}>
+                      <Grid item xs={6}>
+                        <TextField
+                          fullWidth
+                          label="Name"
+                          name="name"
+                          size="small"
+                          value={selectedEvent.name}
+                        />
+                      </Grid>
+                      <Grid item xs={6}>
+                        <TextField
+                          fullWidth
+                          label="Phone"
+                          name="phone"
+                          type="number"
+                          size="small"
+                          value={selectedEvent.phone}
+                        />
+                      </Grid>
+                      <Grid item xs={6}>
+                        <TextField
+                          fullWidth
+                          label="Image"
+                          name="image"
+                          type="file"
+                          size="small"
+                          InputLabelProps={{ shrink: true }}
+                        />
+                      </Grid>
+                    </Grid>
+                  </Grid>
                 )}
               </form>
 

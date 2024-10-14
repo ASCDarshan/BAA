@@ -29,7 +29,10 @@ const DashboardInitiatives = ({ initiativesData }) => {
   };
 
   const [formData, setFormData] = useState(InitialData);
+  console.log(formData);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [amountError, setAmountError] = useState("");
+
   const [loading, setLoading] = useState(false);
 
   const handlePrevious = () => {
@@ -50,6 +53,7 @@ const DashboardInitiatives = ({ initiativesData }) => {
       ...prevFormData,
       [name]: value,
     }));
+    setAmountError("");
   };
 
   function loadScript(src) {
@@ -67,6 +71,11 @@ const DashboardInitiatives = ({ initiativesData }) => {
   }
 
   const handlePay = async () => {
+    if (!formData.amount) {
+      setAmountError("Please enter an amount");
+      return;
+    }
+
     setLoading(true);
     const res = await loadScript(
       "https://checkout.razorpay.com/v1/checkout.js"
@@ -80,12 +89,12 @@ const DashboardInitiatives = ({ initiativesData }) => {
 
     const body = {
       category_id: 1,
-      event_id: 1,
+      initiative_id: 1,
       amount: formData.amount,
     };
 
     const response = await ajaxCall(
-      "accounts/payment/initiate/",
+      "accounts/initiate/initiative/",
       {
         headers: {
           Accept: "application/json",
@@ -108,7 +117,7 @@ const DashboardInitiatives = ({ initiativesData }) => {
 
     const options = {
       key: "rzp_test_rVcN4qbDNcdN9s",
-      amount: formData.amount,
+      amount: formData.amount * 100,
       description: "Test Transaction",
       order_id: order.order_id,
       handler: async function (response) {
@@ -118,7 +127,7 @@ const DashboardInitiatives = ({ initiativesData }) => {
           razorpay_signature: response.razorpay_signature,
         };
         const result = await ajaxCall(
-          "accounts/payment/success/",
+          "accounts/initiate/success/",
           {
             headers: {
               Accept: "application/json",
@@ -134,7 +143,38 @@ const DashboardInitiatives = ({ initiativesData }) => {
         );
 
         if (result?.status === 200) {
-          toast.success("Payment Successful");
+          const registrationData = {
+            donation_date: new Date().toISOString(),
+            amount: formData.amount,
+            payment_status: "COMPLETED",
+            transaction_id: order.order_id,
+            initiative: body.initiative_id,
+            donor: userID,
+          };
+
+          const registrationResult = await ajaxCall(
+            "initiatives/donations/",
+            {
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${
+                  JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
+                }`,
+              },
+              method: "POST",
+              body: JSON.stringify(registrationData),
+            },
+            8000
+          );
+
+          if (registrationResult?.status === 201) {
+            toast.success("Payment Successful and Registration Completed");
+          } else {
+            console.error("Registration API response:", registrationResult);
+          }
+        } else {
+          console.error("Payment success API response:", result);
         }
       },
       prefill: {
@@ -187,29 +227,43 @@ const DashboardInitiatives = ({ initiativesData }) => {
         <Box
           sx={{
             display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+            flexDirection: "column",
+            gap: 1,
           }}
         >
-          <TextField
-            type="number"
-            label="Enter Amount"
-            variant="outlined"
-            size="small"
-            name="amount"
-            value={formData.amount}
-            onChange={handlePaymentChange}
-            required
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handlePay}
-            size="small"
-            disabled={loading}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
           >
-            {loading ? <CircularProgress size={24} /> : "Pay"}
-          </Button>
+            <TextField
+              type="number"
+              label="Enter Amount"
+              variant="outlined"
+              size="small"
+              name="amount"
+              value={formData.amount}
+              onChange={handlePaymentChange}
+              required
+              error={!!amountError}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handlePay}
+              size="small"
+              disabled={loading}
+            >
+              {loading ? <CircularProgress size={24} /> : "Pay"}
+            </Button>
+          </Box>
+          {amountError && (
+            <Typography color="error" variant="body2">
+              {amountError}
+            </Typography>
+          )}
         </Box>
       )}
 
