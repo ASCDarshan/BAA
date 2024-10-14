@@ -34,8 +34,7 @@ const PostComment = ({ postId, userId, commentCounts }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasComments, setHasComments] = useState(true);
-
-  const commentCount = commentCounts?.length || 0;
+  const [commentCount, setCommentCount] = useState(commentCounts?.length || 0);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -69,6 +68,7 @@ const PostComment = ({ postId, userId, commentCounts }) => {
         );
         setCommentsList(filteredComments);
         setHasComments(filteredComments.length > 0);
+        setCommentCount(filteredComments.length);
       } else {
         console.error("Error fetching comments:", response);
       }
@@ -77,7 +77,6 @@ const PostComment = ({ postId, userId, commentCounts }) => {
     }
     setIsLoading(false);
   };
-
   useEffect(() => {
     if (open) {
       fetchComments();
@@ -97,17 +96,16 @@ const PostComment = ({ postId, userId, commentCounts }) => {
             JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
           }`,
         },
-
         body: JSON.stringify(comment),
       });
 
       if ([200, 201].includes(response.status)) {
-        setCommentsList((prev) => [...prev, response.data]);
         setComment((prev) => ({
           ...prev,
           content: "",
         }));
         setHasComments(true);
+        await fetchComments();
       } else {
         console.error("Error submitting comment:", response);
       }

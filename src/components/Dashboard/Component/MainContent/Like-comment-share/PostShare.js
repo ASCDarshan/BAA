@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogActions,
@@ -13,15 +13,11 @@ import ShareIcon from "@mui/icons-material/Share";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import ajaxCall from "../../../../helpers/ajaxCall";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
 
 const PostShare = ({ postId, userId, shareCounts, postContent }) => {
   const [open, setOpen] = useState(false);
-  const [userData, setUserData] = useState({});
   const shareCount = shareCounts?.length || 0;
-
-  const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
-  const userID = loginInfo?.userId;
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -31,49 +27,24 @@ const PostShare = ({ postId, userId, shareCounts, postContent }) => {
     setOpen(false);
   };
 
-  const fetchData = async (url, setData) => {
-    try {
-      const response = await ajaxCall(
-        url,
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${
-              JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
-            }`,
-          },
-          method: "GET",
-        },
-        8000
-      );
-      if (response?.status === 200) {
-        setData(response?.data || {});
-      } else {
-        console.error("Fetch error:", response);
-      }
-    } catch (error) {
-      console.error("Network error:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchData(`profiles/user-profile/${userID}/`, setUserData);
-  }, [userID]);
-
   const handleShare = async (platform) => {
-    const { phone_number, facebook_profile } = userData;
+    // const { content } = postContent${content}\n;
+    const message = `Check out this post: ${window.location.href}`;
 
     try {
       let shareUrl = "";
-      if (platform === "WHATSAPP" && phone_number) {
-        shareUrl = `https://wa.me/${phone_number}?text=${encodeURIComponent(
-          `Check out this post: ${postContent}`
-        )}`;
-      } else if (platform === "FACEBOOK" && facebook_profile) {
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+      if (platform === "WHATSAPP") {
+        shareUrl = isMobile
+          ? `whatsapp://send?text=${encodeURIComponent(message)}`
+          : `https://web.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+        window.open(shareUrl, "_blank");
+      } else if (platform === "FACEBOOK") {
         shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-          `https://facebook.com/${facebook_profile}`
-        )}&quote=${encodeURIComponent(postContent)}`;
+          window.location.href
+        )}&quote=${encodeURIComponent(message)}`;
+        window.open(shareUrl, "_blank");
       }
 
       const response = await ajaxCall("posts/shares/", {
@@ -90,21 +61,19 @@ const PostShare = ({ postId, userId, shareCounts, postContent }) => {
           post: postId,
           user: userId,
           contact_info:
-            platform === "WHATSAPP" ? phone_number : facebook_profile,
+            platform === "WHATSAPP"
+              ? "Phone number here"
+              : "Facebook profile here",
         }),
       });
 
       if ([200, 201].includes(response.status)) {
-        toast.success("Post shared successfully!");
-
-        if (shareUrl) {
-          window.open(shareUrl, "_blank");
-        }
+        console.log("Post shared successfully!");
       } else {
-        toast.error("Error sharing the post");
+        console.log("Error sharing the post");
       }
     } catch (error) {
-      toast.error("Error sharing the post");
+      console.log("Error sharing the post");
     }
 
     setOpen(false);
@@ -114,11 +83,11 @@ const PostShare = ({ postId, userId, shareCounts, postContent }) => {
     <>
       <IconButton size="small" onClick={handleClickOpen}>
         <ShareIcon />
-        {shareCount}
+        {shareCount > 0 && <span>{shareCount}</span>}
       </IconButton>
 
       <Dialog open={open} onClose={handleClose} fullWidth>
-        <DialogTitle> Share this post via:</DialogTitle>
+        <DialogTitle>Share this post via:</DialogTitle>
         <DialogContent>
           <Grid container spacing={2}>
             <Grid item>

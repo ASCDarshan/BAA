@@ -13,6 +13,7 @@ import {
   IconButton,
   Tabs,
   Tab,
+  CardMedia,
 } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import {

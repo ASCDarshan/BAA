@@ -13,6 +13,7 @@ import {
   IconButton,
   Tabs,
   Tab,
+  CardMedia,
 } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import {
@@ -82,6 +83,7 @@ const CheckUser = () => {
   if (!userProfileData) return null;
 
   const {
+    qr_code,
     profile_picture,
     bio,
     linkedin_profile,
@@ -186,6 +188,28 @@ const CheckUser = () => {
                     <FacebookIcon fontSize="medium" color="primary" />
                   </IconButton>
                 </Box>
+              </Card>
+              <Card
+                sx={{
+                  marginTop: 2,
+                  padding: 2,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+                }}
+              >
+                <CardMedia
+                  component="img"
+                  sx={{
+                    height: "40%",
+                    width: "40%",
+                    objectFit: "contain",
+                    borderRadius: "8px",
+                  }}
+                  image={qr_code}
+                  alt="QR Code"
+                />
               </Card>
               <Grid>
                 <Button

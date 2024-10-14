@@ -8,7 +8,6 @@ import {
   Paper,
   CircularProgress,
 } from "@mui/material";
-import { useNavigate, Link } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import ajaxCall from "../helpers/ajaxCall";
@@ -16,12 +15,6 @@ import { toast } from "react-toastify";
 
 const Login = () => {
   const [isLoading, setIsLoading] = React.useState(false);
-  const navigate = useNavigate();
-
-  // clear localStorage
-  useEffect(() => {
-    localStorage.clear();
-  }, []);
 
   const fetchData = async (url, data) => {
     setIsLoading(true);
@@ -39,25 +32,14 @@ const Login = () => {
         8000
       );
       if (response?.status === 200) {
-        const result = response?.data;
-        localStorage.setItem(
-          "loginInfo",
-          JSON.stringify({
-            accessToken: result?.access,
-            refreshToken: result?.refresh,
-            userId: result?.user_id,
-            userRole: result?.user_type,
-          })
-        );
-        toast.success("Login Successful");
-        navigate("/dashboard");
+        toast.success("Mail Send Successful");
       } else if (response.status === 400) {
-        toast.error("Please Check Username and Password");
+        toast.error("Please Check Email Id");
       } else if (response.status === 404) {
-        toast.error("Username or Password is wrong, Please try again...");
+        toast.error("Please Check Email Id");
       }
     } catch (error) {
-      toast.error("Some Problem Occurred. Please try again.");
+      toast.error("Please Check Email Id");
     }
     setIsLoading(false);
   };
@@ -65,18 +47,15 @@ const Login = () => {
   const formik = useFormik({
     initialValues: {
       email: "",
-      password: "",
     },
     validationSchema: Yup.object({
       email: Yup.string().required("Email is required"),
-      password: Yup.string().required("Password is required"),
     }),
     onSubmit: (values) => {
       const loginCredentials = {
-        username: values.email,
-        password: values.password,
+        email_id: values.email,
       };
-      fetchData("accounts/login/", loginCredentials);
+      fetchData("accounts/resetpassword/", loginCredentials);
     },
   });
 
@@ -132,31 +111,13 @@ const Login = () => {
               required
               fullWidth
               id="email"
-              label="Username"
+              label="Email"
               name="email"
               autoComplete="email"
-              autoFocus
               value={formik.values.email}
               onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.email && Boolean(formik.errors.email)}
-              helperText={formik.touched.email && formik.errors.email}
             />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              value={formik.values.password}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.password && Boolean(formik.errors.password)}
-              helperText={formik.touched.password && formik.errors.password}
-            />
+
             {isLoading ? (
               <Button variant="contained" color="primary" fullWidth disabled>
                 <CircularProgress />
@@ -168,29 +129,9 @@ const Login = () => {
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
               >
-                Log In
+                Send
               </Button>
             )}
-            <Box sx={{ textAlign: "center" }}>
-              <Typography variant="body2">
-                <Link
-                  to="/register"
-                  style={{ textDecoration: "none", color: "inherit" }}
-                >
-                  Don't have an account? SignUp
-                </Link>
-              </Typography>
-            </Box>
-            <Box sx={{ textAlign: "center" }}>
-              <Typography variant="body2">
-                <Link
-                  to="/forgotPassword"
-                  style={{ textDecoration: "none", color: "inherit" }}
-                >
-                  Forgot Password
-                </Link>
-              </Typography>
-            </Box>
           </Box>
         </Paper>
       </Container>

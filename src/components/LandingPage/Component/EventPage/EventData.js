@@ -69,10 +69,16 @@ const EventData = () => {
     navigate("/login");
   };
 
-  const handleShareEvent = () => {
+  const handleShareEvent = (name, description) => {
     const currentUrl = window.location.href;
-    const message = `Check out this event: ${currentUrl}`;
-    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    const message = `${name}\n ${description}  \nCheck out this event : ${currentUrl}`;
+
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    const whatsappUrl = isMobile
+      ? `whatsapp://send?text=${encodeURIComponent(message)}`
+      : `https://web.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+
     window.open(whatsappUrl, "_blank");
   };
 
@@ -162,14 +168,6 @@ const EventData = () => {
                             <Typography variant="h6">
                               {subevent.name} ({formatDate(subevent.date)})
                             </Typography>
-                            <Button
-                              variant="contained"
-                              color="primary"
-                              size="small"
-                              onClick={() => navigate("/login")}
-                            >
-                              Buy Pass
-                            </Button>
                           </Grid>
 
                           <Typography variant="body2" paragraph>
@@ -232,7 +230,7 @@ const EventData = () => {
                 variant="contained"
                 color="primary"
                 size="small"
-                onClick={handleShareEvent}
+                onClick={() => handleShareEvent(event.name, event.description)}
                 sx={{ mr: 2 }}
               >
                 Share Event
