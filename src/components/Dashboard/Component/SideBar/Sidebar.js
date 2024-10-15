@@ -42,6 +42,11 @@ const menuItems = [
     link: "/dashboard/addInitiatives",
   },
   {
+    text: "Following Posts",
+    icon: <ResourcesIcon />,
+    link: "/dashboard/followingPost",
+  },
+  {
     text: "Batchmates",
     icon: <Groups3Icon />,
     link: "/dashboard/batchmates",
