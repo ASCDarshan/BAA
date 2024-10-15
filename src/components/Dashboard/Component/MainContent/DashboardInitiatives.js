@@ -29,7 +29,6 @@ const DashboardInitiatives = ({ initiativesData }) => {
   };
 
   const [formData, setFormData] = useState(InitialData);
-  console.log(formData);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [amountError, setAmountError] = useState("");
 
@@ -116,7 +115,7 @@ const DashboardInitiatives = ({ initiativesData }) => {
     const order = response.data;
 
     const options = {
-      key: "rzp_test_rVcN4qbDNcdN9s",
+      key: process.env.REACT_APP_RAZOR_PAY_KEY,
       amount: formData.amount * 100,
       description: "Test Transaction",
       order_id: order.order_id,

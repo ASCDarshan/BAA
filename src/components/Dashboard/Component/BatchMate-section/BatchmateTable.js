@@ -29,6 +29,11 @@ const BatchmateTable = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [batchMates, setBatchMates] = useState([]);
   const [searchYear, setSearchYear] = useState("");
+  const [userProfileData, setUserProfileData] = useState([]);
+  const currentUserId = userProfileData.id;
+  const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
+
+  const userID = loginInfo?.userId;
   const [isYearSearchActive, setIsYearSearchActive] = useState(false);
 
   const columns = [
@@ -90,6 +95,36 @@ const BatchmateTable = () => {
     },
   ];
 
+  const fetchuserData = async (url, setData) => {
+    try {
+      const response = await ajaxCall(
+        url,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
+            }`,
+          },
+          method: "GET",
+        },
+        8000
+      );
+      if (response?.status === 200) {
+        setData(response?.data || []);
+      } else {
+        console.error("Fetch error:", response);
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchuserData(`profiles/user-profile/user/${userID}/`, setUserProfileData);
+  }, [userID]);
+
   const fetchData = async (year = "", setData) => {
     setIsLoading(true);
     try {
@@ -111,14 +146,10 @@ const BatchmateTable = () => {
         8000
       );
       if (response?.status === 200) {
-        const currentUserId = JSON.parse(
-          localStorage.getItem("loginInfo")
-        )?.userId;
         const filteredData =
           response?.data?.filter(
             (user) =>
-              user["user-id"] !== currentUserId &&
-              user.user_type !== "Superuser"
+              user["user-id"] !== userID && user.user_type !== "Superuser"
           ) || [];
         setData(filteredData);
       } else {

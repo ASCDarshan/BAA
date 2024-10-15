@@ -14,6 +14,7 @@ import {
   Tabs,
   Tab,
   CardMedia,
+  CircularProgress,
 } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import {
@@ -40,11 +41,47 @@ const theme = createTheme({
 
 const CheckUser = () => {
   const [userProfileData, setUserProfileData] = useState(null);
+  const [loginuserData, setloginUserData] = useState({});
+  const [loginuserId, setloginUserId] = useState();
+  const [followData, setfollowData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const { UserId } = useParams();
   const [tabValue, setTabValue] = useState(0);
   const [isFollowing, setIsFollowing] = useState(false);
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
-  const loginUserId = loginInfo?.userId;
+  const loginuserid = loginInfo?.userId;
+  const fetchloginuser = async (url, setData) => {
+    try {
+      const response = await ajaxCall(
+        url,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
+            }`,
+          },
+          method: "GET",
+        },
+        8000
+      );
+      if (response?.status === 200) {
+        setloginUserId(response.data.user.id);
+      } else {
+        console.error("Fetch error:", response);
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchloginuser(
+      `profiles/user-profile/user/${loginuserid}/`,
+      setloginUserData
+    );
+  }, []);
 
   const fetchData = async (url, setData) => {
     try {
@@ -64,23 +101,88 @@ const CheckUser = () => {
         setData(response?.data || []);
       } else {
         console.error("Fetch error:", response);
+        toast.error("Failed to fetch user data");
       }
     } catch (error) {
       console.error("Network error:", error);
+      toast.error("Network error occurred");
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchData(`profiles/user-profile/${UserId}/`, setUserProfileData);
+    fetchData(`profiles/following/`, setfollowData);
   }, [UserId]);
 
-  // useEffect(() => {
-  //   if (userProfileData) {
-  //     setIsFollowing(userProfileData.follow_user.includes(loginUserId));
-  //   }
-  // }, [userProfileData, loginUserId]);
+  useEffect(() => {
+    if (followData && Array.isArray(followData.following)) {
+      const isCurrentUserFollowing = followData.following.some(
+        (user) => user.id === parseInt(UserId)
+      );
+      setIsFollowing(isCurrentUserFollowing);
+    }
+  }, [followData, UserId]);
 
-  if (!userProfileData) return null;
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
+
+  const handleFollow = async (e) => {
+    e.preventDefault();
+    const formData = { user_to_follow: loginuserId };
+    const formDataToSend = JSON.stringify(formData);
+
+    try {
+      const response = await ajaxCall(
+        `profiles/follow/`,
+        {
+          method: "POST",
+          body: formDataToSend,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${loginInfo?.accessToken}`,
+          },
+        },
+        8000
+      );
+      if ([200, 201].includes(response.status)) {
+        toast.success("Following Successfully");
+        setIsFollowing(true);
+      } else {
+        toast.error("Some Problem Occurred. Please try again.");
+      }
+    } catch (error) {
+      toast.error("Some Problem Occurred. Please try again.");
+    }
+  };
+
+  if (loading) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (!userProfileData) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <Typography variant="h6">User profile not found</Typography>
+      </Box>
+    );
+  }
 
   const {
     qr_code,
@@ -113,39 +215,6 @@ const CheckUser = () => {
     street_address,
     user: { username },
   } = userProfileData;
-
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
-  };
-
-  const handleFollow = async (e) => {
-    e.preventDefault();
-    const formData = { user_to_follow: UserId };
-    const formDataToSend = JSON.stringify(formData);
-
-    try {
-      const response = await ajaxCall(
-        `profiles/follow/`,
-        {
-          method: "POST",
-          body: formDataToSend,
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${loginInfo?.accessToken}`,
-          },
-        },
-        8000
-      );
-      if ([200, 201].includes(response.status)) {
-        toast.success("Following Successfully");
-        setIsFollowing(true);
-      } else {
-        toast.error("Some Problem Occurred. Please try again.");
-      }
-    } catch (error) {
-      toast.error("Some Problem Occurred. Please try again.");
-    }
-  };
 
   return (
     <ThemeProvider theme={theme}>

@@ -100,6 +100,36 @@ const Navbar = () => {
         <ListItem disablePadding>
           <ListItemText>
             <Button
+              href="/Blogs"
+              sx={{
+                color: "inherit",
+                display: "block",
+                width: "100%",
+                textAlign: "center",
+              }}
+            >
+              Blogs
+            </Button>
+          </ListItemText>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemText>
+            <Button
+              href="/Gallery"
+              sx={{
+                color: "inherit",
+                display: "block",
+                width: "100%",
+                textAlign: "center",
+              }}
+            >
+              Gallery
+            </Button>
+          </ListItemText>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemText>
+            <Button
               href="/login"
               sx={{
                 color: "inherit",
@@ -182,6 +212,12 @@ const Navbar = () => {
                     {item.name}
                   </Button>
                 ))}
+                <Button href="/Blogs" sx={{ color: "inherit" }}>
+                  Blogs
+                </Button>
+                <Button href="/Gallery" sx={{ color: "inherit" }}>
+                  Gallery
+                </Button>
                 <Button href="/login" sx={{ color: "inherit" }}>
                   Login
                 </Button>

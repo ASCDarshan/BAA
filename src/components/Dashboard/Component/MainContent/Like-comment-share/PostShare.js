@@ -13,11 +13,10 @@ import ShareIcon from "@mui/icons-material/Share";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import ajaxCall from "../../../../helpers/ajaxCall";
-// import { toast } from "react-toastify";
 
 const PostShare = ({ postId, userId, shareCounts, postContent }) => {
   const [open, setOpen] = useState(false);
-  const shareCount = shareCounts?.length || 0;
+  const [shareCount, setShareCount] = useState(shareCounts?.length || 0);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -28,7 +27,6 @@ const PostShare = ({ postId, userId, shareCounts, postContent }) => {
   };
 
   const handleShare = async (platform) => {
-    // const { content } = postContent${content}\n;
     const message = `Check out this post: ${window.location.href}`;
 
     try {
@@ -69,6 +67,7 @@ const PostShare = ({ postId, userId, shareCounts, postContent }) => {
 
       if ([200, 201].includes(response.status)) {
         console.log("Post shared successfully!");
+        setShareCount((prevCount) => prevCount + 1);
       } else {
         console.log("Error sharing the post");
       }

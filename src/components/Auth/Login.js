@@ -8,7 +8,7 @@ import {
   Paper,
   CircularProgress,
 } from "@mui/material";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import ajaxCall from "../helpers/ajaxCall";
@@ -17,11 +17,20 @@ import { toast } from "react-toastify";
 const Login = () => {
   const [isLoading, setIsLoading] = React.useState(false);
   const navigate = useNavigate();
-
-  // clear localStorage
+  const location = useLocation();
   useEffect(() => {
-    localStorage.clear();
-  }, []);
+    const checkLoginStatus = () => {
+      const loginInfo = localStorage.getItem("loginInfo");
+      if (loginInfo) {
+        const { userId } = JSON.parse(loginInfo);
+        if (userId && location.pathname === "/login") {
+          navigate("/dashboard/addEvents");
+        }
+      }
+    };
+
+    checkLoginStatus();
+  }, [navigate, location]);
 
   const fetchData = async (url, data) => {
     setIsLoading(true);

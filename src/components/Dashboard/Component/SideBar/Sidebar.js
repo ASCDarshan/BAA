@@ -17,7 +17,7 @@ import {
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Groups3Icon from "@mui/icons-material/Groups3";
 import { createTheme } from "@mui/material/styles";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -51,11 +51,16 @@ const menuItems = [
     icon: <AccountCircleIcon />,
     link: "/dashboard/userProfile",
   },
-  { text: "Log Out", icon: <LogoutIcon />, link: "/login" },
 ];
 
 const Sidebar = ({ drawerOpen, handleDrawerToggle }) => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("loginInfo");
+    navigate("/login");
+  };
 
   return (
     <>
@@ -89,6 +94,19 @@ const Sidebar = ({ drawerOpen, handleDrawerToggle }) => {
               <ListItemText primary={item.text} />
             </ListItem>
           ))}
+          <ListItem
+            button
+            key="logout"
+            onClick={() => {
+              handleLogout();
+              if (isSmallScreen) handleDrawerToggle();
+            }}
+          >
+            <ListItemIcon sx={{ color: "inherit" }}>
+              <LogoutIcon />
+            </ListItemIcon>
+            <ListItemText primary="Log Out" />
+          </ListItem>
         </List>
       </Drawer>
     </>

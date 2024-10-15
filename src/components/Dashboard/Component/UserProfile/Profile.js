@@ -13,7 +13,6 @@ import {
   IconButton,
   Tabs,
   Tab,
-  CardMedia,
 } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import {
@@ -79,7 +78,7 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    fetchData(`profiles/user-profile/${userID}/`, setUserProfileData);
+    fetchData(`profiles/user-profile/user/${userID}/`, setUserProfileData);
   }, [userID]);
   if (!userProfileData) return null;
 

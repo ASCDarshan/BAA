@@ -14,6 +14,8 @@ import Login from "./components/Auth/Login";
 import Register from "./components/Auth/Register";
 import ForgotPassword from "./components/Auth/ForgotPassword";
 import Footers from "./components/LandingPage/Component/Footer/Footers";
+import Blogs from "./components/LandingPage/Component/Blogs/Blog";
+import Gallery from "./components/LandingPage/Component/Gallery/Gallery";
 // dashboard components
 import Dashboard from "./components/Dashboard/Component/Dashboard";
 import AdminNavbar from "./components/Dashboard/Component/Navbar/Navbar";
@@ -26,6 +28,7 @@ import Batchmate from "./components/Dashboard/Component/BatchMate-section/Batchm
 import CheckUser from "./components/Dashboard/Component/UserProfile/CheckUser";
 import DashboardEventData from "./components/Dashboard/Component/EventsSection/EventData";
 import DashboardInitiativesData from "./components/Dashboard/Component/EventsSection/InitiativeData";
+import BlogDetails from "./components/LandingPage/Component/Blogs/BlogDetails";
 
 const theme = createTheme({
   palette: {
@@ -84,6 +87,9 @@ function App() {
           <Route path="/events/:eventName" element={<EventData />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/Blogs" element={<Blogs />} />
+          <Route path="/Blogs/:BlogId" element={<BlogDetails />} />
+          <Route path="/Gallery" element={<Gallery />} />
           <Route path="/forgotPassword" element={<ForgotPassword />} />
         </Route>
 

@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 const Membership = () => {
   const [loading, setLoading] = useState(false);
   const [paymentData, setPaymentData] = useState([]);
+  const [count, setCount] = useState(0);
   const [amount, setAmount] = useState(2500);
 
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
@@ -102,7 +103,7 @@ const Membership = () => {
     const order = response.data;
 
     const options = {
-      key: "rzp_test_rVcN4qbDNcdN9s",
+      key: process.env.REACT_APP_RAZOR_PAY_KEY,
       amount: amount * 100,
       currency: "INR",
       description: "Lifetime Membership",
@@ -130,6 +131,7 @@ const Membership = () => {
 
         if (result?.status === 200) {
           toast.success("Payment Successful");
+          setCount(1);
         } else {
           toast.error("Payment Failed");
         }

@@ -39,9 +39,41 @@ const tabLabels = [
 ];
 
 const ProfileForm = ({ userID }) => {
+  const [loginuserData, setloginUserData] = useState({});
+  const [loginuserId, setloginUserId] = useState();
   const [userProfileData, setUserProfileData] = useState({});
   const [activeTab, setActiveTab] = useState(0);
   const [errors, setErrors] = useState({});
+
+  const fetchData = async (url, setData) => {
+    try {
+      const response = await ajaxCall(
+        url,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
+            }`,
+          },
+          method: "GET",
+        },
+        8000
+      );
+      if (response?.status === 200) {
+        setloginUserId(loginuserData.user.id);
+      } else {
+        console.error("Fetch error:", response);
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData(`profiles/user-profile/user/${userID}/`, setloginUserData);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -79,6 +111,21 @@ const ProfileForm = ({ userID }) => {
       setErrors((prevErrors) => ({ ...prevErrors, [name]: null }));
     }
   };
+  // const handleFileChange = (e) => {
+  //   const { name, files } = e.target;
+  //   if (files.length > 0) {
+  //     setUserProfileData((prevData) => ({ ...prevData, [name]: files[0] }));
+  //     if (errors[name]) {
+  //       setErrors((prevErrors) => ({ ...prevErrors, [name]: null }));
+  //     }
+  //   }
+  // };
+
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target;
+    setUserProfileData((prevData) => ({ ...prevData, [name]: checked }));
+  };
+
   const handleFileChange = (e) => {
     const { name, files } = e.target;
     if (files.length > 0) {
@@ -89,11 +136,6 @@ const ProfileForm = ({ userID }) => {
     }
   };
 
-  const handleCheckboxChange = (e) => {
-    const { name, checked } = e.target;
-    setUserProfileData((prevData) => ({ ...prevData, [name]: checked }));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -102,7 +144,12 @@ const ProfileForm = ({ userID }) => {
       if (userProfileData[key] !== null && userProfileData[key] !== undefined) {
         if (key === "school_graduation_year") {
           formDataToSend.append(key, parseInt(userProfileData[key], 10));
-        } else if (key === "profile_picture" || key === "company_portfolio") {
+        } else if (
+          key === "profile_picture" ||
+          key === "company_portfolio" ||
+          key === "qr_code"
+        ) {
+          // Ensure the value is a File object before appending
           if (userProfileData[key] instanceof File) {
             formDataToSend.append(key, userProfileData[key]);
           }
