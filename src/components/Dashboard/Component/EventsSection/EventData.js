@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import {
   Box,
@@ -40,17 +40,15 @@ const theme = createTheme({
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const year = date.getFullYear();
-  return `${day}-${month}-${year}`;
+  return date.toLocaleDateString("en-GB");
 };
 
 const formatTime = (timeString) => {
   const [hour, minute] = timeString.split(":");
-  const hour12 = hour % 12 || 12;
-  const ampm = hour >= 12 ? "PM" : "AM";
-  return `${hour12}:${minute} ${ampm}`;
+  return new Date(0, 0, 0, hour, minute).toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+  });
 };
 
 const BackgroundImage = styled("div")(({ bgImage }) => ({
@@ -80,8 +78,20 @@ const EventData = () => {
   const [guestsCount, setGuestsCount] = useState({});
   const [totalAmount, setTotalAmount] = useState(0);
   const [activeStep, setActiveStep] = useState(0);
+  const [totalGuests, setTotalGuests] = useState(0);
 
-  const fetchData = async (url, setData) => {
+  const [formData, setFormData] = useState({
+    registration_date: new Date().toISOString(),
+    total_amount: "",
+    payment_status: "COMPLETED",
+    full_event_access: true,
+    event: "",
+    alumni: JSON.parse(localStorage.getItem("loginInfo"))?.userId,
+    subevent_registrations: [],
+    guests: [],
+  });
+
+  const fetchData = useCallback(async (url, setData) => {
     try {
       const response = await ajaxCall(
         url,
@@ -104,11 +114,11 @@ const EventData = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchData("events/events/", setEventData);
-  }, []);
+  }, [fetchData]);
 
   useEffect(() => {
     if (eventData.length > 0) {
@@ -119,68 +129,203 @@ const EventData = () => {
     }
   }, [eventData, eventId]);
 
-  const handleRegistrations = () => {
+  const handleRegistrations = useCallback(() => {
     setOpenDialog(true);
     setActiveStep(0);
     setSelectedSubEvents([]);
     setGuestsCount({});
     setTotalAmount(selectedEvent?.amount || 0);
-  };
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      event: selectedEvent.id,
+      total_amount: selectedEvent?.amount || 0,
+    }));
+  }, [selectedEvent]);
 
-  const handleCloseDialog = () => {
+  const handleCloseDialog = useCallback(() => {
     setOpenDialog(false);
     setActiveStep(0);
-  };
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      subevent_registrations: [],
+      guests: [],
+    }));
+  }, []);
 
-  const handleSubEventSelection = (subEventId, isChecked) => {
-    const updatedSelectedSubEvents = isChecked
-      ? [...selectedSubEvents, subEventId]
-      : selectedSubEvents.filter((id) => id !== subEventId);
-    setSelectedSubEvents(updatedSelectedSubEvents);
+  const handleSubEventSelection = useCallback(
+    (subEventId, isChecked) => {
+      setSelectedSubEvents((prevSelected) =>
+        isChecked
+          ? [...prevSelected, subEventId]
+          : prevSelected.filter((id) => id !== subEventId)
+      );
 
-    calculateTotalAmount(updatedSelectedSubEvents, guestsCount);
-  };
+      setFormData((prevFormData) => {
+        const updatedSubEventRegistrations = isChecked
+          ? [
+              ...prevFormData.subevent_registrations,
+              {
+                subevent: subEventId,
+                num_guests: 0,
+                amount_paid: "0.00",
+                attended: false,
+              },
+            ]
+          : prevFormData.subevent_registrations.filter(
+              (reg) => reg.subevent !== subEventId
+            );
 
-  const handleGuestChange = (subEventId, count) => {
-    const updatedGuestsCount = { ...guestsCount, [subEventId]: count };
-    setGuestsCount(updatedGuestsCount);
+        return {
+          ...prevFormData,
+          subevent_registrations: updatedSubEventRegistrations,
+        };
+      });
 
-    calculateTotalAmount(selectedSubEvents, updatedGuestsCount);
-  };
+      calculateTotalAmount(
+        isChecked
+          ? [...selectedSubEvents, subEventId]
+          : selectedSubEvents.filter((id) => id !== subEventId),
+        guestsCount
+      );
+    },
+    [selectedSubEvents, guestsCount]
+  );
 
-  const calculateTotalAmount = (selectedSubEvents, guestsCount) => {
-    let amount = selectedEvent?.amount || 0;
-    selectedSubEvents.forEach((subEventId) => {
-      const subEvent = subEvents.find((sub) => sub.id === subEventId);
-      const alumniPrice = parseFloat(subEvent.pricing[0].alumni_price);
-      const guestPrice = parseFloat(subEvent.pricing[0].guest_price);
-      const guestCount = parseInt(guestsCount[subEventId] || 0);
+  const handleGuestChange = useCallback(
+    (subEventId, count) => {
+      setGuestsCount((prevCount) => ({
+        ...prevCount,
+        [subEventId]: count,
+      }));
 
-      amount += alumniPrice + guestPrice * guestCount;
+      const newTotalGuests = Object.values({
+        ...guestsCount,
+        [subEventId]: count,
+      }).reduce((sum, count) => sum + parseInt(count || 0), 0);
+      setTotalGuests(newTotalGuests);
+
+      setFormData((prevFormData) => {
+        const updatedSubEventRegistrations =
+          prevFormData.subevent_registrations.map((reg) =>
+            reg.subevent === subEventId
+              ? { ...reg, num_guests: parseInt(count || 0) }
+              : reg
+          );
+
+        return {
+          ...prevFormData,
+          subevent_registrations: updatedSubEventRegistrations,
+          guests: Array(newTotalGuests)
+            .fill({})
+            .map(() => ({ name: "", phone: "", image: null })),
+        };
+      });
+
+      calculateTotalAmount(selectedSubEvents, {
+        ...guestsCount,
+        [subEventId]: count,
+      });
+    },
+    [selectedSubEvents, guestsCount]
+  );
+
+  const calculateTotalAmount = useCallback(
+    (selectedSubEvents, guestsCount) => {
+      let amount = selectedEvent?.amount || 0;
+      selectedSubEvents.forEach((subEventId) => {
+        const subEvent = subEvents.find((sub) => sub.id === subEventId);
+        const alumniPrice = parseFloat(subEvent.pricing[0].alumni_price);
+        const guestPrice = parseFloat(subEvent.pricing[0].guest_price);
+        const guestCount = parseInt(guestsCount[subEventId] || 0);
+
+        amount += alumniPrice + guestPrice * guestCount;
+      });
+      setTotalAmount(amount);
+      setFormData((prevData) => ({
+        ...prevData,
+        total_amount: amount.toFixed(2),
+      }));
+    },
+    [selectedEvent, subEvents]
+  );
+
+  const handleGuestInfoChange = useCallback((index, field, value) => {
+    setFormData((prevData) => {
+      const updatedGuests = [...prevData.guests];
+      updatedGuests[index] = {
+        ...updatedGuests[index],
+        [field]: field === "image" ? value : value,
+      };
+      return { ...prevData, guests: updatedGuests };
     });
-    setTotalAmount(amount);
-  };
+  }, []);
 
-  const handleNext = () => setActiveStep((prevStep) => prevStep + 1);
-  const handleBack = () => setActiveStep((prevStep) => prevStep - 1);
-  const handleReset = () => setActiveStep(0);
-  const isStepComplete = () => activeStep === steps.length - 1;
+  const handleSubmit = useCallback(async () => {
+    try {
+      const formDataToSend = new FormData();
 
-  function loadScript(src) {
+      Object.keys(formData).forEach((key) => {
+        if (key !== "guests" && key !== "subevent_registrations") {
+          formDataToSend.append(key, formData[key]);
+        }
+      });
+
+      formDataToSend.append(
+        "subevent_registrations",
+        JSON.stringify(formData.subevent_registrations)
+      );
+
+      formData.guests.forEach((guest, index) => {
+        formDataToSend.append(`guests[${index}]name`, guest.name);
+        formDataToSend.append(`guests[${index}]phone`, guest.phone);
+        if (guest.image instanceof File) {
+          formDataToSend.append(
+            `guests[${index}]image`,
+            guest.image,
+            guest.image.name
+          );
+        }
+      });
+
+      const response = await ajaxCall(
+        "events/registrations/",
+        {
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${
+              JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
+            }`,
+          },
+          method: "POST",
+          body: formDataToSend,
+        },
+        8000
+      );
+
+      if (response?.status === 201) {
+        toast.success("Registration Completed Successfully");
+        handleCloseDialog();
+      } else {
+        console.error("Registration API response:", response);
+        toast.error("Registration Failed");
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+      toast.error("Registration Failed");
+    }
+  }, [formData, handleCloseDialog]);
+
+  const loadScript = useCallback((src) => {
     return new Promise((resolve) => {
       const script = document.createElement("script");
       script.src = src;
-      script.onload = () => {
-        resolve(true);
-      };
-      script.onerror = () => {
-        resolve(false);
-      };
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
       document.body.appendChild(script);
     });
-  }
+  }, []);
 
-  const handlePay = async () => {
+  const handlePay = useCallback(async () => {
     const res = await loadScript(
       "https://checkout.razorpay.com/v1/checkout.js"
     );
@@ -221,8 +366,8 @@ const EventData = () => {
     const userData = JSON.parse(localStorage.getItem("loginInfo"));
 
     const options = {
-      key: "rzp_test_rVcN4qbDNcdN9s",
-      amount: totalAmount,
+      key: process.env.REACT_APP_RAZOR_PAY_KEY,
+      amount: totalAmount * 100,
       currency: "INR",
       description: "Test Transaction",
       order_id: order.order_id,
@@ -251,38 +396,7 @@ const EventData = () => {
           );
 
           if (result?.status === 200) {
-            const registrationData = {
-              registration_date: new Date().toISOString(),
-              total_amount: totalAmount,
-              payment_status: "COMPLETED",
-              full_event_access: true,
-              event: selectedEvent.id,
-              alumni: userData.userId,
-            };
-
-            const registrationResult = await ajaxCall(
-              "events/registrations/",
-              {
-                headers: {
-                  Accept: "application/json",
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${
-                    JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
-                  }`,
-                },
-                method: "POST",
-                body: JSON.stringify(registrationData),
-              },
-              8000
-            );
-
-            if (registrationResult?.status === 200) {
-              toast.success("Payment Successful and Registration Completed");
-              setOpenDialog(false);
-            } else {
-              console.error("Registration API response:", registrationResult);
-              toast.error("Payment was successful, but registration failed.");
-            }
+            handleSubmit();
           } else {
             console.error("Payment success API response:", result);
             toast.error("Payment failed. Please try again.");
@@ -307,9 +421,9 @@ const EventData = () => {
 
     const paymentObject = new window.Razorpay(options);
     paymentObject.open();
-  };
+  }, [totalAmount, selectedEvent, handleSubmit, loadScript]);
 
-  const handleShareEvent = (description) => {
+  const handleShareEvent = useCallback((description) => {
     const currentUrl = window.location.href;
     const message = `Check out this event: ${currentUrl}\n${description}`;
 
@@ -320,7 +434,20 @@ const EventData = () => {
       : `https://web.whatsapp.com/send?text=${encodeURIComponent(message)}`;
 
     window.open(whatsappUrl, "_blank");
-  };
+  }, []);
+
+  const handleNext = useCallback(() => {
+    if (activeStep === 1 && totalGuests === 0) {
+      handleSubmit();
+    } else {
+      setActiveStep((prevStep) => prevStep + 1);
+    }
+  }, [activeStep, totalGuests]);
+
+  const handleBack = useCallback(
+    () => setActiveStep((prevStep) => prevStep - 1),
+    []
+  );
 
   return (
     <Container maxWidth="lg" sx={{ mt: 10 }}>
@@ -516,168 +643,165 @@ const EventData = () => {
             ))}
           </Stepper>
 
-          {activeStep === steps.length ? (
-            <Box sx={{ mt: 3 }}>
-              <Typography variant="h6">
-                All steps completed - you're finished!
-              </Typography>
-              <Button onClick={handleReset} sx={{ mt: 2 }}>
-                Reset
-              </Button>
-            </Box>
-          ) : (
-            <>
-              <form>
-                {activeStep === 0 && (
-                  <Grid container spacing={2} sx={{ mt: 2 }}>
-                    <Grid item xs={6}>
-                      <TextField
-                        fullWidth
-                        label="Event"
-                        value={selectedEvent?.name || ""}
-                        InputProps={{
-                          readOnly: true,
-                        }}
-                        size="small"
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <TextField
-                        fullWidth
-                        label="Total Amount"
-                        value={selectedEvent?.amount}
-                        InputProps={{
-                          readOnly: true,
-                        }}
-                        size="small"
-                      />
-                    </Grid>
-                  </Grid>
-                )}
+          <form>
+            {activeStep === 0 && (
+              <Grid container spacing={2} sx={{ mt: 2 }}>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    label="Event"
+                    value={selectedEvent?.name || ""}
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                    size="small"
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    label="Total Amount"
+                    value={formData.total_amount}
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                    size="small"
+                  />
+                </Grid>
+              </Grid>
+            )}
 
-                {activeStep === 1 && (
-                  <>
-                    {subEvents.map((subEvent) => (
-                      <Grid key={subEvent.id} mt={2}>
-                        <FormControlLabel
-                          control={
-                            <Checkbox
-                              checked={selectedSubEvents.includes(subEvent.id)}
-                              onChange={(e) =>
-                                handleSubEventSelection(
-                                  subEvent.id,
-                                  e.target.checked
-                                )
-                              }
-                            />
+            {activeStep === 1 && (
+              <>
+                {subEvents.map((subEvent) => (
+                  <Grid key={subEvent.id} mt={2}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={selectedSubEvents.includes(subEvent.id)}
+                          onChange={(e) =>
+                            handleSubEventSelection(
+                              subEvent.id,
+                              e.target.checked
+                            )
                           }
-                          label="Select Event"
                         />
-                        <Typography variant="subtitle1" gutterBottom>
-                          Event : {subEvent.name}
-                        </Typography>
-                        <Grid container spacing={2} sx={{ mt: 1 }}>
-                          <Grid item xs={6}>
-                            <TextField
-                              fullWidth
-                              label="Num Guests"
-                              name={`subEventGuests_${subEvent.id}`}
-                              type="number"
-                              size="small"
-                              onChange={(e) =>
-                                handleGuestChange(subEvent.id, e.target.value)
-                              }
-                            />
-                          </Grid>
-                          <Grid item xs={6}>
-                            <TextField
-                              fullWidth
-                              label="Alumni Price"
-                              value={subEvent.pricing[0]?.alumni_price || ""}
-                              InputProps={{
-                                readOnly: true,
-                              }}
-                              size="small"
-                            />
-                          </Grid>
-                          <Grid item xs={6}>
-                            <TextField
-                              fullWidth
-                              label="Guest Price"
-                              value={subEvent.pricing[0]?.guest_price || ""}
-                              InputProps={{
-                                readOnly: true,
-                              }}
-                              size="small"
-                            />
-                          </Grid>
-                        </Grid>
-                      </Grid>
-                    ))}
-                  </>
-                )}
-
-                {activeStep === 2 && (
-                  <Grid>
-                    <Grid container spacing={2} sx={{ mt: 2 }}>
+                      }
+                      label="Select Event"
+                    />
+                    <Typography variant="subtitle1" gutterBottom>
+                      Event : {subEvent.name}
+                    </Typography>
+                    <Grid container spacing={2} sx={{ mt: 1 }}>
                       <Grid item xs={6}>
                         <TextField
                           fullWidth
-                          label="Name"
-                          name="name"
-                          size="small"
-                          value={selectedEvent.name}
-                        />
-                      </Grid>
-                      <Grid item xs={6}>
-                        <TextField
-                          fullWidth
-                          label="Phone"
-                          name="phone"
+                          label="Num Guests"
+                          name={`subEventGuests_${subEvent.id}`}
                           type="number"
                           size="small"
-                          value={selectedEvent.phone}
+                          onChange={(e) =>
+                            handleGuestChange(subEvent.id, e.target.value)
+                          }
                         />
                       </Grid>
                       <Grid item xs={6}>
                         <TextField
                           fullWidth
-                          label="Image"
-                          name="image"
-                          type="file"
+                          label="Alumni Price"
+                          value={subEvent.pricing[0]?.alumni_price || ""}
+                          InputProps={{
+                            readOnly: true,
+                          }}
                           size="small"
-                          InputLabelProps={{ shrink: true }}
+                        />
+                      </Grid>
+                      <Grid item xs={6}>
+                        <TextField
+                          fullWidth
+                          label="Guest Price"
+                          value={subEvent.pricing[0]?.guest_price || ""}
+                          InputProps={{
+                            readOnly: true,
+                          }}
+                          size="small"
                         />
                       </Grid>
                     </Grid>
                   </Grid>
-                )}
-              </form>
+                ))}
+              </>
+            )}
 
-              <Box
-                sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}
-              >
-                <Button
-                  variant="contained"
-                  onClick={handleBack}
-                  sx={{ mt: 1, mr: 1 }}
-                  disabled={activeStep === 0}
-                  size="small"
-                >
-                  Back
-                </Button>
-                <Typography variant="h6">Total: {totalAmount}</Typography>
-                <Button
-                  variant="contained"
-                  onClick={isStepComplete() ? handlePay : handleNext}
-                  sx={{ mt: 1, mr: 1 }}
-                  size="small"
-                >
-                  {isStepComplete() ? `Pay: ${totalAmount}` : "Next"}
-                </Button>
-              </Box>
-            </>
-          )}
+            {activeStep === 2 && totalGuests > 0 && (
+              <>
+                {formData.guests.map((guest, index) => (
+                  <Grid container spacing={2} sx={{ mt: 2 }} key={index}>
+                    <Grid item xs={12}>
+                      <Typography variant="h6">Guest {index + 1}</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <TextField
+                        fullWidth
+                        label="Name"
+                        value={guest.name}
+                        onChange={(e) =>
+                          handleGuestInfoChange(index, "name", e.target.value)
+                        }
+                        size="small"
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <TextField
+                        fullWidth
+                        label="Phone"
+                        value={guest.phone}
+                        onChange={(e) =>
+                          handleGuestInfoChange(index, "phone", e.target.value)
+                        }
+                        type="number"
+                        size="small"
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) =>
+                          handleGuestInfoChange(
+                            index,
+                            "image",
+                            e.target.files[0]
+                          )
+                        }
+                      />
+                    </Grid>
+                  </Grid>
+                ))}
+              </>
+            )}
+          </form>
+
+          <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
+            <Button
+              variant="contained"
+              onClick={handleBack}
+              sx={{ mt: 1, mr: 1 }}
+              disabled={activeStep === 0}
+              size="small"
+            >
+              Back
+            </Button>
+            <Typography variant="h6">Total: {totalAmount}</Typography>
+            <Button
+              variant="contained"
+              onClick={activeStep === steps.length - 1 ? handlePay : handleNext}
+              sx={{ mt: 1, mr: 1 }}
+              size="small"
+            >
+              {activeStep === steps.length - 1 ? "Submit" : "Next"}
+            </Button>
+          </Box>
         </DialogContent>
       </Dialog>
     </Container>

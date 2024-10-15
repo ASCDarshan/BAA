@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Paper,
   Typography,
@@ -58,10 +58,6 @@ const DashboardEvents = ({ eventsData }) => {
   const [activeStep, setActiveStep] = useState(0);
   const [totalGuests, setTotalGuests] = useState(0);
 
-  useEffect(() => {
-    fetchData("events/registrations/", seteventRegistrationsData);
-  }, []);
-
   const fetchData = async (url, setData) => {
     try {
       const response = await ajaxCall(
@@ -88,6 +84,17 @@ const DashboardEvents = ({ eventsData }) => {
     }
   };
 
+  useEffect(() => {
+    fetchData("events/registrations/", seteventRegistrationsData);
+  }, []);
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setActiveStep(0);
+    setFormData(initialData);
+    setTotalGuests(0);
+  };
+
   const handleOpenDialog = (event) => {
     setSelectedEvent(event);
     setSubEvents(event.subevents || []);
@@ -98,13 +105,6 @@ const DashboardEvents = ({ eventsData }) => {
     setFormData({ ...initialData, event: event.id });
   };
 
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-    setActiveStep(0);
-    setFormData(initialData);
-    setTotalGuests(0);
-  };
-
   const handleSubEventSelection = (subEventId, isChecked) => {
     const updatedSelectedSubEvents = isChecked
       ? [...selectedSubEvents, subEventId]
@@ -112,37 +112,6 @@ const DashboardEvents = ({ eventsData }) => {
     setSelectedSubEvents(updatedSelectedSubEvents);
 
     calculateTotalAmount(updatedSelectedSubEvents, guestsCount);
-  };
-
-  const handleGuestChange = (subEventId, count) => {
-    const updatedGuestsCount = { ...guestsCount, [subEventId]: count };
-    setGuestsCount(updatedGuestsCount);
-
-    const newTotalGuests = Object.values(updatedGuestsCount).reduce(
-      (sum, count) => sum + parseInt(count || 0),
-      0
-    );
-    setTotalGuests(newTotalGuests);
-
-    calculateTotalAmount(selectedSubEvents, updatedGuestsCount);
-
-    // Update formData with subevent_registrations
-    const updatedSubEventRegistrations = selectedSubEvents.map(
-      (subEventId) => ({
-        subevent: subEventId,
-        num_guests: parseInt(updatedGuestsCount[subEventId] || 0),
-        amount_paid: "0.00", // You may need to calculate this based on your pricing logic
-        attended: false,
-      })
-    );
-
-    setFormData((prevData) => ({
-      ...prevData,
-      subevent_registrations: updatedSubEventRegistrations,
-      guests: Array(newTotalGuests)
-        .fill({})
-        .map(() => ({ name: "", phone: "", image: null })),
-    }));
   };
 
   const calculateTotalAmount = (selectedSubEvents, guestsCount) => {
@@ -162,16 +131,35 @@ const DashboardEvents = ({ eventsData }) => {
     }));
   };
 
-  const handleNext = () => {
-    if (activeStep === 1 && totalGuests === 0) {
-      // Skip guest registration step if no guests
-      handleSubmit();
-    } else {
-      setActiveStep((prevStep) => prevStep + 1);
-    }
-  };
+  const handleGuestChange = (subEventId, count) => {
+    const updatedGuestsCount = { ...guestsCount, [subEventId]: count };
+    setGuestsCount(updatedGuestsCount);
 
-  const handleBack = () => setActiveStep((prevStep) => prevStep - 1);
+    const newTotalGuests = Object.values(updatedGuestsCount).reduce(
+      (sum, count) => sum + parseInt(count || 0),
+      0
+    );
+    setTotalGuests(newTotalGuests);
+
+    calculateTotalAmount(selectedSubEvents, updatedGuestsCount);
+
+    const updatedSubEventRegistrations = selectedSubEvents.map(
+      (subEventId) => ({
+        subevent: subEventId,
+        num_guests: parseInt(updatedGuestsCount[subEventId] || 0),
+        amount_paid: "0.00",
+        attended: false,
+      })
+    );
+
+    setFormData((prevData) => ({
+      ...prevData,
+      subevent_registrations: updatedSubEventRegistrations,
+      guests: Array(newTotalGuests)
+        .fill({})
+        .map(() => ({ name: "", phone: "", image: null })),
+    }));
+  };
 
   const handleGuestInfoChange = (index, field, value) => {
     setFormData((prevData) => {
@@ -184,136 +172,26 @@ const DashboardEvents = ({ eventsData }) => {
     });
   };
 
-  function loadScript(src) {
-    return new Promise((resolve) => {
-      const script = document.createElement("script");
-      script.src = src;
-      script.onload = () => {
-        resolve(true);
-      };
-      script.onerror = () => {
-        resolve(false);
-      };
-      document.body.appendChild(script);
-    });
-  }
-
-  const handlePay = async () => {
-    const res = await loadScript(
-      "https://checkout.razorpay.com/v1/checkout.js"
-    );
-
-    if (!res) {
-      alert("Razorpay SDK failed to load. Are you online?");
-      throw new Error("Razorpay SDK failed to load");
-    }
-
-    const body = {
-      amount: formData.total_amount,
-      category_id: 1,
-      event_id: formData.event,
-    };
-
-    const response = await ajaxCall(
-      "accounts/payment/initiate/",
-      {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${
-            JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
-          }`,
-        },
-        method: "POST",
-        body: JSON.stringify(body),
-      },
-      8000
-    );
-
-    if (!response || response?.status !== 200) {
-      alert("Server error. Are you online?");
-      throw new Error("Payment initiation failed");
-    }
-
-    const order = response.data;
-    const userData = JSON.parse(localStorage.getItem("loginInfo"));
-
-    return new Promise((resolve, reject) => {
-      const options = {
-        key: "rzp_test_rVcN4qbDNcdN9s",
-        amount: formData.total_amount * 100,
-        currency: "INR",
-        description: "Test Transaction",
-        order_id: order.order_id,
-        handler: async function (response) {
-          const data = {
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_signature: response.razorpay_signature,
-          };
-
-          const result = await ajaxCall(
-            "accounts/payment/success/",
-            {
-              headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${
-                  JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
-                }`,
-              },
-              method: "POST",
-              body: JSON.stringify(data),
-            },
-            8000
-          );
-
-          if (result?.status === 200) {
-            toast.success("Payment Successful");
-            resolve(); // Resolve the promise if payment is successful
-          } else {
-            toast.error("Payment verification failed");
-            reject(new Error("Payment verification failed"));
-          }
-        },
-        prefill: {
-          name: userData?.username,
-        },
-        notes: {
-          address: "Razorpay Corporate Office",
-        },
-        theme: {
-          color: "#61dafb",
-        },
-      };
-
-      const paymentObject = new window.Razorpay(options);
-      paymentObject.open();
-      paymentObject.on("payment.failed", function (response) {
-        toast.error("Payment failed");
-        reject(new Error("Payment failed"));
-      });
-    });
+  const handleNext = () => {
+    setActiveStep((prevStep) => prevStep + 1);
   };
 
-  const handleSubmit = async () => {
+  const handleBack = () => setActiveStep((prevStep) => prevStep - 1);
+
+  const handleSubmit = useCallback(async () => {
     try {
       const formDataToSend = new FormData();
 
-      // Append non-file data
       formDataToSend.append("event", formData.event);
       formDataToSend.append("alumni", formData.alumni);
       formDataToSend.append("total_amount", formData.total_amount);
       formDataToSend.append("payment_status", formData.payment_status);
       formDataToSend.append("full_event_access", formData.full_event_access);
-
-      // Append subevent_registrations as JSON string
       formDataToSend.append(
         "subevent_registrations",
         JSON.stringify(formData.subevent_registrations)
       );
 
-      // Append guests data and files
       formData.guests.forEach((guest, index) => {
         formDataToSend.append(`guests[${index}]name`, guest.name);
         formDataToSend.append(`guests[${index}]phone`, guest.phone);
@@ -326,18 +204,12 @@ const DashboardEvents = ({ eventsData }) => {
         }
       });
 
-      // Attempt payment
-      await handlePay();
-
-      // Payment successful, proceed with registration
       const response = await ajaxCall(
         "events/registrations/",
         {
           headers: {
             Accept: "application/json",
-            Authorization: `Bearer ${
-              JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
-            }`,
+            Authorization: `Bearer ${loginInfo?.accessToken}`,
           },
           method: "POST",
           body: formDataToSend,
@@ -353,11 +225,112 @@ const DashboardEvents = ({ eventsData }) => {
         toast.error("Registration Failed");
       }
     } catch (error) {
-      // Handle errors from either the payment or registration
-      console.error("Error during registration or payment:", error);
-      toast.error("Registration or Payment Failed");
+      console.error("Error during registration:", error);
+      toast.error("Registration Failed");
     }
-  };
+  }, [formData, handleCloseDialog, loginInfo]);
+
+  const loadScript = useCallback((src) => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = src;
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  }, []);
+
+  const handlePay = useCallback(async () => {
+    const res = await loadScript(
+      "https://checkout.razorpay.com/v1/checkout.js"
+    );
+
+    if (!res) {
+      toast.error("Razorpay SDK failed to load. Are you online?");
+      return;
+    }
+
+    try {
+      const response = await ajaxCall(
+        "accounts/payment/initiate/",
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${loginInfo?.accessToken}`,
+          },
+          method: "POST",
+          body: JSON.stringify({
+            amount: totalAmount,
+            category_id: 1,
+            event_id: selectedEvent.id,
+          }),
+        },
+        8000
+      );
+
+      if (!response) {
+        toast.error("Server error. Are you online?");
+        return;
+      }
+
+      const order = response.data;
+
+      const options = {
+        key: process.env.REACT_APP_RAZOR_PAY_KEY,
+        amount: totalAmount * 100,
+        currency: "INR",
+        name: "Your Company Name",
+        description: "Event Registration",
+        order_id: order.order_id,
+        handler: async function (response) {
+          try {
+            const result = await ajaxCall(
+              "accounts/payment/success/",
+              {
+                headers: {
+                  Accept: "application/json",
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${loginInfo?.accessToken}`,
+                },
+                method: "POST",
+                body: JSON.stringify({
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                }),
+              },
+              8000
+            );
+
+            if (result?.status === 200) {
+              await handleSubmit();
+            } else {
+              console.error("Payment success API response:", result);
+              toast.error("Payment failed. Please try again.");
+            }
+          } catch (error) {
+            console.error("Error in payment handler:", error);
+            toast.error(
+              "An unexpected error occurred during the payment process."
+            );
+          }
+        },
+        prefill: {
+          name: loginInfo?.username,
+        },
+        theme: {
+          color: "#61dafb",
+        },
+      };
+
+      const paymentObject = new window.Razorpay(options);
+      paymentObject.open();
+    } catch (error) {
+      console.error("Error initiating payment:", error);
+      toast.error("Failed to initiate payment. Please try again.");
+    }
+  }, [totalAmount, selectedEvent, handleSubmit, loadScript, loginInfo]);
 
   return (
     <>
@@ -424,7 +397,7 @@ const DashboardEvents = ({ eventsData }) => {
                     fullWidth
                     label="Total Amount"
                     name="total_amount"
-                    value={selectedEvent?.amount}
+                    value={totalAmount}
                     InputProps={{
                       readOnly: true,
                     }}
@@ -493,6 +466,9 @@ const DashboardEvents = ({ eventsData }) => {
                     </Grid>
                   </Grid>
                 ))}
+                <Typography variant="h6" sx={{ mt: 2 }}>
+                  Total Amount: {totalAmount}
+                </Typography>
               </>
             )}
 

@@ -75,7 +75,7 @@ const Navbar = ({ handleDrawerToggle }) => {
   };
 
   useEffect(() => {
-    fetchData(`profiles/user-profile/${userID}/`, setUserProfileData);
+    fetchData(`profiles/user-profile/user/${userID}/`, setUserProfileData);
   }, [userID]);
 
   return (
