@@ -83,7 +83,7 @@ const EventData = () => {
   const [formData, setFormData] = useState({
     registration_date: new Date().toISOString(),
     total_amount: "",
-    payment_status: "COMPLETED",
+    payment_status: "PENDING",
     full_event_access: true,
     event: "",
     alumni: JSON.parse(localStorage.getItem("loginInfo"))?.userId,
@@ -154,39 +154,12 @@ const EventData = () => {
 
   const handleSubEventSelection = useCallback(
     (subEventId, isChecked) => {
-      setSelectedSubEvents((prevSelected) =>
-        isChecked
-          ? [...prevSelected, subEventId]
-          : prevSelected.filter((id) => id !== subEventId)
-      );
+      const updatedSelectedSubEvents = isChecked
+        ? [...selectedSubEvents, subEventId]
+        : selectedSubEvents.filter((id) => id !== subEventId);
+      setSelectedSubEvents(updatedSelectedSubEvents);
 
-      setFormData((prevFormData) => {
-        const updatedSubEventRegistrations = isChecked
-          ? [
-              ...prevFormData.subevent_registrations,
-              {
-                subevent: subEventId,
-                num_guests: 0,
-                amount_paid: "0.00",
-                attended: false,
-              },
-            ]
-          : prevFormData.subevent_registrations.filter(
-              (reg) => reg.subevent !== subEventId
-            );
-
-        return {
-          ...prevFormData,
-          subevent_registrations: updatedSubEventRegistrations,
-        };
-      });
-
-      calculateTotalAmount(
-        isChecked
-          ? [...selectedSubEvents, subEventId]
-          : selectedSubEvents.filter((id) => id !== subEventId),
-        guestsCount
-      );
+      calculateTotalAmount(updatedSelectedSubEvents, guestsCount);
     },
     [selectedSubEvents, guestsCount]
   );
@@ -331,96 +304,94 @@ const EventData = () => {
     );
 
     if (!res) {
-      alert("Razorpay SDK failed to load. Are you online?");
+      toast.error("Razorpay SDK failed to load. Are you online?");
       return;
     }
 
-    const body = {
-      amount: totalAmount,
-      category_id: 1,
-      event_id: selectedEvent.id,
-    };
-
-    const response = await ajaxCall(
-      "accounts/payment/initiate/",
-      {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${
-            JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
-          }`,
+    try {
+      const response = await ajaxCall(
+        "accounts/payment/initiate/",
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
+            }`,
+          },
+          method: "POST",
+          body: JSON.stringify({
+            amount: totalAmount,
+            category_id: 1,
+            event_id: selectedEvent.id,
+          }),
         },
-        method: "POST",
-        body: JSON.stringify(body),
-      },
-      8000
-    );
+        8000
+      );
 
-    if (!response) {
-      alert("Server error. Are you online?");
-      return;
-    }
+      if (!response) {
+        toast.error("Server error. Are you online?");
+        return;
+      }
 
-    const order = response.data;
-    const userData = JSON.parse(localStorage.getItem("loginInfo"));
+      const order = response.data;
 
-    const options = {
-      key: process.env.REACT_APP_RAZOR_PAY_KEY,
-      amount: totalAmount * 100,
-      currency: "INR",
-      description: "Test Transaction",
-      order_id: order.order_id,
-      handler: async function (response) {
-        try {
-          const data = {
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_signature: response.razorpay_signature,
-          };
-
-          const result = await ajaxCall(
-            "accounts/payment/success/",
-            {
-              headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${
-                  JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
-                }`,
+      const options = {
+        key: process.env.REACT_APP_RAZOR_PAY_KEY,
+        amount: totalAmount * 100,
+        currency: "INR",
+        name: "Your Company Name",
+        description: "Event Registration",
+        order_id: order.order_id,
+        handler: async function (response) {
+          try {
+            const result = await ajaxCall(
+              "accounts/payment/success/",
+              {
+                headers: {
+                  Accept: "application/json",
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${
+                    JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
+                  }`,
+                },
+                method: "POST",
+                body: JSON.stringify({
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                }),
               },
-              method: "POST",
-              body: JSON.stringify(data),
-            },
-            8000
-          );
+              8000
+            );
 
-          if (result?.status === 200) {
-            handleSubmit();
-          } else {
-            console.error("Payment success API response:", result);
-            toast.error("Payment failed. Please try again.");
+            if (result?.status === 200) {
+              await handleSubmit();
+            } else {
+              console.error("Payment success API response:", result);
+              toast.error("Payment failed. Please try again.");
+            }
+          } catch (error) {
+            console.error("Error in payment handler:", error);
+            toast.error(
+              "An unexpected error occurred during the payment process."
+            );
           }
-        } catch (error) {
-          console.error("Error in payment handler:", error);
-          toast.error(
-            "An unexpected error occurred during the payment process."
-          );
-        }
-      },
-      prefill: {
-        name: userData?.username,
-      },
-      notes: {
-        address: "Razorpay Corporate Office",
-      },
-      theme: {
-        color: "#61dafb",
-      },
-    };
+        },
+        prefill: {
+          name: JSON.parse(localStorage.getItem("loginInfo"))?.username,
+        },
+        theme: {
+          color: "#61dafb",
+        },
+      };
 
-    const paymentObject = new window.Razorpay(options);
-    paymentObject.open();
+      const paymentObject = new window.Razorpay(options);
+      paymentObject.open();
+    } catch (error) {
+      console.error("Error initiating payment:", error);
+      toast.error("Failed to initiate payment. Please try again.");
+    }
   }, [totalAmount, selectedEvent, handleSubmit, loadScript]);
 
   const handleShareEvent = useCallback((description) => {
@@ -437,12 +408,8 @@ const EventData = () => {
   }, []);
 
   const handleNext = useCallback(() => {
-    if (activeStep === 1 && totalGuests === 0) {
-      handleSubmit();
-    } else {
-      setActiveStep((prevStep) => prevStep + 1);
-    }
-  }, [activeStep, totalGuests]);
+    setActiveStep((prevStep) => prevStep + 1);
+  }, []);
 
   const handleBack = useCallback(
     () => setActiveStep((prevStep) => prevStep - 1),

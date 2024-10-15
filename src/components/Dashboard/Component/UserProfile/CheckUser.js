@@ -48,40 +48,9 @@ const CheckUser = () => {
   const { UserId } = useParams();
   const [tabValue, setTabValue] = useState(0);
   const [isFollowing, setIsFollowing] = useState(false);
+
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
   const loginuserid = loginInfo?.userId;
-  const fetchloginuser = async (url, setData) => {
-    try {
-      const response = await ajaxCall(
-        url,
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${
-              JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
-            }`,
-          },
-          method: "GET",
-        },
-        8000
-      );
-      if (response?.status === 200) {
-        setloginUserId(response.data.user.id);
-      } else {
-        console.error("Fetch error:", response);
-      }
-    } catch (error) {
-      console.error("Network error:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchloginuser(
-      `profiles/user-profile/user/${loginuserid}/`,
-      setloginUserData
-    );
-  }, []);
 
   const fetchData = async (url, setData) => {
     try {
@@ -115,6 +84,39 @@ const CheckUser = () => {
     fetchData(`profiles/user-profile/${UserId}/`, setUserProfileData);
     fetchData(`profiles/following/`, setfollowData);
   }, [UserId]);
+
+  const fetchloginuser = async (url, setData) => {
+    try {
+      const response = await ajaxCall(
+        url,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
+            }`,
+          },
+          method: "GET",
+        },
+        8000
+      );
+      if (response?.status === 200) {
+        setloginUserId(response.data.user.id);
+      } else {
+        console.error("Fetch error:", response);
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchloginuser(
+      `profiles/user-profile/user/${loginuserid}/`,
+      setloginUserData
+    );
+  }, []);
 
   useEffect(() => {
     if (followData && Array.isArray(followData.following)) {

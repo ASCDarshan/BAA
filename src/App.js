@@ -29,6 +29,7 @@ import CheckUser from "./components/Dashboard/Component/UserProfile/CheckUser";
 import DashboardEventData from "./components/Dashboard/Component/EventsSection/EventData";
 import DashboardInitiativesData from "./components/Dashboard/Component/EventsSection/InitiativeData";
 import BlogDetails from "./components/LandingPage/Component/Blogs/BlogDetails";
+import PostsByFollowing from "./components/Dashboard/Component/MainContent/PostsByFollowing";
 
 const theme = createTheme({
   palette: {
@@ -96,6 +97,7 @@ function App() {
         <Route path="/dashboard" element={<AdminLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="/dashboard/addEvents" element={<EventSection />} />
+          <Route path="/dashboard/followingPost" element={<PostsByFollowing />} />
           <Route
             path="/dashboard/event/:eventName"
             element={<DashboardEventData />}
