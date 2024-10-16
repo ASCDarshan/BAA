@@ -30,6 +30,7 @@ const steps = [
 
 const DashboardEvents = ({ eventsData }) => {
   const [eventregistrationsData, seteventRegistrationsData] = useState([]);
+  console.log(eventregistrationsData);
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
   const userID = loginInfo?.userId;
 
@@ -85,7 +86,7 @@ const DashboardEvents = ({ eventsData }) => {
   };
 
   useEffect(() => {
-    fetchData("events/registrations/", seteventRegistrationsData);
+    fetchData("events/registrations-get/", seteventRegistrationsData);
   }, []);
 
   const handleCloseDialog = () => {

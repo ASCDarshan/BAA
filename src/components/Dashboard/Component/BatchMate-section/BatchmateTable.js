@@ -149,7 +149,8 @@ const BatchmateTable = () => {
         const filteredData =
           response?.data?.filter(
             (user) =>
-              user["user-id"] !== userID && user.user_type !== "Superuser"
+              user["user-id"] !== currentUserId &&
+              user.user_type !== "Superuser"
           ) || [];
         setData(filteredData);
       } else {

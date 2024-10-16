@@ -15,7 +15,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "react-toastify";
 import ajaxCall from "../../../helpers/ajaxCall";
 
-const DashboardInitiatives = ({ initiativesData }) => {
+const DashboardInitiatives = ({ initiativesData, setCount }) => {
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
   const userID = loginInfo?.userId;
 
@@ -168,6 +168,7 @@ const DashboardInitiatives = ({ initiativesData }) => {
           );
 
           if (registrationResult?.status === 201) {
+            setCount((prev) => prev + 1);
             toast.success("Payment Successful and Registration Completed");
           } else {
             console.error("Registration API response:", registrationResult);

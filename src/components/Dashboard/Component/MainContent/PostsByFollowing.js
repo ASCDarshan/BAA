@@ -1,5 +1,18 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import ajaxCall from "../../../helpers/ajaxCall";
+import {
+  Container,
+  Grid,
+  Paper,
+  Card,
+  Box,
+  CardMedia,
+  CardContent,
+  Typography,
+  Avatar,
+  Link,
+} from "@mui/material";
+import Breadcrumb from "../../../Ul/Breadcrumb";
 
 const PostsByFollowing = () => {
   const [posts, setPosts] = useState([]);
@@ -38,48 +51,98 @@ const PostsByFollowing = () => {
   }, []);
 
   useEffect(() => {
-    console.log("Following data:", following);
-    console.log("Posts data:", posts);
+    if (following?.following?.length > 0 && posts.length > 0) {
+      const followingIds = following?.following?.map((user) => user.id);
 
-    if (following.length > 0 && posts.length > 0) {
-        const followingIds = following.map((user) => user.id);
-        console.log(followingIds)
-        console.log("Following IDs:", followingIds);
-    
-        const filtered = posts.filter((post) => {
-            if (post.author && post.author.id) {
-                const isPostByFollowing = followingIds.includes(post.author.id);
-                console.log(`Post by ${post.author.id}, included: ${isPostByFollowing}`);
-                return isPostByFollowing;
-            } else {
-                console.log(`Post with no valid author:`, post);
-                return false;
-            }
-        });
-    
-        console.log("Filtered posts:", filtered);
-        setFilteredPosts(filtered);
+      const filtered = posts.filter((post) => {
+        if (post.author && post.author.id) {
+          return followingIds.includes(post.author.id);
+        }
+        return false;
+      });
+      setFilteredPosts(filtered);
     }
-    
-  }, [following, posts]);
+  }, [following?.following, posts]);
 
   return (
-    <div>
-      <h2>Posts by Following Users</h2>
-      {filteredPosts.length > 0 ? (
-        filteredPosts.map((post) => (
-          <div key={post.id} className="post">
-            <h3>{post.content}</h3>
-            <p>Posted by: {post.author.username}</p>
-            {post.images && post.images.length > 0 && (
-              <img src={post.images[0].image} alt="Post Image" />
+    <Box sx={{ display: "flex" }}>
+      <Container sx={{ mt: 10 }}>
+        <Grid item xs={12} md={8}>
+          <Breadcrumb title="Following User Posts" main="Dashboard" mb={2} />
+          <Paper
+            sx={{ p: 2, boxShadow: "0 4px 8px rgba(251, 166, 69, 0.5)", mt: 2 }}
+          >
+            {filteredPosts.length > 0 ? (
+              filteredPosts.map((post) => (
+                <Card key={post.id} sx={{ display: "flex", mb: 2 }}>
+                  {post.images && post.images.length > 0 && (
+                    <Box sx={{ display: "flex" }}>
+                      {post.images.map((imageData, index) => (
+                        <CardMedia
+                          key={index}
+                          component="img"
+                          sx={{ width: 160 }}
+                          image={imageData.image}
+                          alt={post.title}
+                        />
+                      ))}
+                    </Box>
+                  )}
+                  <Box
+                    sx={{ display: "flex", flexDirection: "column", flex: 1 }}
+                  >
+                    <CardContent>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          mb: 1,
+                          flexWrap: "wrap",
+                        }}
+                      >
+                        <Avatar sx={{ mr: 1 }}>
+                          {post.author?.username
+                            ? post.author?.username.charAt(0).toUpperCase()
+                            : "A"}
+                        </Avatar>
+                        <Typography variant="subtitle1">
+                          <Link
+                            to={`/dashboard/userProfile/${post.author.id}`}
+                            style={{
+                              textDecoration: "none",
+                              color: "inherit",
+                            }}
+                          >
+                            {post.author?.username}
+                          </Link>
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          sx={{ ml: 1, color: "text.secondary" }}
+                        >
+                          {post.category?.name} •{" "}
+                          {new Date(post?.created_at).toLocaleString()}
+                        </Typography>
+                      </Box>
+                      <Typography variant="h6" gutterBottom>
+                        {post.title}
+                      </Typography>
+                      <Typography variant="body2" paragraph>
+                        {post.content}
+                      </Typography>
+                    </CardContent>
+                  </Box>
+                </Card>
+              ))
+            ) : (
+              <Typography variant="body1" align="center">
+                No posts from following users.
+              </Typography>
             )}
-          </div>
-        ))
-      ) : (
-        <p>No posts from following users.</p>
-      )}
-    </div>
+          </Paper>
+        </Grid>
+      </Container>
+    </Box>
   );
 };
 

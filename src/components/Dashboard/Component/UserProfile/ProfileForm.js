@@ -39,9 +39,9 @@ const tabLabels = [
 ];
 
 const ProfileForm = ({ userID }) => {
-  const [loginuserData, setloginUserData] = useState({});
-  const [loginuserId, setloginUserId] = useState();
   const [userProfileData, setUserProfileData] = useState({});
+  const [loginuserId, setloginUserId] = useState();
+  // const [userProfileData, setUserProfileData] = useState({});
   const [activeTab, setActiveTab] = useState(0);
   const [errors, setErrors] = useState({});
 
@@ -62,7 +62,8 @@ const ProfileForm = ({ userID }) => {
         8000
       );
       if (response?.status === 200) {
-        setloginUserId(loginuserData.user.id);
+        setData(response.data);
+        setloginUserId(response.data.user.id);
       } else {
         console.error("Fetch error:", response);
       }
@@ -72,7 +73,7 @@ const ProfileForm = ({ userID }) => {
   };
 
   useEffect(() => {
-    fetchData(`profiles/user-profile/user/${userID}/`, setloginUserData);
+    fetchData(`profiles/user-profile/user/${userID}/`, setUserProfileData);
   }, []);
 
   useEffect(() => {
@@ -161,7 +162,7 @@ const ProfileForm = ({ userID }) => {
 
     try {
       const response = await ajaxCall(
-        `profiles/user-profile/${userID}/`,
+        `profiles/user-profile/${userProfileData.id}/`,
         {
           method: "PATCH",
           body: formDataToSend,

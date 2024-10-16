@@ -51,6 +51,10 @@ const Profile = () => {
     navigate("/dashboard/updateProfile");
   };
 
+  const handleChangePassword = () => {
+    navigate("/dashboard/changePassword");
+  };
+
   const fetchData = async (url, setData) => {
     try {
       const response = await ajaxCall(
@@ -80,6 +84,7 @@ const Profile = () => {
   useEffect(() => {
     fetchData(`profiles/user-profile/user/${userID}/`, setUserProfileData);
   }, [userID]);
+
   if (!userProfileData) return null;
 
   const {
@@ -202,7 +207,7 @@ const Profile = () => {
                       Phone: {phone_number}
                     </Typography>
                     <Typography variant="body1">
-                      Address:{street_address}, {city}, {state}, {country},{" "}
+                      Address: {street_address}, {city}, {state}, {country},{" "}
                       {postal_code}
                     </Typography>
                   </Box>
@@ -289,8 +294,17 @@ const Profile = () => {
                     color="primary"
                     onClick={handleUpdateProfile}
                     size="small"
+                    sx={{ mr: 2 }}
                   >
                     Update Profile
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={handleChangePassword}
+                    size="small"
+                  >
+                    Change Password
                   </Button>
                 </Box>
               </Paper>
