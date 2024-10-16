@@ -31,6 +31,7 @@ import DashboardInitiativesData from "./components/Dashboard/Component/EventsSec
 import BlogDetails from "./components/LandingPage/Component/Blogs/BlogDetails";
 import PostsByFollowing from "./components/Dashboard/Component/MainContent/PostsByFollowing";
 import ChangePassword from "./components/Dashboard/Component/UserProfile/ChangePassword";
+import DashboardTwo from "./components/Dashboard/Component/DashboardTwo";
 
 const theme = createTheme({
   palette: {
@@ -126,6 +127,7 @@ function App() {
           />
           <Route path="/dashboard/batchmates" element={<Batchmate />} />
         </Route>
+        <Route path="/becomemember" element={<DashboardTwo />} />
       </Routes>
     </ThemeProvider>
   );

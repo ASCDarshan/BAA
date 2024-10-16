@@ -69,53 +69,51 @@ const Sidebar = ({ drawerOpen, handleDrawerToggle }) => {
   };
 
   return (
-    <>
-      <Drawer
-        variant={isSmallScreen ? "temporary" : "permanent"}
-        open={isSmallScreen ? drawerOpen : true}
-        onClose={handleDrawerToggle}
-        ModalProps={{ keepMounted: true }}
-        sx={{
+    <Drawer
+      variant={isSmallScreen ? "temporary" : "permanent"}
+      open={isSmallScreen ? drawerOpen : true}
+      onClose={handleDrawerToggle}
+      ModalProps={{ keepMounted: true }}
+      sx={{
+        width: drawerWidth,
+        flexShrink: 0,
+        "& .MuiDrawer-paper": {
           width: drawerWidth,
-          flexShrink: 0,
-          "& .MuiDrawer-paper": {
-            width: drawerWidth,
-            boxSizing: "border-box",
-            backgroundColor: theme.palette.primary.main,
-            color: theme.palette.common.white,
-          },
-        }}
-      >
-        <Toolbar />
-        <List>
-          {menuItems.map((item) => (
-            <ListItem
-              button
-              key={item.text}
-              component={Link}
-              to={item.link}
-              onClick={isSmallScreen ? handleDrawerToggle : null}
-            >
-              <ListItemIcon sx={{ color: "inherit" }}>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
-            </ListItem>
-          ))}
+          boxSizing: "border-box",
+          backgroundColor: theme.palette.primary.main,
+          color: theme.palette.common.white,
+        },
+      }}
+    >
+      <Toolbar />
+      <List>
+        {menuItems.map((item) => (
           <ListItem
             button
-            key="logout"
-            onClick={() => {
-              handleLogout();
-              if (isSmallScreen) handleDrawerToggle();
-            }}
+            key={item.text}
+            component={Link}
+            to={item.link}
+            onClick={isSmallScreen ? handleDrawerToggle : null}
           >
-            <ListItemIcon sx={{ color: "inherit" }}>
-              <LogoutIcon />
-            </ListItemIcon>
-            <ListItemText primary="Log Out" />
+            <ListItemIcon sx={{ color: "inherit" }}>{item.icon}</ListItemIcon>
+            <ListItemText primary={item.text} />
           </ListItem>
-        </List>
-      </Drawer>
-    </>
+        ))}
+        <ListItem
+          button
+          key="logout"
+          onClick={() => {
+            handleLogout();
+            if (isSmallScreen) handleDrawerToggle();
+          }}
+        >
+          <ListItemIcon sx={{ color: "inherit" }}>
+            <LogoutIcon />
+          </ListItemIcon>
+          <ListItemText primary="Log Out" />
+        </ListItem>
+      </List>
+    </Drawer>
   );
 };
 

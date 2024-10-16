@@ -98,7 +98,7 @@ const LandingPage = () => {
   }
 
   const handleLifetimeMembershipClick = () => {
-    navigate("/login");
+    navigate("/register");
   };
 
   return (
@@ -148,16 +148,17 @@ const LandingPage = () => {
           size="small"
           onClick={handleLifetimeMembershipClick}
           sx={{
-            fontSize: "10px",
-            padding: "8px 30px",
+            fontSize: "14px",
+            padding: "9px 30px",
             marginRight: "20px",
             borderRadius: "25px",
-            background: "linear-gradient(45deg, #1976d2, #42a5f5)",
+            background: "rgb(241 169 75)",
             color: "#fff",
+            fontWeight: "bold",
             boxShadow: "0 6px 15px rgba(0, 0, 0, 0.2)",
             transition: "all 0.4s ease",
             "&:hover": {
-              background: "linear-gradient(45deg, #1565c0, #2196f3)",
+              background: "rgb(241 169 75)",
               transform: "scale(1.05)",
               boxShadow: "0 8px 20px rgba(0, 0, 0, 0.25)",
             },

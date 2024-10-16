@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   TextField,
   Button,
@@ -15,9 +15,10 @@ import ajaxCall from "../helpers/ajaxCall";
 import { toast } from "react-toastify";
 
 const Login = () => {
-  const [isLoading, setIsLoading] = React.useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
     const checkLoginStatus = () => {
       const loginInfo = localStorage.getItem("loginInfo");
@@ -56,12 +57,23 @@ const Login = () => {
             refreshToken: result?.refresh,
             userId: result?.user_id,
             userRole: result?.user_type,
+            is_member: result?.is_member,
           })
         );
         toast.success("Login Successful");
-        navigate("/dashboard");
+        if (result?.is_member) {
+          navigate("/dashboard");
+        } else {
+          navigate("/becomemember");
+        }
       } else if (response.status === 400) {
-        toast.error("Please Check Username and Password");
+        if (response.data.error === "Invalid credentials") {
+          toast.error(response.data.error);
+        } else {
+          toast.error(
+            "Email not verified. Please verify your email to log in."
+          );
+        }
       } else if (response.status === 404) {
         toast.error("Username or Password is wrong, Please try again...");
       }
@@ -77,7 +89,7 @@ const Login = () => {
       password: "",
     },
     validationSchema: Yup.object({
-      email: Yup.string().required("Email is required"),
+      email: Yup.string().required("Username is required"),
       password: Yup.string().required("Password is required"),
     }),
     onSubmit: (values) => {
@@ -144,7 +156,6 @@ const Login = () => {
               label="Username"
               name="email"
               autoComplete="email"
-              autoFocus
               value={formik.values.email}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -181,24 +192,20 @@ const Login = () => {
               </Button>
             )}
             <Box sx={{ textAlign: "center" }}>
-              <Typography variant="body2">
-                <Link
-                  to="/register"
-                  style={{ textDecoration: "none", color: "inherit" }}
-                >
-                  Don't have an account? SignUp
-                </Link>
-              </Typography>
+              <Link
+                to="/register"
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                Don't have an account? SignUp
+              </Link>
             </Box>
             <Box sx={{ textAlign: "center" }}>
-              <Typography variant="body2">
-                <Link
-                  to="/forgotPassword"
-                  style={{ textDecoration: "none", color: "inherit" }}
-                >
-                  Forgot Password
-                </Link>
-              </Typography>
+              <Link
+                to="/forgotPassword"
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                Forgot Password
+              </Link>
             </Box>
           </Box>
         </Paper>
