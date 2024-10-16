@@ -30,6 +30,7 @@ import DashboardEventData from "./components/Dashboard/Component/EventsSection/E
 import DashboardInitiativesData from "./components/Dashboard/Component/EventsSection/InitiativeData";
 import BlogDetails from "./components/LandingPage/Component/Blogs/BlogDetails";
 import PostsByFollowing from "./components/Dashboard/Component/MainContent/PostsByFollowing";
+import ChangePassword from "./components/Dashboard/Component/UserProfile/ChangePassword";
 
 const theme = createTheme({
   palette: {
@@ -97,7 +98,10 @@ function App() {
         <Route path="/dashboard" element={<AdminLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="/dashboard/addEvents" element={<EventSection />} />
-          <Route path="/dashboard/followingPost" element={<PostsByFollowing />} />
+          <Route
+            path="/dashboard/followingPost"
+            element={<PostsByFollowing />}
+          />
           <Route
             path="/dashboard/event/:eventName"
             element={<DashboardEventData />}
@@ -112,6 +116,10 @@ function App() {
           />
           <Route path="/dashboard/userProfile" element={<Profile />} />
           <Route path="/dashboard/updateProfile" element={<UserProfile />} />
+          <Route
+            path="/dashboard/changePassword"
+            element={<ChangePassword />}
+          />
           <Route
             path="/dashboard/userProfile/:UserId"
             element={<CheckUser />}

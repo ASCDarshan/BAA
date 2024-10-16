@@ -133,7 +133,7 @@ const CheckUser = () => {
 
   const handleFollow = async (e) => {
     e.preventDefault();
-    const formData = { user_to_follow: loginuserId };
+    const formData = { user_to_follow: UserId };
     const formDataToSend = JSON.stringify(formData);
 
     try {
@@ -260,28 +260,32 @@ const CheckUser = () => {
                   </IconButton>
                 </Box>
               </Card>
-              <Card
-                sx={{
-                  marginTop: 2,
-                  padding: 2,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-                }}
-              >
-                <CardMedia
-                  component="img"
+              {qr_code ? (
+                <Card
                   sx={{
-                    height: "40%",
-                    width: "40%",
-                    objectFit: "contain",
-                    borderRadius: "8px",
+                    marginTop: 2,
+                    padding: 2,
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
                   }}
-                  image={qr_code}
-                  alt="QR Code"
-                />
-              </Card>
+                >
+                  <CardMedia
+                    component="img"
+                    sx={{
+                      height: "40%",
+                      width: "40%",
+                      objectFit: "contain",
+                      borderRadius: "8px",
+                    }}
+                    image={qr_code}
+                    alt="QR Code"
+                  />
+                </Card>
+              ) : (
+                ""
+              )}
               <Grid>
                 <Button
                   variant={isFollowing ? "outlined" : "contained"}

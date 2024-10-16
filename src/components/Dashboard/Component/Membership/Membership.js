@@ -48,7 +48,7 @@ const Membership = () => {
 
   useEffect(() => {
     fetchData(`accounts/member/list/`, setPaymentData);
-  }, []);
+  }, [count]);
 
   const loadScript = (src) => {
     return new Promise((resolve) => {

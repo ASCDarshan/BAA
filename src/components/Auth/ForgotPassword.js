@@ -12,6 +12,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import ajaxCall from "../helpers/ajaxCall";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -98,7 +99,7 @@ const Login = () => {
           }}
         >
           <Typography component="h1" variant="h5">
-            Log in
+            Forgot Password
           </Typography>
           <Box
             component="form"
@@ -132,6 +133,16 @@ const Login = () => {
                 Send
               </Button>
             )}
+            <Box sx={{ textAlign: "center" }}>
+              <Typography variant="body2">
+                <Link
+                  to="/login"
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
+                  Back to Login
+                </Link>
+              </Typography>
+            </Box>
           </Box>
         </Paper>
       </Container>
