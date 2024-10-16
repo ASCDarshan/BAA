@@ -52,7 +52,6 @@ const MainContent = ({ userID, eventsData, initiativesData, setCount }) => {
   const [postData, setPostData] = useState(initialData);
   const [refreshData, setRefreshData] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [shareCounts, setShareCounts] = useState([]);
 
   const [tabValue, setTabValue] = useState(1);
   const handleTabChange = (event, newValue) => {

@@ -14,27 +14,25 @@ import ajaxCall from "../../helpers/ajaxCall";
 import { toast } from "react-toastify";
 import DashboardImg from "../../images/Dashboard.png";
 import { useTheme } from "@emotion/react";
+import { useNavigate } from "react-router-dom";
 
-const DashboardTwo = ({ setCount }) => {
-  const [loading, setLoading] = useState(false);
-  const [amount, setAmount] = useState(2500);
-  const [openDialog, setOpenDialog] = useState(false);
+const DashboardTwo = () => {
+  const amount = 2500;
   const theme = useTheme();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
 
   const loadScript = (src) => {
     return new Promise((resolve) => {
-      setLoading(true);
       const script = document.createElement("script");
       script.src = src;
       script.onload = () => {
-        setLoading(false);
         resolve(true);
       };
       script.onerror = () => {
-        setLoading(false);
         resolve(false);
       };
       document.body.appendChild(script);
@@ -42,12 +40,18 @@ const DashboardTwo = ({ setCount }) => {
   };
 
   const handlePay = async () => {
+    setLoading(true);
+
+    // Simulate a 2-second delay
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
     const res = await loadScript(
       "https://checkout.razorpay.com/v1/checkout.js"
     );
 
     if (!res) {
       toast.error("Razorpay SDK failed to load. Are you online?");
+      setLoading(false);
       return;
     }
 
@@ -71,6 +75,7 @@ const DashboardTwo = ({ setCount }) => {
 
     if (!response) {
       toast.error("Server error. Are you online?");
+      setLoading(false);
       return;
     }
 
@@ -102,9 +107,8 @@ const DashboardTwo = ({ setCount }) => {
           },
           8000
         );
-
         if (result?.status === 200) {
-          setCount((prev) => prev + 1);
+          navigate("/dashboard");
           toast.success("Payment Successful");
         } else {
           toast.error("Payment Failed");
@@ -117,6 +121,7 @@ const DashboardTwo = ({ setCount }) => {
 
     const paymentObject = new window.Razorpay(options);
     paymentObject.open();
+    setLoading(false);
     setOpenDialog(false);
   };
 
@@ -133,7 +138,7 @@ const DashboardTwo = ({ setCount }) => {
         sx={{
           position: "absolute",
           top: 10,
-          left: isMobile ? "0px" : "200px",
+          left: 0,
           right: 0,
           bottom: 0,
           backgroundImage: `url(${DashboardImg})`,

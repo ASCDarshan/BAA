@@ -8,7 +8,7 @@ import {
   Paper,
   CircularProgress,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import ajaxCall from "../helpers/ajaxCall";
@@ -16,6 +16,7 @@ import { toast } from "react-toastify";
 
 const Register = () => {
   const [isLoading, setIsLoading] = React.useState(false);
+  const navigate = useNavigate();
 
   const fetchData = async (url, data) => {
     setIsLoading(true);
@@ -34,8 +35,10 @@ const Register = () => {
       );
       if (response?.status === 201) {
         toast.success(
-          "Mail send successfully. Please Check Your Mail and Verify"
+          "Mail sent successfully. Please check your email and verify."
         );
+        formik.resetForm(); // Clear the form fields
+        navigate("/login"); // Navigate to the login page
       } else {
         toast.error("Registration failed. Please try again");
       }
@@ -50,19 +53,24 @@ const Register = () => {
     initialValues: {
       email: "",
       password: "",
+      confirm_password: "",
       username: "",
       batchyear: "",
     },
     validationSchema: Yup.object({
       email: Yup.string().required("Email is required"),
       password: Yup.string().required("Password is required"),
-      batchyear: Yup.string().required("batchyear is required"),
+      confirm_password: Yup.string()
+        .oneOf([Yup.ref("password"), null], "Passwords must match")
+        .required("Confirm Password is required"),
+      batchyear: Yup.string().required("Batch year is required"),
       username: Yup.string().required("Username is required"),
     }),
     onSubmit: (values) => {
       const signupData = {
         email: values.email,
         password: values.password,
+        confirm_password: values.confirm_password,
         username: values.username,
         batchyear: values.batchyear,
       };
@@ -160,6 +168,26 @@ const Register = () => {
               margin="normal"
               required
               fullWidth
+              name="confirm_password"
+              label="Confirm Password"
+              type="password"
+              value={formik.values.confirm_password}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={
+                formik.touched.confirm_password &&
+                Boolean(formik.errors.confirm_password)
+              }
+              helperText={
+                formik.touched.confirm_password &&
+                formik.errors.confirm_password
+              }
+            />
+
+            <TextField
+              margin="normal"
+              required
+              fullWidth
               name="batchyear"
               label="Batch Year"
               type="text"
@@ -186,15 +214,12 @@ const Register = () => {
               </Button>
             )}
             <Box sx={{ textAlign: "center" }}>
-              <Typography variant="body2">
-                <Link
-                  to="/login"
-                  style={{ textDecoration: "none", color: "inherit" }}
-                >
-                  {" "}
-                  Already have an account? Sign In
-                </Link>
-              </Typography>
+              <Link
+                to="/login"
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                Already have an account? Sign In
+              </Link>
             </Box>
           </Box>
         </Paper>
