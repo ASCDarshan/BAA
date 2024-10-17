@@ -14,7 +14,7 @@ import FacebookIcon from "@mui/icons-material/Facebook";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import ajaxCall from "../../../../helpers/ajaxCall";
 
-const PostShare = ({ postId, userId, shareCounts, postContent }) => {
+const PostShare = ({ postId, userId, shareCounts }) => {
   const [open, setOpen] = useState(false);
   const [shareCount, setShareCount] = useState(shareCounts?.length || 0);
 

@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Card,
   CardContent,
@@ -7,7 +8,6 @@ import {
   styled,
   Typography,
 } from "@mui/material";
-import React from "react";
 
 const SectionTitle = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(4),
@@ -58,7 +58,7 @@ const AboutUs = (props) => {
                   <Typography gutterBottom variant="h5" component="div">
                     {post.title}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color="text.primary">
                     {post.author}
                   </Typography>
                 </CardContent>

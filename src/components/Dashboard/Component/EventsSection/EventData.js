@@ -152,6 +152,26 @@ const EventData = () => {
     }));
   }, []);
 
+  const calculateTotalAmount = useCallback(
+    (selectedSubEvents, guestsCount) => {
+      let amount = selectedEvent?.amount || 0;
+      selectedSubEvents.forEach((subEventId) => {
+        const subEvent = subEvents.find((sub) => sub.id === subEventId);
+        const alumniPrice = parseFloat(subEvent.pricing[0].alumni_price);
+        const guestPrice = parseFloat(subEvent.pricing[0].guest_price);
+        const guestCount = parseInt(guestsCount[subEventId] || 0);
+
+        amount += alumniPrice + guestPrice * guestCount;
+      });
+      setTotalAmount(amount);
+      setFormData((prevData) => ({
+        ...prevData,
+        total_amount: amount.toFixed(2),
+      }));
+    },
+    [selectedEvent, subEvents]
+  );
+
   const handleSubEventSelection = useCallback(
     (subEventId, isChecked) => {
       const updatedSelectedSubEvents = isChecked
@@ -161,7 +181,7 @@ const EventData = () => {
 
       calculateTotalAmount(updatedSelectedSubEvents, guestsCount);
     },
-    [selectedSubEvents, guestsCount]
+    [selectedSubEvents, calculateTotalAmount, guestsCount]
   );
 
   const handleGuestChange = useCallback(
@@ -199,27 +219,7 @@ const EventData = () => {
         [subEventId]: count,
       });
     },
-    [selectedSubEvents, guestsCount]
-  );
-
-  const calculateTotalAmount = useCallback(
-    (selectedSubEvents, guestsCount) => {
-      let amount = selectedEvent?.amount || 0;
-      selectedSubEvents.forEach((subEventId) => {
-        const subEvent = subEvents.find((sub) => sub.id === subEventId);
-        const alumniPrice = parseFloat(subEvent.pricing[0].alumni_price);
-        const guestPrice = parseFloat(subEvent.pricing[0].guest_price);
-        const guestCount = parseInt(guestsCount[subEventId] || 0);
-
-        amount += alumniPrice + guestPrice * guestCount;
-      });
-      setTotalAmount(amount);
-      setFormData((prevData) => ({
-        ...prevData,
-        total_amount: amount.toFixed(2),
-      }));
-    },
-    [selectedEvent, subEvents]
+    [guestsCount, calculateTotalAmount, selectedSubEvents]
   );
 
   const handleGuestInfoChange = useCallback((index, field, value) => {
@@ -454,11 +454,7 @@ const EventData = () => {
                     <Typography variant="body1" paragraph>
                       {selectedEvent.description}
                     </Typography>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      paragraph
-                    >
+                    <Typography variant="body2" color="text.primary" paragraph>
                       Time: {formatTime(selectedEvent.start_time)} -{" "}
                       {formatTime(selectedEvent.end_time)}
                       <br />
@@ -466,11 +462,7 @@ const EventData = () => {
                       {formatDate(selectedEvent.end_date)}
                     </Typography>
 
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      paragraph
-                    >
+                    <Typography variant="body2" color="text.primary" paragraph>
                       Event Location:{" "}
                       <Button
                         variant="contained"

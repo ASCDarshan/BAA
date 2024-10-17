@@ -34,7 +34,6 @@ const Gallery = () => {
   const [heroImages, setHeroImages] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
-  console.log(categories);
   const fetchData = async (url, setData) => {
     try {
       const response = await ajaxCall(

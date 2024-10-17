@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Button,
   Card,
@@ -9,7 +10,6 @@ import {
   styled,
   Typography,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 
 const SectionTitle = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(4),

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -9,7 +10,6 @@ import {
   styled,
   Typography,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import ajaxCall from "../../../helpers/ajaxCall";
 import HeroBanner from "../Content/HeroBanner";
 
@@ -30,9 +30,9 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
 }));
 
 const Event = () => {
+  const navigate = useNavigate();
   const [eventData, setEventData] = useState([]);
   const [heroImages, setHeroImages] = useState([]);
-  const navigate = useNavigate();
 
   const fetchData = async (url, setData) => {
     try {

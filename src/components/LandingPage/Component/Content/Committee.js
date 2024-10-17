@@ -148,7 +148,7 @@ const Committee = ({ committeeData }) => {
           {selectedMember?.phone && (
             <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
               <PhoneIcon sx={{ mr: 1, color: "#fda085" }} />
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" color="text.primary">
                 {selectedMember.phone}
               </Typography>
             </Box>
@@ -156,7 +156,7 @@ const Committee = ({ committeeData }) => {
           {selectedMember?.email && (
             <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
               <EmailIcon sx={{ mr: 1, color: "#fda085" }} />
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" color="text.primary">
                 {selectedMember.email}
               </Typography>
             </Box>
@@ -164,7 +164,7 @@ const Committee = ({ committeeData }) => {
           {selectedMember?.websites && (
             <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
               <LanguageIcon sx={{ mr: 1, color: "#fda085" }} />
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" color="text.primary">
                 {selectedMember.websites}
               </Typography>
             </Box>

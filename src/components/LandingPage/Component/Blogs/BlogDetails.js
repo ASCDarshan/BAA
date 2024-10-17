@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
-  CardMedia,
   Container,
   Grid,
   styled,
@@ -13,10 +12,12 @@ import HeroBanner from "../Content/HeroBanner";
 import { useParams } from "react-router-dom";
 
 const BlogDetails = () => {
+  const { BlogId } = useParams();
+
   const [blogData, setBlogData] = useState([]);
   const [heroImages, setHeroImages] = useState([]);
-  const { BlogId } = useParams();
-  const Event = blogData.filter((item) => item.id == BlogId);
+
+  const Event = blogData.filter((item) => item.id === parseInt(BlogId));
 
   const fetchData = async (url, setData) => {
     try {

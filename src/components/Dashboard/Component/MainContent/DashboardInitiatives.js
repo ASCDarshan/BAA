@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 import {
   Paper,
   Typography,
@@ -12,7 +13,6 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { toast } from "react-toastify";
 import ajaxCall from "../../../helpers/ajaxCall";
 
 const DashboardInitiatives = ({ initiativesData, setCount }) => {
@@ -28,11 +28,10 @@ const DashboardInitiatives = ({ initiativesData, setCount }) => {
     donor: userID,
   };
 
-  const [formData, setFormData] = useState(InitialData);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [amountError, setAmountError] = useState("");
-
   const [loading, setLoading] = useState(false);
+  const [amountError, setAmountError] = useState("");
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [formData, setFormData] = useState(InitialData);
 
   const handlePrevious = () => {
     setCurrentIndex((prevIndex) =>

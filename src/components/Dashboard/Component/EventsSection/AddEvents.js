@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 import {
   Typography,
   TextField,
@@ -12,7 +13,6 @@ import {
 } from "@mui/material";
 import { RemoveCircle } from "@mui/icons-material";
 import ajaxCall from "../../../helpers/ajaxCall";
-import { toast } from "react-toastify";
 
 const theme = createTheme({
   palette: {
@@ -60,8 +60,8 @@ const InitialData = {
 };
 
 const AddEvents = () => {
-  const [formData, setFormData] = useState(InitialData);
   const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState(InitialData);
 
   const handleMainEventChange = (e) => {
     const { name, value } = e.target;

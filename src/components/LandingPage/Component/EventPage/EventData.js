@@ -16,11 +16,13 @@ import { useLocation } from "react-router-dom";
 
 const EventData = () => {
   const navigate = useNavigate();
-  const [eventData, setEventData] = useState([]);
-  const [heroImages, setHeroImages] = useState([]);
   const location = useLocation();
   const eventId = location.state;
-  const Event = eventData.filter((item) => item.id == eventId);
+
+  const [eventData, setEventData] = useState([]);
+  const [heroImages, setHeroImages] = useState([]);
+  
+  const Event = eventData.filter((item) => item.id === parseInt(eventId));
 
   const fetchData = async (url, setData) => {
     try {

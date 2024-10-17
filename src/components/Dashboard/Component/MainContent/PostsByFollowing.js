@@ -118,7 +118,7 @@ const PostsByFollowing = () => {
                         </Typography>
                         <Typography
                           variant="body2"
-                          sx={{ ml: 1, color: "text.secondary" }}
+                          sx={{ ml: 1, color: "text.primary" }}
                         >
                           {post.category?.name} •{" "}
                           {new Date(post?.created_at).toLocaleString()}

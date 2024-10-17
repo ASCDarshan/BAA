@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Typography,
   Box,
@@ -8,10 +9,9 @@ import {
   TextField,
   createTheme,
 } from "@mui/material";
-import ajaxCall from "../../../helpers/ajaxCall";
 import { DataGrid } from "@mui/x-data-grid";
+import ajaxCall from "../../../helpers/ajaxCall";
 import Breadcrumb from "../../../Ul/Breadcrumb";
-import { Link } from "react-router-dom";
 
 const theme = createTheme({
   palette: {
@@ -25,75 +25,75 @@ const theme = createTheme({
   },
 });
 
+const columns = [
+  {
+    headerName: "Username",
+    field: "username",
+    width: 150,
+    renderCell: (params) => {
+      const userId = params?.row?.["user-id"];
+      const username = params?.row?.username;
+      return userId ? (
+        <Link
+          to={`/dashboard/userProfile/${userId}`}
+          style={{ textDecoration: "none" }}
+        >
+          {username}
+        </Link>
+      ) : (
+        " - "
+      );
+    },
+    valueGetter: (params) => params?.row?.username || " - ",
+  },
+  {
+    headerName: "Phone Number",
+    field: "phone_number",
+    width: 150,
+    valueGetter: (params) => params?.row?.phone_number || " - ",
+  },
+  {
+    headerName: "Email",
+    field: "email",
+    width: 200,
+    renderCell: (params) => {
+      const email = params?.row?.email || " - ";
+      return email;
+    },
+    valueGetter: (params) => params?.row?.email || " - ",
+  },
+  {
+    headerName: "School Graduation Year",
+    field: "school_graduation_year",
+    width: 200,
+    renderCell: (params) => {
+      const year = params?.row?.school_graduation_year || " - ";
+      return year;
+    },
+    valueGetter: (params) => params?.row?.school_graduation_year || " - ",
+  },
+  {
+    headerName: "Education",
+    field: "Education",
+    width: 200,
+    renderCell: (params) => {
+      const education = params?.row?.Education || " - ";
+      return education;
+    },
+    valueGetter: (params) => params?.row?.Education || " - ",
+  },
+];
+
 const BatchmateTable = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const [batchMates, setBatchMates] = useState([]);
   const [searchYear, setSearchYear] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [userProfileData, setUserProfileData] = useState([]);
-  const currentUserId = userProfileData.id;
-  const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
-
-  const userID = loginInfo?.userId;
   const [isYearSearchActive, setIsYearSearchActive] = useState(false);
 
-  const columns = [
-    {
-      headerName: "Username",
-      field: "username",
-      width: 150,
-      renderCell: (params) => {
-        const userId = params?.row?.["user-id"];
-        const username = params?.row?.username;
-        return userId ? (
-          <Link
-            to={`/dashboard/userProfile/${userId}`}
-            style={{ textDecoration: "none" }}
-          >
-            {username}
-          </Link>
-        ) : (
-          " - "
-        );
-      },
-      valueGetter: (params) => params?.row?.username || " - ",
-    },
-    {
-      headerName: "Phone Number",
-      field: "phone_number",
-      width: 150,
-      valueGetter: (params) => params?.row?.phone_number || " - ",
-    },
-    {
-      headerName: "Email",
-      field: "email",
-      width: 200,
-      renderCell: (params) => {
-        const email = params?.row?.email || " - ";
-        return email;
-      },
-      valueGetter: (params) => params?.row?.email || " - ",
-    },
-    {
-      headerName: "School Graduation Year",
-      field: "school_graduation_year",
-      width: 200,
-      renderCell: (params) => {
-        const year = params?.row?.school_graduation_year || " - ";
-        return year;
-      },
-      valueGetter: (params) => params?.row?.school_graduation_year || " - ",
-    },
-    {
-      headerName: "Education",
-      field: "Education",
-      width: 200,
-      renderCell: (params) => {
-        const education = params?.row?.Education || " - ";
-        return education;
-      },
-      valueGetter: (params) => params?.row?.Education || " - ",
-    },
-  ];
+  const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
+  const userID = loginInfo?.userId;
+  const currentUserId = userProfileData.id;
 
   const fetchuserData = async (url, setData) => {
     try {
@@ -125,49 +125,52 @@ const BatchmateTable = () => {
     fetchuserData(`profiles/user-profile/user/${userID}/`, setUserProfileData);
   }, [userID]);
 
-  const fetchData = async (year = "", setData) => {
-    setIsLoading(true);
-    try {
-      const url = year
-        ? `profiles/year-user/?year=${year}`
-        : "profiles/year-user/";
-      const response = await ajaxCall(
-        url,
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${
-              JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
-            }`,
+  const fetchData = useCallback(
+    async (year = "", setData) => {
+      setIsLoading(true);
+      try {
+        const url = year
+          ? `profiles/year-user/?year=${year}`
+          : "profiles/year-user/";
+        const response = await ajaxCall(
+          url,
+          {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${
+                JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
+              }`,
+            },
+            method: "GET",
           },
-          method: "GET",
-        },
-        8000
-      );
-      if (response?.status === 200) {
-        const filteredData =
-          response?.data?.filter(
-            (user) =>
-              user["user-id"] !== currentUserId &&
-              user.user_type !== "Superuser"
-          ) || [];
-        setData(filteredData);
-      } else {
-        console.error("Fetch error:", response);
+          8000
+        );
+        if (response?.status === 200) {
+          const filteredData =
+            response?.data?.filter(
+              (user) =>
+                user["user-id"] !== currentUserId &&
+                user.user_type !== "Superuser"
+            ) || [];
+          setData(filteredData);
+        } else {
+          console.error("Fetch error:", response);
+        }
+      } catch (error) {
+        console.error("Network error:", error);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.error("Network error:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+    [currentUserId]
+  );
 
   useEffect(() => {
     if (!isYearSearchActive) {
       fetchData("", setBatchMates);
     }
-  }, [isYearSearchActive]);
+  }, [fetchData, isYearSearchActive]);
 
   const handleSearchChange = (e) => {
     const year = e.target.value;

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Typography,
   Box,
@@ -7,10 +8,9 @@ import {
   Paper,
   createTheme,
 } from "@mui/material";
-import ajaxCall from "../../../helpers/ajaxCall";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import ajaxCall from "../../../helpers/ajaxCall";
 import Breadcrumb from "../../../Ul/Breadcrumb";
-import { useNavigate } from "react-router-dom";
 
 const theme = createTheme({
   palette: {
@@ -25,9 +25,9 @@ const theme = createTheme({
 });
 
 const EventTable = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [eventData, setEventData] = useState([]);
   const navigate = useNavigate();
+  const [eventData, setEventData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const columns = [
     {

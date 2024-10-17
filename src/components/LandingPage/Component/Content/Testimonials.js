@@ -56,7 +56,7 @@ const TestimonialCard = ({ testimonial }) => (
       <Typography gutterBottom variant="h6" component="div">
         {testimonial.name} - {testimonial.graduation_year}
       </Typography>
-      <Typography variant="body2" color="text.secondary">
+      <Typography variant="body2" color="text.primary">
         {testimonial.testimonial}
       </Typography>
     </CardContent>

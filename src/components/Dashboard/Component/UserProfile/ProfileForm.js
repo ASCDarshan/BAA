@@ -39,9 +39,9 @@ const tabLabels = [
 ];
 
 const ProfileForm = ({ userID }) => {
-  const [userProfileData, setUserProfileData] = useState({});
-  const [activeTab, setActiveTab] = useState(0);
   const [errors, setErrors] = useState({});
+  const [activeTab, setActiveTab] = useState(0);
+  const [userProfileData, setUserProfileData] = useState({});
 
   const fetchData = async (url, setData) => {
     try {

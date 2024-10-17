@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 import {
   Typography,
   TextField,
@@ -10,9 +11,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
-
 import ajaxCall from "../../../helpers/ajaxCall";
-import { toast } from "react-toastify";
 
 const theme = createTheme({
   palette: {
@@ -25,6 +24,7 @@ const theme = createTheme({
     },
   },
 });
+
 const InitialData = {
   name: "",
   purpose: "",
@@ -37,9 +37,10 @@ const InitialData = {
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),
 };
+
 const AddInitiatives = () => {
-  const [formData, setFormData] = useState(InitialData);
   const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState(InitialData);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

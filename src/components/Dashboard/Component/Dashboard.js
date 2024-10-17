@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import MainContent from "./MainContent/MainContent";
 import ajaxCall from "../../helpers/ajaxCall";
-import DashboardTwo from "./DashboardTwo";
 
 const theme = createTheme({
   palette: {
@@ -18,9 +17,9 @@ const theme = createTheme({
 });
 
 const Dashboard = () => {
+  const [count, setCount] = useState(0);
   const [eventsData, setEventsData] = useState([]);
   const [initiativesData, setInitiativesData] = useState([]);
-  const [count, setCount] = useState(0);
 
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
   const userID = loginInfo?.userId;

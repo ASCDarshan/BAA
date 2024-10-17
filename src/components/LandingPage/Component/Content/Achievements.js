@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Card,
   CardContent,
@@ -7,7 +8,6 @@ import {
   styled,
   Typography,
 } from "@mui/material";
-import React from "react";
 
 const SectionTitle = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(4),
@@ -61,10 +61,10 @@ const Achievements = (props) => {
                 <Typography gutterBottom variant="h6" component="div">
                   {achievement.title}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="text.primary">
                   {achievement.date}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="text.primary">
                   {achievement.description}
                 </Typography>
               </CardContent>

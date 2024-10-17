@@ -27,7 +27,7 @@ const InitiativesSection = () => {
       <Box sx={{ display: "flex" }}>
         <Container sx={{ mt: 10 }}>
           <InitiativesTable />
-          {UserRole == "Superuser" && <AddInitiatives userID={userID} />}
+          {UserRole === "Superuser" && <AddInitiatives userID={userID} />}
         </Container>
       </Box>
     </ThemeProvider>

@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import {
   Container,
   Grid,
@@ -22,14 +24,12 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import { Add as AddIcon } from "@mui/icons-material";
 import { AddPhotoAlternate as UploadIcon } from "@mui/icons-material";
 import ajaxCall from "../../../helpers/ajaxCall";
-import { toast } from "react-toastify";
 import PostLike from "./Like-comment-share/PostLike";
 import PostComment from "./Like-comment-share/PostComment";
 import PostShare from "./Like-comment-share/PostShare";
 import DashboardEvents from "./DashboardEvents";
 import DashboardInitiatives from "./DashboardInitiatives";
 import DashboardUsers from "./DashboardUsers";
-import { Link } from "react-router-dom";
 import Membership from "../Membership/Membership";
 
 const MainContent = ({ userID, eventsData, initiativesData, setCount }) => {
@@ -260,7 +260,7 @@ const MainContent = ({ userID, eventsData, initiativesData, setCount }) => {
                   </Typography>
                   <Typography
                     variant="body2"
-                    sx={{ ml: 1, color: "text.secondary" }}
+                    sx={{ ml: 1, color: "text.primary" }}
                   >
                     {data.category?.name} • {timeAgo(data?.created_at)}
                   </Typography>
