@@ -26,9 +26,9 @@ const theme = createTheme({
 });
 
 const InitiativeData = () => {
-  const [InitiativesData, setInitiativesData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const { InitiativeId } = useParams();
+  const [isLoading, setIsLoading] = useState(true);
+  const [InitiativesData, setInitiativesData] = useState([]);
 
   const fetchData = async (url, setData) => {
     try {

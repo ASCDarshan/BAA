@@ -16,18 +16,18 @@ import { useNavigate } from "react-router-dom";
 import ajaxCall from "../../../helpers/ajaxCall";
 
 const Navbar = ({ handleDrawerToggle }) => {
-  const [userProfileData, setUserProfileData] = useState([]);
-  const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
-  const userID = loginInfo?.userId;
-
   const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
   const navigate = useNavigate();
 
+  const [userProfileData, setUserProfileData] = useState([]);
+
+  const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
+  const userID = loginInfo?.userId;
   const username = userProfileData?.user?.username || "Guest";
 
   const [anchorEl, setAnchorEl] = useState(null);
   const isMenuOpen = Boolean(anchorEl);
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
 
   const handleAvatarClick = (event) => {
     setAnchorEl(event.currentTarget);

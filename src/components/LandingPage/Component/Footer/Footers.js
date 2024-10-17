@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Box,
   Container,
@@ -6,19 +8,18 @@ import {
   styled,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
-import { Link } from "react-router-dom";
 import ajaxCall from "../../../helpers/ajaxCall";
 
-const FooterLink = styled(Typography)(({ theme }) => ({
-  cursor: "pointer",
+const FooterLink = styled(Link)(({ theme }) => ({
+  textDecoration: "none",
+  color: theme.palette.text.primary,
   display: "block",
   marginBottom: theme.spacing(1),
   "&:hover": {
-    color: theme.palette.primary.main,
+    color: theme.palette.secondary.main,
     textDecoration: "underline",
   },
 }));
@@ -49,12 +50,14 @@ const Footers = () => {
       console.error("Network error:", error);
     }
   };
+
   useEffect(() => {
     Promise.all([
       fetchData("website/footer/", setFooterData),
       fetchData("website/reach-us/", setContactData),
     ]);
   }, []);
+
   return (
     <Box
       component="footer"
@@ -72,7 +75,7 @@ const Footers = () => {
             <Typography variant="h6" color="text.primary" gutterBottom>
               About Us
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" color="text.primary">
               Bhavans Alumni Association is dedicated to fostering lifelong
               connections among alumni, supporting current students, and
               promoting the welfare of our alma mater.
@@ -82,13 +85,13 @@ const Footers = () => {
             <Typography variant="h6" color="text.primary" gutterBottom>
               Contact Us
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" color="text.primary">
               {contactData.address}
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" color="text.primary">
               Email: {contactData.email}
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" color="text.primary">
               Phone: {contactData.phone}
             </Typography>
           </Grid>
@@ -96,34 +99,13 @@ const Footers = () => {
             <Typography variant="h6" color="text.primary" gutterBottom>
               Quick Links
             </Typography>
-            <FooterLink
-              variant="body2"
-              color="text.secondary"
-              component={Link}
-              to="/"
-            >
-              Home
-            </FooterLink>
-            <FooterLink
-              variant="body2"
-              color="text.secondary"
-              component={Link}
-              to="/events"
-            >
-              Events
-            </FooterLink>
-            <FooterLink
-              variant="body2"
-              color="text.secondary"
-              component={Link}
-              to="/login"
-            >
-              Login
-            </FooterLink>
+            <FooterLink to="/">Home</FooterLink>
+            <FooterLink to="/events">Events</FooterLink>
+            <FooterLink to="/login">Login</FooterLink>
           </Grid>
         </Grid>
         <Box mt={5} textAlign="center">
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.primary">
             {new Date().getFullYear()} {footerData.copyright_text}
           </Typography>
           <Box display="flex" justifyContent="center" mt={2}>

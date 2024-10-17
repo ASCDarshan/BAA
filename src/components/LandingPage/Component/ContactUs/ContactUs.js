@@ -1,3 +1,6 @@
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
 import {
   Container,
   Grid,
@@ -6,11 +9,8 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import ajaxCall from "../../../helpers/ajaxCall";
-import { toast } from "react-toastify";
 import HeroBanner from "../Content/HeroBanner";
-import { useLocation } from "react-router-dom";
+import ajaxCall from "../../../helpers/ajaxCall";
 
 const SectionTitle = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(4),
@@ -38,8 +38,9 @@ const StyledIframe = styled("iframe")(({ theme }) => ({
 }));
 
 const ContactUs = () => {
-  const location = useLocation();
   const imageHide = ["/"];
+  const location = useLocation();
+
   const [heroImages, setHeroImages] = useState([]);
   const [formData, setFormData] = useState({
     name: "",

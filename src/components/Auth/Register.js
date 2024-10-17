@@ -1,4 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { toast } from "react-toastify";
 import {
   TextField,
   Button,
@@ -8,47 +12,12 @@ import {
   Paper,
   CircularProgress,
 } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
-import { useFormik } from "formik";
-import * as Yup from "yup";
 import ajaxCall from "../helpers/ajaxCall";
-import { toast } from "react-toastify";
 
 const Register = () => {
-  const [isLoading, setIsLoading] = React.useState(false);
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const fetchData = async (url, data) => {
-    setIsLoading(true);
-    try {
-      const response = await ajaxCall(
-        url,
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          method: "POST",
-          body: JSON.stringify(data),
-        },
-        8000
-      );
-      if (response?.status === 201) {
-        toast.success(
-          "Mail sent successfully. Please check your email and verify."
-        );
-        formik.resetForm(); // Clear the form fields
-        navigate("/login"); // Navigate to the login page
-      } else {
-        toast.error("Registration failed. Please try again");
-      }
-    } catch (error) {
-      toast.error("Registration failed. Please try again");
-    }
-    setIsLoading(false);
-  };
-
-  // Formik configuration
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -77,6 +46,36 @@ const Register = () => {
       fetchData("accounts/signup/", signupData);
     },
   });
+
+  const fetchData = async (url, data) => {
+    setIsLoading(true);
+    try {
+      const response = await ajaxCall(
+        url,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+          body: JSON.stringify(data),
+        },
+        8000
+      );
+      if (response?.status === 201) {
+        toast.success(
+          "Mail sent successfully. Please check your email and verify."
+        );
+        formik.resetForm();
+        navigate("/login");
+      } else {
+        toast.error("Registration failed. Please try again");
+      }
+    } catch (error) {
+      toast.error("Registration failed. Please try again");
+    }
+    setIsLoading(false);
+  };
 
   return (
     <Box

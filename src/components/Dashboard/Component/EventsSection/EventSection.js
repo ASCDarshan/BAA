@@ -1,7 +1,6 @@
 import React from "react";
 import { Box, Container } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-
 import AddEvents from "./AddEvents";
 import EventTable from "./EventTable";
 
@@ -27,7 +26,7 @@ const EventSection = () => {
       <Box sx={{ display: "flex" }}>
         <Container sx={{ mt: 10 }}>
           <EventTable />
-          {UserRole == "Superuser" && <AddEvents userID={userID} />}
+          {UserRole === "Superuser" && <AddEvents userID={userID} />}
         </Container>
       </Box>
     </ThemeProvider>

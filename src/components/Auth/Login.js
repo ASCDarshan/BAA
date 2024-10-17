@@ -19,6 +19,24 @@ const Login = () => {
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
 
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: Yup.object({
+      email: Yup.string().required("Username is required"),
+      password: Yup.string().required("Password is required"),
+    }),
+    onSubmit: (values) => {
+      const loginCredentials = {
+        username: values.email,
+        password: values.password,
+      };
+      fetchData("accounts/login/", loginCredentials);
+    },
+  });
+
   useEffect(() => {
     const checkLoginStatus = () => {
       const loginInfo = localStorage.getItem("loginInfo");
@@ -82,24 +100,6 @@ const Login = () => {
     }
     setIsLoading(false);
   };
-
-  const formik = useFormik({
-    initialValues: {
-      email: "",
-      password: "",
-    },
-    validationSchema: Yup.object({
-      email: Yup.string().required("Username is required"),
-      password: Yup.string().required("Password is required"),
-    }),
-    onSubmit: (values) => {
-      const loginCredentials = {
-        username: values.email,
-        password: values.password,
-      };
-      fetchData("accounts/login/", loginCredentials);
-    },
-  });
 
   return (
     <Box

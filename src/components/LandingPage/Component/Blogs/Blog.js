@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Button,
   Card,
@@ -8,9 +10,7 @@ import {
   styled,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
 import ajaxCall from "../../../helpers/ajaxCall";
-import { useNavigate } from "react-router-dom";
 import HeroBanner from "../Content/HeroBanner";
 
 const SectionTitle = styled(Typography)(({ theme }) => ({
@@ -30,9 +30,10 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
 }));
 
 const Blogs = () => {
+  const navigate = useNavigate();
+  
   const [blogData, setblogData] = useState([]);
   const [heroImages, setHeroImages] = useState([]);
-  const navigate = useNavigate();
 
   const fetchData = async (url, setData) => {
     try {
@@ -108,7 +109,7 @@ const Blogs = () => {
                     {Blog.title}
                   </Typography>
 
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color="text.primary">
                     {Blog.text.split(" ").slice(0, 20).join(" ")}...
                   </Typography>
                 </CardContent>

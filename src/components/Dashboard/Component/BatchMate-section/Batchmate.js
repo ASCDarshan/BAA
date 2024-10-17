@@ -1,7 +1,6 @@
 import React from "react";
 import { Box, Container } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-
 import BatchmateTable from "./BatchmateTable";
 
 const theme = createTheme({

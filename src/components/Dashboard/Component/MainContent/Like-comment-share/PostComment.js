@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Dialog,
   DialogActions,
@@ -52,7 +52,7 @@ const PostComment = ({ postId, userId, commentCounts }) => {
     }));
   };
 
-  const fetchComments = async () => {
+  const fetchComments = useCallback(async () => {
     setIsLoading(true);
     try {
       const response = await ajaxCall(`posts/comments/`, {
@@ -76,12 +76,13 @@ const PostComment = ({ postId, userId, commentCounts }) => {
       console.error("Error:", error);
     }
     setIsLoading(false);
-  };
+  }, [postId]);
+
   useEffect(() => {
     if (open) {
       fetchComments();
     }
-  }, [open]);
+  }, [fetchComments, open]);
 
   const handleSubmitComment = async () => {
     if (comment.content.trim() === "") return;

@@ -40,12 +40,13 @@ const theme = createTheme({
 });
 
 const Profile = () => {
+  const navigate = useNavigate();
+
+  const [tabValue, setTabValue] = useState(0);
   const [userProfileData, setUserProfileData] = useState(null);
+
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
   const userID = loginInfo?.userId;
-  const [tabValue, setTabValue] = useState(0);
-
-  const navigate = useNavigate();
 
   const handleUpdateProfile = () => {
     navigate("/dashboard/updateProfile");

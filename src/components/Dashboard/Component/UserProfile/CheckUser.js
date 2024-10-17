@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import {
   Box,
   Grid,
@@ -25,7 +26,6 @@ import {
   Work as WorkIcon,
 } from "@mui/icons-material";
 import ajaxCall from "../../../helpers/ajaxCall";
-import { toast } from "react-toastify";
 
 const theme = createTheme({
   palette: {
@@ -40,83 +40,50 @@ const theme = createTheme({
 });
 
 const CheckUser = () => {
-  const [userProfileData, setUserProfileData] = useState(null);
-  const [loginuserData, setloginUserData] = useState({});
-  const [loginuserId, setloginUserId] = useState();
-  const [followData, setfollowData] = useState(null);
-  const [loading, setLoading] = useState(true);
   const { UserId } = useParams();
   const [tabValue, setTabValue] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [followData, setfollowData] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [userProfileData, setUserProfileData] = useState(null);
 
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
-  const loginuserid = loginInfo?.userId;
 
-  const fetchData = async (url, setData) => {
-    try {
-      const response = await ajaxCall(
-        url,
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${loginInfo?.accessToken}`,
+  const fetchData = useCallback(
+    async (url, setData) => {
+      try {
+        const response = await ajaxCall(
+          url,
+          {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${loginInfo?.accessToken}`,
+            },
+            method: "GET",
           },
-          method: "GET",
-        },
-        8000
-      );
-      if (response?.status === 200) {
-        setData(response?.data || []);
-      } else {
-        console.error("Fetch error:", response);
-        toast.error("Failed to fetch user data");
+          8000
+        );
+        if (response?.status === 200) {
+          setData(response?.data || []);
+        } else {
+          console.error("Fetch error:", response);
+          toast.error("Failed to fetch user data");
+        }
+      } catch (error) {
+        console.error("Network error:", error);
+        toast.error("Network error occurred");
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Network error:", error);
-      toast.error("Network error occurred");
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [loginInfo?.accessToken]
+  );
 
   useEffect(() => {
     fetchData(`profiles/user-profile/${UserId}/`, setUserProfileData);
     fetchData(`profiles/following/`, setfollowData);
-  }, [UserId]);
-
-  const fetchloginuser = async (url, setData) => {
-    try {
-      const response = await ajaxCall(
-        url,
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${
-              JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
-            }`,
-          },
-          method: "GET",
-        },
-        8000
-      );
-      if (response?.status === 200) {
-        setloginUserId(response.data.user.id);
-      } else {
-        console.error("Fetch error:", response);
-      }
-    } catch (error) {
-      console.error("Network error:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchloginuser(
-      `profiles/user-profile/user/${loginuserid}/`,
-      setloginUserData
-    );
-  }, []);
+  }, [UserId, fetchData]);
 
   useEffect(() => {
     if (followData && Array.isArray(followData.following)) {
@@ -312,7 +279,6 @@ const CheckUser = () => {
                   <Tab label="Additional Info" />
                 </Tabs>
 
-                {/* Tabs */}
                 {tabValue === 0 && (
                   <Box sx={{ mt: 2 }}>
                     <Typography variant="h6" sx={{ mb: 2 }}>
@@ -329,6 +295,7 @@ const CheckUser = () => {
                     </Typography>
                   </Box>
                 )}
+
                 {tabValue === 1 && (
                   <Box sx={{ mt: 2 }}>
                     <Typography variant="h6" sx={{ mb: 2 }}>
@@ -349,6 +316,7 @@ const CheckUser = () => {
                     </Typography>
                   </Box>
                 )}
+
                 {tabValue === 2 && (
                   <Box sx={{ mt: 2 }}>
                     <Typography variant="h6" sx={{ mb: 2 }}>
@@ -365,6 +333,7 @@ const CheckUser = () => {
                     </Typography>
                   </Box>
                 )}
+
                 {tabValue === 3 && (
                   <Box sx={{ mt: 2 }}>
                     <Typography variant="h6" sx={{ mb: 2 }}>
@@ -423,6 +392,7 @@ const CheckUser = () => {
                     </Typography>
                   </Box>
                 )}
+                
               </Paper>
             </Grid>
           </Grid>

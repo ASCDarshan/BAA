@@ -1,4 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useState } from "react";
+import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import {
   TextField,
   Button,
@@ -8,14 +12,25 @@ import {
   Paper,
   CircularProgress,
 } from "@mui/material";
-import { useFormik } from "formik";
-import * as Yup from "yup";
 import ajaxCall from "../helpers/ajaxCall";
-import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
 
-const Login = () => {
-  const [isLoading, setIsLoading] = React.useState(false);
+const ForgotPassword = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+    },
+    validationSchema: Yup.object({
+      email: Yup.string().required("Email is required"),
+    }),
+    onSubmit: (values) => {
+      const loginCredentials = {
+        email_id: values.email,
+      };
+      fetchData("accounts/resetpassword/", loginCredentials);
+    },
+  });
 
   const fetchData = async (url, data) => {
     setIsLoading(true);
@@ -44,21 +59,6 @@ const Login = () => {
     }
     setIsLoading(false);
   };
-
-  const formik = useFormik({
-    initialValues: {
-      email: "",
-    },
-    validationSchema: Yup.object({
-      email: Yup.string().required("Email is required"),
-    }),
-    onSubmit: (values) => {
-      const loginCredentials = {
-        email_id: values.email,
-      };
-      fetchData("accounts/resetpassword/", loginCredentials);
-    },
-  });
 
   return (
     <Box
@@ -148,4 +148,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ForgotPassword;

@@ -1,3 +1,7 @@
+import React, { useState } from "react";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { useTheme } from "@emotion/react";
 import {
   Box,
   Button,
@@ -9,20 +13,19 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import React, { useState } from "react";
 import ajaxCall from "../../helpers/ajaxCall";
-import { toast } from "react-toastify";
 import DashboardImg from "../../images/Dashboard.png";
-import { useTheme } from "@emotion/react";
-import { useNavigate } from "react-router-dom";
 
 const DashboardTwo = () => {
   const amount = 2500;
   const theme = useTheme();
   const navigate = useNavigate();
+
   const [loading, setLoading] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
+
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
 
   const loadScript = (src) => {

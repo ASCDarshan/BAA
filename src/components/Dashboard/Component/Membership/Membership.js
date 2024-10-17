@@ -1,3 +1,5 @@
+import React, { useCallback, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import {
   Box,
   Button,
@@ -6,49 +8,52 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
 import ajaxCall from "../../../helpers/ajaxCall";
-import { toast } from "react-toastify";
 
 const Membership = () => {
-  const [loading, setLoading] = useState(false);
-  const [paymentData, setPaymentData] = useState([]);
   const [count, setCount] = useState(0);
   const [amount, setAmount] = useState(2500);
+  const [loading, setLoading] = useState(false);
+  const [paymentData, setPaymentData] = useState([]);
 
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
+
   const userID = loginInfo?.userId;
+  
   const isLifetimeMember = paymentData.some(
     (data) => data.user === userID && data.is_member === true
   );
 
-  const fetchData = async (url, setData) => {
-    try {
-      const response = await ajaxCall(
-        url,
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${loginInfo?.accessToken}`,
+  const fetchData = useCallback(
+    async (url, setData) => {
+      try {
+        const response = await ajaxCall(
+          url,
+          {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${loginInfo?.accessToken}`,
+            },
+            method: "GET",
           },
-          method: "GET",
-        },
-        8000
-      );
-      if (response?.status === 200) {
-        setData(response?.data || []);
-      } else {
-        console.error("Fetch error:", response);
+          8000
+        );
+        if (response?.status === 200) {
+          setData(response?.data || []);
+        } else {
+          console.error("Fetch error:", response);
+        }
+      } catch (error) {
+        console.error("Network error:", error);
       }
-    } catch (error) {
-      console.error("Network error:", error);
-    }
-  };
+    },
+    [loginInfo?.accessToken]
+  );
 
   useEffect(() => {
     fetchData(`accounts/member/list/`, setPaymentData);
-  }, [count]);
+  }, [count, fetchData]);
 
   const loadScript = (src) => {
     return new Promise((resolve) => {

@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import {
   Box,
   Paper,
@@ -9,8 +11,6 @@ import {
 } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import ajaxCall from "../../../helpers/ajaxCall";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 
 const theme = createTheme({
   palette: {
@@ -25,11 +25,12 @@ const theme = createTheme({
 });
 
 const ChangePassword = () => {
-  const [current_password, setCurrentPassword] = useState("");
+  const navigate = useNavigate();
+
+  const [error, setError] = useState("");
   const [password, setNewPassword] = useState("");
   const [newpassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
+  const [current_password, setCurrentPassword] = useState("");
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
@@ -61,7 +62,6 @@ const ChangePassword = () => {
         },
         8000
       );
-      console.log("----response---->", response);
       if (response?.status === 200) {
         navigate("/dashboard/userProfile");
         toast.success("Password changed successfully");

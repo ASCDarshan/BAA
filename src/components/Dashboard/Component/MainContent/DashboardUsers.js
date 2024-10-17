@@ -57,7 +57,7 @@ const DashboardUsers = () => {
         People You May Know
       </Typography>
       <List>
-        {userProfileData.slice(0, 5).map((data) => (
+        {userProfileData.slice(0, 3).map((data) => (
           <ListItem key={data.id}>
             <ListItemAvatar>
               <Avatar sx={{ mr: 1 }}>

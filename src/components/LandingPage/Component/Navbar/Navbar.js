@@ -23,10 +23,12 @@ import LoginIcon from "@mui/icons-material/Person";
 import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+  const theme = useTheme();
   const navigate = useNavigate();
+
   const [value, setValue] = useState(0);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const theme = useTheme();
+
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const handleDrawerToggle = () => {

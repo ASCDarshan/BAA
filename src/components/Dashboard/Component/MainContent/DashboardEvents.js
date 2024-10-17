@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Paper,
   Typography,
@@ -30,7 +30,6 @@ const steps = [
 
 const DashboardEvents = ({ eventsData }) => {
   const [eventregistrationsData, seteventRegistrationsData] = useState([]);
-  console.log(eventregistrationsData);
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
   const userID = loginInfo?.userId;
 
@@ -38,16 +37,19 @@ const DashboardEvents = ({ eventsData }) => {
     (registration) => registration.alumni === userID
   );
 
-  const initialData = {
-    registration_date: new Date().toISOString(),
-    total_amount: "",
-    payment_status: "PENDING",
-    full_event_access: true,
-    event: "",
-    alumni: userID,
-    subevent_registrations: [],
-    guests: [],
-  };
+  const initialData = useMemo(
+    () => ({
+      registration_date: new Date().toISOString(),
+      total_amount: "",
+      payment_status: "PENDING",
+      full_event_access: true,
+      event: "",
+      alumni: userID,
+      subevent_registrations: [],
+      guests: [],
+    }),
+    [userID]
+  );
 
   const [formData, setFormData] = useState(initialData);
   const [openDialog, setOpenDialog] = useState(false);
@@ -89,12 +91,12 @@ const DashboardEvents = ({ eventsData }) => {
     fetchData("events/registrations-get/", seteventRegistrationsData);
   }, []);
 
-  const handleCloseDialog = () => {
+  const handleCloseDialog = useCallback(() => {
     setOpenDialog(false);
     setActiveStep(0);
     setFormData(initialData);
     setTotalGuests(0);
-  };
+  }, [initialData]);
 
   const handleOpenDialog = (event) => {
     setSelectedEvent(event);

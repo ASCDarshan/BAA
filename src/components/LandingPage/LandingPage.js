@@ -13,6 +13,8 @@ import { useNavigate } from "react-router-dom";
 import LogoImg from "../images/BAA.png";
 
 const LandingPage = () => {
+  const navigate = useNavigate();
+  
   const [aboutusData, setAboutusData] = useState([]);
   const [heroImages, setHeroImages] = useState([]);
   const [achievements, setAchievements] = useState([]);
@@ -21,7 +23,6 @@ const LandingPage = () => {
   const [InitiativesData, setInitiativesData] = useState([]);
   const [committeeData, setCommitteeData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   const fetchData = async (url, setData) => {
     try {
