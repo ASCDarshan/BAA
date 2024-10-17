@@ -233,8 +233,8 @@ const Profile = () => {
                 )}
 
                 <Typography variant="body1" color="textSecondary">
-                  {job_title || "Add Job-Title"} | Batch of{" "}
-                  {school_graduation_year}
+                  {job_title || "N/A"} | Batch of{" "}
+                  {school_graduation_year || "N/A"}
                 </Typography>
                 <Typography variant="body1" color="textSecondary">
                   Alumni Number : {userID}
@@ -313,11 +313,6 @@ const Profile = () => {
                       iconPosition="start"
                       label="Additional Info"
                     />
-                    <Tab
-                      icon={<AdminPanelSettingsIcon sx={{ mb: 0.5 }} />}
-                      iconPosition="start"
-                      label="Security Profile"
-                    />
                   </Tabs>
                 </Box>
                 <Box sx={{ p: 3 }}>
@@ -374,7 +369,7 @@ const Profile = () => {
                               }}
                             >
                               <Typography variant="body1" paragraph>
-                                {bio || "No bio available"}
+                                {bio || "N/A"}
                               </Typography>
                               <IconButton
                                 onClick={() => handleEditClick("bio")}
@@ -558,7 +553,9 @@ const Profile = () => {
                                 >
                                   <Typography variant="body1">
                                     {Education
-                                      ? `${Education}, ${degree}`
+                                      ? `${Education || "N/A"}, ${
+                                          degree || "N/A"
+                                        }`
                                       : "No education details available"}
                                   </Typography>
                                   <IconButton
@@ -744,7 +741,7 @@ const Profile = () => {
                                 }}
                               >
                                 <Typography variant="body1">
-                                  {alternative_email}
+                                  {alternative_email || "N/A"}
                                 </Typography>
                                 <IconButton>
                                   <EditIcon
@@ -800,7 +797,7 @@ const Profile = () => {
                                 }}
                               >
                                 <Typography variant="body1">
-                                  {phone_number}
+                                  {phone_number || "N/A"}
                                 </Typography>
                                 <IconButton>
                                   <EditIcon
@@ -927,7 +924,7 @@ const Profile = () => {
                                 }}
                               >
                                 <Typography variant="body1">
-                                  {company}
+                                  {company || "N/A"}
                                 </Typography>
                                 <IconButton>
                                   <EditIcon
@@ -978,7 +975,7 @@ const Profile = () => {
                                 }}
                               >
                                 <Typography variant="body1">
-                                  {job_title}
+                                  {job_title || "N/A"}
                                 </Typography>
                                 <IconButton>
                                   <EditIcon
@@ -1029,7 +1026,7 @@ const Profile = () => {
                                 }}
                               >
                                 <Typography variant="body1">
-                                  {industry}
+                                  {industry || "N/A"}
                                 </Typography>
                                 <IconButton>
                                   <EditIcon
@@ -1083,7 +1080,7 @@ const Profile = () => {
                                 }}
                               >
                                 <Typography variant="body1">
-                                  {company_address}
+                                  {company_address || "N/A"}
                                 </Typography>
 
                                 <IconButton>
@@ -1100,7 +1097,7 @@ const Profile = () => {
                             <Button
                               variant="outlined"
                               color="primary"
-                              href={company_website}
+                              href={company_website || "N/A"}
                               target="_blank"
                               fullWidth
                               size="small"
@@ -1112,7 +1109,7 @@ const Profile = () => {
                             <Button
                               variant="outlined"
                               color="primary"
-                              href={company_portfolio}
+                              href={company_portfolio || "N/A"}
                               target="_blank"
                               size="small"
                               fullWidth
@@ -1183,7 +1180,7 @@ const Profile = () => {
                                 }}
                               >
                                 <Typography variant="body1">
-                                  {interests}
+                                  {interests || "N/A"}
                                 </Typography>
                                 <IconButton>
                                   <EditIcon
@@ -1225,7 +1222,7 @@ const Profile = () => {
                             ) : (
                               <>
                                 <Typography variant="body1">
-                                  {skills}
+                                  {skills || "N/A"}
                                 </Typography>
                                 <IconButton>
                                   <EditIcon
@@ -1279,7 +1276,7 @@ const Profile = () => {
                                 }}
                               >
                                 <Typography variant="body1">
-                                  {achievements}
+                                  {achievements || "N/A"}
                                 </Typography>
                                 <IconButton>
                                   <EditIcon
@@ -1335,7 +1332,7 @@ const Profile = () => {
                                 }}
                               >
                                 <Typography variant="body1">
-                                  {publications}
+                                  {publications || "N/A"}
                                 </Typography>
                                 <IconButton>
                                   <EditIcon
@@ -1352,28 +1349,6 @@ const Profile = () => {
                     </Box>
                   )}
 
-                  {tabValue === 4 && (
-                    <Box
-                      sx={{ display: "flex", flexDirection: "column", gap: 2 }}
-                    >
-                      <Typography
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1,
-                          color: "primary.main",
-                        }}
-                      >
-                        <AdminPanelSettingsIcon size="small" /> Security Profile
-                      </Typography>
-                      <Paper sx={{ p: 2, bgcolor: "grey.50" }}>
-                        <Grid container spacing={2}>
-                          {/* Add your security profile fields here */}
-                        </Grid>
-                      </Paper>
-                    </Box>
-                  )}
-
                   {/* Action Buttons */}
                   <Box
                     sx={{
@@ -1384,13 +1359,13 @@ const Profile = () => {
                     }}
                   >
                     <Button
-                      variant="outlined"
                       color="primary"
                       onClick={handleChangePassword}
                       sx={{
                         textTransform: "none",
                         px: 3,
                       }}
+                      variant="contained"
                       size="small"
                     >
                       Change Password

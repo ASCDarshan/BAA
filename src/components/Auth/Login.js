@@ -7,12 +7,15 @@ import {
   Box,
   Paper,
   CircularProgress,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import ajaxCall from "../helpers/ajaxCall";
 import { toast } from "react-toastify";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -101,6 +104,14 @@ const Login = () => {
     setIsLoading(false);
   };
 
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => setShowPassword(!showPassword);
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
   return (
     <Box
       sx={{
@@ -168,7 +179,7 @@ const Login = () => {
               fullWidth
               name="password"
               label="Password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               id="password"
               autoComplete="current-password"
               value={formik.values.password}
@@ -176,6 +187,19 @@ const Login = () => {
               onBlur={formik.handleBlur}
               error={formik.touched.password && Boolean(formik.errors.password)}
               helperText={formik.touched.password && formik.errors.password}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
             {isLoading ? (
               <Button variant="contained" color="primary" fullWidth disabled>
