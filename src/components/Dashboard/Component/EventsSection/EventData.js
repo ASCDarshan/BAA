@@ -32,6 +32,7 @@ import {
   EventAvailable,
   LocationOn,
   People,
+  Share as ShareIcon,
 } from "@mui/icons-material";
 
 const theme = createTheme({
@@ -593,7 +594,8 @@ const EventData = () => {
                     </Button>
                     <Button
                       variant="contained"
-                      color="primary"
+                      color="secondary"
+                      startIcon={<ShareIcon />}
                       size="small"
                       onClick={() =>
                         handleShareEvent(selectedEvent.description)
@@ -783,7 +785,7 @@ const EventData = () => {
               sx={{ mt: 1, mr: 1 }}
               size="small"
             >
-              {activeStep === steps.length - 1 ? "Submit" : "Next"}
+              {activeStep === steps.length - 1 ? "Pay" : "Next"}
             </Button>
           </Box>
         </DialogContent>

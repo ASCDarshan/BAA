@@ -544,7 +544,7 @@ const DashboardEvents = ({ eventsData }) => {
               sx={{ mt: 1, mr: 1 }}
               size="small"
             >
-              {activeStep === steps.length - 1 ? "Submit" : "Next"}
+              {activeStep === steps.length - 1 ? "Pay" : "Next"}
             </Button>
           </Box>
         </DialogContent>

@@ -27,7 +27,7 @@ const DashboardInitiatives = ({ initiativesData, setCount }) => {
     initiative: "",
     donor: userID,
   };
-
+  console.log(InitialData);
   const [loading, setLoading] = useState(false);
   const [amountError, setAmountError] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -90,6 +90,7 @@ const DashboardInitiatives = ({ initiativesData, setCount }) => {
       initiative_id: 1,
       amount: formData.amount,
     };
+    console.log("body----------->", body);
 
     const response = await ajaxCall(
       "accounts/initiate/initiative/",
@@ -115,7 +116,7 @@ const DashboardInitiatives = ({ initiativesData, setCount }) => {
 
     const options = {
       key: process.env.REACT_APP_RAZOR_PAY_KEY,
-      amount: formData.amount * 100,
+      amount: formData.amount,
       description: "Test Transaction",
       order_id: order.order_id,
       handler: async function (response) {
@@ -150,6 +151,8 @@ const DashboardInitiatives = ({ initiativesData, setCount }) => {
             donor: userID,
           };
 
+          console.log("registration data -------------->", registrationData);
+
           const registrationResult = await ajaxCall(
             "initiatives/donations/",
             {
@@ -168,6 +171,7 @@ const DashboardInitiatives = ({ initiativesData, setCount }) => {
 
           if (registrationResult?.status === 201) {
             setCount((prev) => prev + 1);
+            setFormData(InitialData);
             toast.success("Payment Successful and Registration Completed");
           } else {
             console.error("Registration API response:", registrationResult);
