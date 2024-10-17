@@ -12,6 +12,7 @@ import {
 import { createTheme } from "@mui/material/styles";
 import ajaxCall from "../../../helpers/ajaxCall";
 import Breadcrumb from "../../../Ul/Breadcrumb";
+import { CalendarToday } from "@mui/icons-material";
 
 const theme = createTheme({
   palette: {
@@ -65,10 +66,7 @@ const InitiativeData = () => {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
+    return date.toLocaleDateString("en-GB");
   };
 
   return (
@@ -104,11 +102,15 @@ const InitiativeData = () => {
                     <Typography variant="body1" paragraph>
                       {selectedInitiatives.purpose}
                     </Typography>
-                    <Typography variant="body1" paragraph>
-                      Starts from : {formatDate(selectedInitiatives.start_date)}{" "}
-                      to {formatDate(selectedInitiatives.end_date)} <br />
-                    </Typography>
-                    <Typography variant="body1" paragraph>
+                    <Box display="flex" alignItems="center" mt={1}>
+                      <CalendarToday sx={{ mr: 1, color: "#fb9e45" }} />
+                      <Typography variant="body2">
+                        {formatDate(selectedInitiatives.start_date)} -{" "}
+                        {formatDate(selectedInitiatives.end_date)}
+                      </Typography>
+                    </Box>
+
+                    <Typography variant="body1" paragraph mt={2}>
                       Total Funds Required :{" "}
                       {selectedInitiatives.total_funds_required}
                     </Typography>

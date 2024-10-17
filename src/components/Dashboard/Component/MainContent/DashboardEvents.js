@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Paper,
   Typography,
@@ -30,6 +30,7 @@ const steps = [
 
 const DashboardEvents = ({ eventsData }) => {
   const [eventregistrationsData, seteventRegistrationsData] = useState([]);
+  console.log(eventregistrationsData);
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
   const userID = loginInfo?.userId;
 
@@ -37,19 +38,16 @@ const DashboardEvents = ({ eventsData }) => {
     (registration) => registration.alumni === userID
   );
 
-  const initialData = useMemo(
-    () => ({
-      registration_date: new Date().toISOString(),
-      total_amount: "",
-      payment_status: "PENDING",
-      full_event_access: true,
-      event: "",
-      alumni: userID,
-      subevent_registrations: [],
-      guests: [],
-    }),
-    [userID]
-  );
+  const initialData = {
+    registration_date: new Date().toISOString(),
+    total_amount: "",
+    payment_status: "PENDING",
+    full_event_access: true,
+    event: "",
+    alumni: userID,
+    subevent_registrations: [],
+    guests: [],
+  };
 
   const [formData, setFormData] = useState(initialData);
   const [openDialog, setOpenDialog] = useState(false);
@@ -60,6 +58,7 @@ const DashboardEvents = ({ eventsData }) => {
   const [totalAmount, setTotalAmount] = useState(0);
   const [activeStep, setActiveStep] = useState(0);
   const [totalGuests, setTotalGuests] = useState(0);
+  const [count, setCount] = useState(0);
 
   const fetchData = async (url, setData) => {
     try {
@@ -89,14 +88,14 @@ const DashboardEvents = ({ eventsData }) => {
 
   useEffect(() => {
     fetchData("events/registrations-get/", seteventRegistrationsData);
-  }, []);
+  }, [count]);
 
-  const handleCloseDialog = useCallback(() => {
+  const handleCloseDialog = () => {
     setOpenDialog(false);
     setActiveStep(0);
     setFormData(initialData);
     setTotalGuests(0);
-  }, [initialData]);
+  };
 
   const handleOpenDialog = (event) => {
     setSelectedEvent(event);
@@ -188,7 +187,10 @@ const DashboardEvents = ({ eventsData }) => {
       formDataToSend.append("event", formData.event);
       formDataToSend.append("alumni", formData.alumni);
       formDataToSend.append("total_amount", formData.total_amount);
-      formDataToSend.append("payment_status", formData.payment_status);
+      formDataToSend.append(
+        "payment_status",
+        (formData.payment_status = "COMPLETED")
+      );
       formDataToSend.append("full_event_access", formData.full_event_access);
       formDataToSend.append(
         "subevent_registrations",
@@ -221,6 +223,7 @@ const DashboardEvents = ({ eventsData }) => {
       );
 
       if (response?.status === 201) {
+        setCount(1);
         toast.success("Registration Completed Successfully");
         handleCloseDialog();
       } else {
