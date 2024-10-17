@@ -27,7 +27,6 @@ const DashboardInitiatives = ({ initiativesData, setCount }) => {
     initiative: "",
     donor: userID,
   };
-  console.log(InitialData);
   const [loading, setLoading] = useState(false);
   const [amountError, setAmountError] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -90,7 +89,6 @@ const DashboardInitiatives = ({ initiativesData, setCount }) => {
       initiative_id: 1,
       amount: formData.amount,
     };
-    console.log("body----------->", body);
 
     const response = await ajaxCall(
       "accounts/initiate/initiative/",
@@ -151,8 +149,6 @@ const DashboardInitiatives = ({ initiativesData, setCount }) => {
             donor: userID,
           };
 
-          console.log("registration data -------------->", registrationData);
-
           const registrationResult = await ajaxCall(
             "initiatives/donations/",
             {
@@ -195,6 +191,17 @@ const DashboardInitiatives = ({ initiativesData, setCount }) => {
     paymentObject.open();
   };
 
+  const calculateTotalDonations = () => {
+    const currentInitiative = initiativesData[currentIndex];
+    if (!currentInitiative || !currentInitiative.donations) {
+      return 0;
+    }
+    return currentInitiative.donations.reduce(
+      (total, donation) => total + parseFloat(donation.amount),
+      0
+    );
+  };
+
   return (
     <Paper
       sx={{
@@ -220,7 +227,7 @@ const DashboardInitiatives = ({ initiativesData, setCount }) => {
             />
             <ListItemText
               primary="Current Funds Raised"
-              secondary={initiativesData[currentIndex].current_funds}
+              secondary={`${calculateTotalDonations().toFixed(2)}`}
             />
           </ListItem>
         </List>

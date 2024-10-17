@@ -8,6 +8,7 @@ import {
   CircularProgress,
   Paper,
   CardContent,
+  Divider,
 } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 import ajaxCall from "../../../helpers/ajaxCall";
@@ -99,7 +100,8 @@ const InitiativeData = () => {
                     <Typography variant="h5" gutterBottom>
                       {selectedInitiatives.name}
                     </Typography>
-                    <Typography variant="body1" paragraph>
+                    <Divider />
+                    <Typography variant="body1" paragraph mt={1}>
                       {selectedInitiatives.purpose}
                     </Typography>
                     <Box display="flex" alignItems="center" mt={1}>
