@@ -115,7 +115,7 @@ const Navbar = ({ handleDrawerToggle }) => {
           </IconButton>
           <Typography
             variant="body1"
-            sx={{ ml: 1 }}
+            sx={{ ml: 1, cursor: "pointer" }}
             onClick={handleAvatarClick}
           >
             {username}
