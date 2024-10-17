@@ -9,6 +9,7 @@ import {
   CircularProgress,
   Divider,
   Paper,
+  Card,
   CardContent,
   Button,
   Dialog,
@@ -25,6 +26,13 @@ import { createTheme, styled } from "@mui/material/styles";
 import ajaxCall from "../../../helpers/ajaxCall";
 import Breadcrumb from "../../../Ul/Breadcrumb";
 import { toast } from "react-toastify";
+import {
+  AccessTime,
+  CalendarToday,
+  EventAvailable,
+  LocationOn,
+  People,
+} from "@mui/icons-material";
 
 const theme = createTheme({
   palette: {
@@ -58,6 +66,17 @@ const BackgroundImage = styled("div")(({ bgImage }) => ({
   backgroundSize: "cover",
   backgroundPosition: "center",
   position: "relative",
+  borderRadius: "8px",
+  boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
+  transition: "transform 0.3s ease-in-out",
+}));
+
+const StyledCard = styled(Card)(({ theme }) => ({
+  marginTop: theme.spacing(4),
+  boxShadow: "0 4px 8px rgba(251, 166, 69, 0.5)",
+  borderRadius: "12px",
+  overflow: "hidden",
+  transition: "transform 0.3s ease-in-out",
 }));
 
 const steps = [
@@ -90,6 +109,8 @@ const EventData = () => {
     subevent_registrations: [],
     guests: [],
   });
+
+  console.log(formData.guests);
 
   const fetchData = useCallback(async (url, setData) => {
     try {
@@ -137,6 +158,7 @@ const EventData = () => {
     setTotalAmount(selectedEvent?.amount || 0);
     setFormData((prevFormData) => ({
       ...prevFormData,
+      payment_status: "COMPLETED",
       event: selectedEvent.id,
       total_amount: selectedEvent?.amount || 0,
     }));
@@ -420,169 +442,172 @@ const EventData = () => {
     <Container maxWidth="lg" sx={{ mt: 10 }}>
       <Box>
         <Breadcrumb title="Event" main="Dashboard" />
-        <Paper
-          elevation={3}
-          sx={{
-            backgroundColor: theme.palette.background.paper,
-            mt: 2,
-            p: 2,
-            boxShadow: "0 4px 8px rgba(251, 166, 69, 0.5)",
-          }}
-        >
-          <CardContent>
-            {isLoading ? (
-              <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                minHeight="300px"
-              >
-                <CircularProgress />
-              </Box>
-            ) : (
-              <>
-                <Grid container>
-                  <Grid item xs={12} mb={2}>
-                    <BackgroundImage bgImage={selectedEvent.event_banner} />
+        <StyledCard>
+          <Paper
+            elevation={3}
+            sx={{
+              backgroundColor: theme.palette.background.paper,
+              boxShadow: "0 4px 8px rgba(251, 166, 69, 0.5)",
+            }}
+          >
+            <CardContent>
+              {isLoading ? (
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  minHeight="300px"
+                >
+                  <CircularProgress />
+                </Box>
+              ) : (
+                <>
+                  <Grid container>
+                    <Grid item xs={12} mb={2}>
+                      <BackgroundImage bgImage={selectedEvent.event_banner} />
+                    </Grid>
                   </Grid>
-                </Grid>
-                <Grid container spacing={4}>
-                  <Grid item xs={12} md={8}>
-                    <Typography variant="h4" gutterBottom>
-                      {selectedEvent.name}
-                    </Typography>
-                    <Typography variant="body1" paragraph>
-                      {selectedEvent.description}
-                    </Typography>
-                    <Typography variant="body2" color="text.primary" paragraph>
-                      Time: {formatTime(selectedEvent.start_time)} -{" "}
-                      {formatTime(selectedEvent.end_time)}
-                      <br />
-                      Starts from {formatDate(selectedEvent.start_date)} to{" "}
-                      {formatDate(selectedEvent.end_date)}
-                    </Typography>
+                  <Grid container spacing={4} sx={{ p: 4 }}>
+                    <Grid item xs={12} md={8}>
+                      <CardContent>
+                        <Typography variant="h4" gutterBottom>
+                          {selectedEvent.name}
+                        </Typography>
+                        <Typography
+                          variant="body1"
+                          paragraph
+                          color="textSecondary"
+                        >
+                          {selectedEvent.description}
+                        </Typography>
+                        <Box display="flex" alignItems="center" mt={2}>
+                          <AccessTime sx={{ mr: 1, color: "#fb9e45" }} />
+                          <Typography variant="body2">
+                            {formatTime(selectedEvent.start_time)} -{" "}
+                            {formatTime(selectedEvent.end_time)}
+                          </Typography>
+                        </Box>
+                        <Box display="flex" alignItems="center" mt={1}>
+                          <CalendarToday sx={{ mr: 1, color: "#fb9e45" }} />
+                          <Typography variant="body2">
+                            {formatDate(selectedEvent.start_date)} -{" "}
+                            {formatDate(selectedEvent.end_date)}
+                          </Typography>
+                        </Box>
+                      </CardContent>
+                    </Grid>
+                    <Grid item xs={12} md={4} mt={4}>
+                      <CardMedia
+                        component="img"
+                        sx={{
+                          height: "70%",
+                          width: "70%",
+                          objectFit: "contain",
+                          borderRadius: "8px",
+                          boxShadow: "0 4px 15px rgba(0, 0, 0, 0.3)",
+                        }}
+                        image={selectedEvent.qr_code}
+                        alt={selectedEvent.title || "Upcoming Event"}
+                      />
+                    </Grid>
+                  </Grid>
 
-                    <Typography variant="body2" color="text.primary" paragraph>
-                      Event Location:{" "}
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        size="small"
-                        onClick={() =>
-                          window.open(selectedEvent.direction, "_blank")
-                        }
-                        sx={{ mr: 2 }}
-                      >
-                        Get Direction
-                      </Button>
-                    </Typography>
+                  <Grid container sx={{ p: 4 }}>
+                    <Grid item xs={12} md={8}>
+                      <CardContent>
+                        {selectedEvent.subevents?.length > 0 && (
+                          <>
+                            <Divider sx={{ my: 4 }} />
+                            <Typography variant="h6" gutterBottom>
+                              Event Schedule
+                            </Typography>
+                            {selectedEvent.subevents.map(
+                              (subevent, subIndex) => (
+                                <Box key={subIndex} sx={{ mb: 3 }}>
+                                  <Typography variant="h6">
+                                    {subevent.name}
+                                  </Typography>
+                                  <Typography variant="body2" paragraph>
+                                    {subevent.description}
+                                  </Typography>
+                                  <Box
+                                    display="flex"
+                                    alignItems="center"
+                                    mt={1}
+                                  >
+                                    <EventAvailable
+                                      sx={{ mr: 1, color: "#fb9e45" }}
+                                    />
+                                    <Typography variant="body2">
+                                      {formatDate(subevent.date)}
+                                    </Typography>
+                                  </Box>
+                                  <Box
+                                    display="flex"
+                                    alignItems="center"
+                                    mt={1}
+                                  >
+                                    <LocationOn
+                                      sx={{ mr: 1, color: "#fb9e45" }}
+                                    />
+                                    <Typography variant="body2">
+                                      {subevent.location}
+                                    </Typography>
+                                  </Box>
+                                  <Box
+                                    display="flex"
+                                    alignItems="center"
+                                    mt={1}
+                                  >
+                                    <People sx={{ mr: 1, color: "#fb9e45" }} />
+                                    <Typography variant="body2">
+                                      Max Participants:{" "}
+                                      {subevent.max_participants}
+                                    </Typography>
+                                  </Box>
+                                </Box>
+                              )
+                            )}
+                          </>
+                        )}
+                      </CardContent>
+                    </Grid>
                   </Grid>
+
                   <Grid
                     item
                     xs={12}
-                    md={4}
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      height: "250px",
-                      marginTop: 2,
-                    }}
+                    container
+                    justifyContent="flex-end"
+                    mt={2}
+                    mb={3}
                   >
-                    <CardMedia
-                      component="img"
-                      sx={{
-                        height: "80%",
-                        width: "80%",
-                        objectFit: "contain",
-                        borderRadius: "8px",
-                      }}
-                      image={selectedEvent.qr_code}
-                      alt={selectedEvent.title || "Upcoming Event"}
-                    />
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      size="small"
+                      onClick={handleRegistrations}
+                      sx={{ mr: 2 }}
+                    >
+                      Register
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      size="small"
+                      onClick={() =>
+                        handleShareEvent(selectedEvent.description)
+                      }
+                      sx={{ mr: 2 }}
+                    >
+                      Share Event
+                    </Button>
                   </Grid>
-                </Grid>
-
-                {selectedEvent.subevents?.length > 0 && (
-                  <>
-                    <Divider sx={{ my: 4 }} />
-                    <Typography variant="h5" gutterBottom>
-                      Event Schedule
-                    </Typography>
-
-                    {selectedEvent.subevents.map((subevent, subIndex) => (
-                      <Box key={subIndex} sx={{ mb: 4 }}>
-                        <Typography variant="h6" gutterBottom>
-                          <b>{subevent.name}</b> ({formatDate(subevent.date)})
-                        </Typography>
-                        <Typography variant="body2" paragraph>
-                          {subevent.description}
-                        </Typography>
-                        <Typography variant="body2">
-                          Time: {formatTime(subevent.start_time)} -{" "}
-                          {formatTime(subevent.end_time)}
-                        </Typography>
-                        <Typography variant="body2">
-                          Location: {subevent.location || "To be announced"}
-                        </Typography>
-                        <Typography variant="body2" paragraph>
-                          Max Participants: {subevent.max_participants}
-                        </Typography>
-
-                        {/* Display Pricing */}
-                        {subevent.pricing?.length > 0 && (
-                          <>
-                            <Typography variant="subtitle1" gutterBottom>
-                              Pricing:
-                            </Typography>
-                            {subevent.pricing.map((price, priceIndex) => (
-                              <Box key={priceIndex} sx={{ mb: 1 }}>
-                                <Typography variant="body2">
-                                  Alumni Price: {price.alumni_price}
-                                </Typography>
-                                <Typography variant="body2">
-                                  Guest Price: {price.guest_price}
-                                </Typography>
-                              </Box>
-                            ))}
-                          </>
-                        )}
-                      </Box>
-                    ))}
-                  </>
-                )}
-
-                <Grid
-                  item
-                  xs={12}
-                  container
-                  justifyContent="flex-end"
-                  mt={2}
-                  mb={3}
-                >
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    size="small"
-                    onClick={handleRegistrations}
-                    sx={{ mr: 2 }}
-                  >
-                    Register
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    size="small"
-                    onClick={() => handleShareEvent(selectedEvent.description)}
-                    sx={{ mr: 2 }}
-                  >
-                    Share Event
-                  </Button>
-                </Grid>
-              </>
-            )}
-          </CardContent>
-        </Paper>
+                </>
+              )}
+            </CardContent>
+          </Paper>
+        </StyledCard>
       </Box>
 
       {/* Updated Dialog for Registration */}
