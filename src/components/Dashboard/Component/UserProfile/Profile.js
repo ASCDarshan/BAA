@@ -23,8 +23,9 @@ import {
   Work as WorkIcon,
 } from "@mui/icons-material";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
+import PlaylistAddCheckCircleIcon from "@mui/icons-material/PlaylistAddCheckCircle";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import CallIcon from "@mui/icons-material/Call";
-import BackupTableIcon from "@mui/icons-material/BackupTable";
 import ajaxCall from "../../../helpers/ajaxCall";
 
 const theme = createTheme({
@@ -41,7 +42,6 @@ const theme = createTheme({
 
 const Profile = () => {
   const navigate = useNavigate();
-
   const [tabValue, setTabValue] = useState(0);
   const [userProfileData, setUserProfileData] = useState(null);
 
@@ -148,6 +148,9 @@ const Profile = () => {
                   {job_title || "Add Job-Title"} | Batch of{" "}
                   {school_graduation_year}
                 </Typography>
+                <Typography variant="body1" color="textSecondary">
+                  Alumni Number : {userID}
+                </Typography>
                 <Divider sx={{ my: 2 }} />
                 <Box display="flex" justifyContent="center" gap={2}>
                   <IconButton href={linkedin_profile} target="_blank">
@@ -165,148 +168,445 @@ const Profile = () => {
 
             <Grid item xs={12} sm={8}>
               <Paper
-                elevation={4}
-                sx={{ p: 3, boxShadow: "0 4px 8px rgba(251, 166, 69, 0.5)" }}
+                elevation={3}
+                sx={{
+                  borderRadius: 2,
+                  overflow: "hidden",
+                  bgcolor: "background.paper",
+                }}
               >
-                <Tabs value={tabValue} onChange={handleTabChange} centered>
-                  <Tab label="Bio" />
-                  <Tab label="Contact Info" />
-                  <Tab label="Education" />
-                  <Tab label="Company Info" />
-                  <Tab label="Additional Info" />
-                </Tabs>
-
-                {/* Tab Panels */}
-                {tabValue === 0 && (
-                  <Box sx={{ mt: 2 }}>
-                    <Typography variant="h6" sx={{ mb: 2 }}>
-                      Bio <LibraryBooksIcon fontSize="small" />
-                    </Typography>
-                    <Typography variant="body1" paragraph>
-                      {bio || "No bio available"}
-                    </Typography>
-                    <Typography variant="body1">
-                      Birth Date: {birth_date}
-                    </Typography>
-                    <Typography variant="body1">
-                      School Graduation Year: {school_graduation_year}
-                    </Typography>
-                  </Box>
-                )}
-                {tabValue === 1 && (
-                  <Box sx={{ mt: 2 }}>
-                    <Typography variant="h6" sx={{ mb: 2 }}>
-                      Contact Information <CallIcon fontSize="small" />
-                    </Typography>
-                    <Typography variant="body1">
-                      Email: {userProfileData.user.email}
-                    </Typography>
-                    <Typography variant="body1">
-                      Alternate Email: {alternative_email}
-                    </Typography>
-                    <Typography variant="body1">
-                      Phone: {phone_number}
-                    </Typography>
-                    <Typography variant="body1">
-                      Address: {street_address}, {city}, {state}, {country},{" "}
-                      {postal_code}
-                    </Typography>
-                  </Box>
-                )}
-                {tabValue === 2 && (
-                  <Box sx={{ mt: 2 }}>
-                    <Typography variant="h6" sx={{ mb: 2 }}>
-                      Education <SchoolIcon fontSize="small" />
-                    </Typography>
-                    <Typography variant="body1">
-                      Degree:{" "}
-                      {Education
-                        ? `${Education}, ${degree}`
-                        : "No education details available"}
-                    </Typography>
-                    <Typography variant="body1">
-                      Graduation Year: {year_of_graduation || "N/A"}
-                    </Typography>
-                  </Box>
-                )}
-                {tabValue === 3 && (
-                  <Box sx={{ mt: 2 }}>
-                    <Typography variant="h6" sx={{ mb: 2 }}>
-                      Company Information <WorkIcon fontSize="small" />
-                    </Typography>
-                    <Typography variant="body1">Company: {company}</Typography>
-                    <Typography variant="body1">
-                      Job Title: {job_title}
-                    </Typography>
-                    <Typography variant="body1">
-                      Industry: {industry}
-                    </Typography>
-                    <Typography variant="body1">Company: {company}</Typography>
-                    <Typography variant="body1">
-                      Address: {company_address}
-                    </Typography>
-                    <Typography variant="body1">
-                      Company Website:{" "}
-                      <Button
-                        variant="text"
-                        color="primary"
-                        href={company_website}
-                        target="_blank"
-                      >
-                        Visit Website
-                      </Button>
-                    </Typography>
-                    <Typography variant="body1">
-                      Portfolio:{" "}
-                      <Button
-                        variant="text"
-                        color="primary"
-                        href={company_portfolio}
-                        target="_blank"
-                      >
-                        View Portfolio
-                      </Button>
-                    </Typography>
-                  </Box>
-                )}
-
-                {tabValue === 4 && (
-                  <Box sx={{ mt: 2 }}>
-                    <Typography variant="h6" sx={{ mb: 2 }}>
-                      Additional Information{" "}
-                      <BackupTableIcon fontSize="small" />
-                    </Typography>
-                    <Typography variant="body1">
-                      Interest: {interests}
-                    </Typography>
-                    <Typography variant="body1">Skills: {skills}</Typography>
-                    <Typography variant="body1">
-                      Achievements: {achievements}
-                    </Typography>
-                    <Typography variant="body1">
-                      Publications: {publications}
-                    </Typography>
-                  </Box>
-                )}
-
-                <Box mt={3} textAlign="right">
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleUpdateProfile}
-                    size="small"
-                    sx={{ mr: 2 }}
+                <Box
+                  sx={{
+                    borderBottom: 1,
+                    borderColor: "divider",
+                    bgcolor: "grey.50",
+                  }}
+                >
+                  <Tabs
+                    value={tabValue}
+                    onChange={handleTabChange}
+                    variant="scrollable"
+                    scrollButtons="auto"
+                    sx={{
+                      "& .MuiTab-root": {
+                        minHeight: "64px",
+                        textTransform: "none",
+                        fontSize: "0.95rem",
+                        fontWeight: 500,
+                        px: 3,
+                        "&.Mui-selected": {
+                          color: "primary.main",
+                          fontWeight: 600,
+                        },
+                      },
+                      "& .MuiTabs-indicator": {
+                        height: 3,
+                        borderRadius: "3px 3px 0 0",
+                      },
+                    }}
                   >
-                    Update Profile
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    onClick={handleChangePassword}
-                    size="small"
+                    <Tab
+                      icon={<LibraryBooksIcon sx={{ mb: 0.5 }} />}
+                      iconPosition="start"
+                      label="Bio"
+                    />
+                    <Tab
+                      icon={<CallIcon sx={{ mb: 0.5 }} />}
+                      iconPosition="start"
+                      label="Contact Info"
+                    />
+                    <Tab
+                      icon={<WorkIcon sx={{ mb: 0.5 }} />}
+                      iconPosition="start"
+                      label="Company Info"
+                    />
+                    <Tab
+                      icon={<PlaylistAddCheckCircleIcon sx={{ mb: 0.5 }} />}
+                      iconPosition="start"
+                      label="Additional Info"
+                    />
+                    <Tab
+                      icon={<AdminPanelSettingsIcon sx={{ mb: 0.5 }} />}
+                      iconPosition="start"
+                      label="Security Profile"
+                    />
+                  </Tabs>
+                </Box>
+
+                <Box sx={{ p: 3 }}>
+                  {tabValue === 0 && (
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 3,
+                      }}
+                    >
+                      <Box>
+                        <Typography
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                            mb: 2,
+                            color: "primary.main",
+                          }}
+                        >
+                          <LibraryBooksIcon size="small" /> Bio
+                        </Typography>
+                        <Paper sx={{ p: 2, bgcolor: "grey.50" }}>
+                          <Typography variant="body1" paragraph>
+                            {bio || "No bio available"}
+                          </Typography>
+                          <Grid container spacing={2}>
+                            <Grid item xs={12} sm={6}>
+                              <Typography
+                                variant="subtitle2"
+                                color="text.secondary"
+                              >
+                                Birth Date
+                              </Typography>
+                              <Typography variant="body1">
+                                {birth_date}
+                              </Typography>
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                              <Typography
+                                variant="subtitle2"
+                                color="text.secondary"
+                              >
+                                School Graduation Year
+                              </Typography>
+                              <Typography variant="body1">
+                                {school_graduation_year}
+                              </Typography>
+                            </Grid>
+                          </Grid>
+                        </Paper>
+                      </Box>
+
+                      <Box>
+                        <Typography
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                            mb: 2,
+                            color: "primary.main",
+                          }}
+                        >
+                          <SchoolIcon size="small" /> Education
+                        </Typography>
+                        <Paper sx={{ p: 2, bgcolor: "grey.50" }}>
+                          <Grid container spacing={2}>
+                            <Grid item xs={12} sm={6}>
+                              <Typography
+                                variant="subtitle2"
+                                color="text.secondary"
+                              >
+                                Degree
+                              </Typography>
+                              <Typography variant="body1">
+                                {Education
+                                  ? `${Education}, ${degree}`
+                                  : "No education details available"}
+                              </Typography>
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                              <Typography
+                                variant="subtitle2"
+                                color="text.secondary"
+                              >
+                                Graduation Year
+                              </Typography>
+                              <Typography variant="body1">
+                                {year_of_graduation || "N/A"}
+                              </Typography>
+                            </Grid>
+                          </Grid>
+                        </Paper>
+                      </Box>
+                    </Box>
+                  )}
+
+                  {/* Contact Info Tab */}
+                  {tabValue === 1 && (
+                    <Box
+                      sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+                    >
+                      <Typography
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1,
+                          color: "primary.main",
+                        }}
+                      >
+                        <CallIcon size="small" /> Contact Information
+                      </Typography>
+                      <Paper sx={{ p: 2, bgcolor: "grey.50" }}>
+                        <Grid container spacing={2}>
+                          <Grid item xs={12} sm={6}>
+                            <Typography
+                              variant="subtitle2"
+                              color="text.secondary"
+                            >
+                              Email
+                            </Typography>
+                            <Typography variant="body1">
+                              {userProfileData.user.email}
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={12} sm={6}>
+                            <Typography
+                              variant="subtitle2"
+                              color="text.secondary"
+                            >
+                              Alternative Email
+                            </Typography>
+                            <Typography variant="body1">
+                              {alternative_email}
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={12} sm={6}>
+                            <Typography
+                              variant="subtitle2"
+                              color="text.secondary"
+                            >
+                              Phone
+                            </Typography>
+                            <Typography variant="body1">
+                              {phone_number}
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={12}>
+                            <Typography
+                              variant="subtitle2"
+                              color="text.secondary"
+                            >
+                              Address
+                            </Typography>
+                            <Typography variant="body1">
+                              {[
+                                street_address,
+                                city,
+                                state,
+                                country,
+                                postal_code,
+                              ]
+                                .filter(Boolean)
+                                .join(", ")}
+                            </Typography>
+                          </Grid>
+                        </Grid>
+                      </Paper>
+                    </Box>
+                  )}
+
+                  {/* Company Info Tab */}
+                  {tabValue === 2 && (
+                    <Box
+                      sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+                    >
+                      <Typography
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1,
+                          color: "primary.main",
+                        }}
+                      >
+                        <WorkIcon size="small" /> Company Information
+                      </Typography>
+                      <Paper sx={{ p: 2, bgcolor: "grey.50" }}>
+                        <Grid container spacing={2}>
+                          <Grid item xs={12} sm={6}>
+                            <Typography
+                              variant="subtitle2"
+                              color="text.secondary"
+                            >
+                              Company
+                            </Typography>
+                            <Typography variant="body1">{company}</Typography>
+                          </Grid>
+                          <Grid item xs={12} sm={6}>
+                            <Typography
+                              variant="subtitle2"
+                              color="text.secondary"
+                            >
+                              Job Title
+                            </Typography>
+                            <Typography variant="body1">{job_title}</Typography>
+                          </Grid>
+                          <Grid item xs={12} sm={6}>
+                            <Typography
+                              variant="subtitle2"
+                              color="text.secondary"
+                            >
+                              Industry
+                            </Typography>
+                            <Typography variant="body1">{industry}</Typography>
+                          </Grid>
+                          <Grid item xs={12}>
+                            <Typography
+                              variant="subtitle2"
+                              color="text.secondary"
+                            >
+                              Company Address
+                            </Typography>
+                            <Typography variant="body1">
+                              {company_address}
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={12} sm={6}>
+                            <Button
+                              variant="outlined"
+                              color="primary"
+                              href={company_website}
+                              target="_blank"
+                              fullWidth
+                              size="small"
+                            >
+                              Visit Website
+                            </Button>
+                          </Grid>
+                          <Grid item xs={12} sm={6}>
+                            <Button
+                              variant="outlined"
+                              color="primary"
+                              href={company_portfolio}
+                              target="_blank"
+                              size="small"
+                              fullWidth
+                            >
+                              View Portfolio
+                            </Button>
+                          </Grid>
+                        </Grid>
+                      </Paper>
+                    </Box>
+                  )}
+
+                  {/* Additional Info Tab */}
+                  {tabValue === 3 && (
+                    <Box
+                      sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+                    >
+                      <Typography
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1,
+                          color: "primary.main",
+                        }}
+                      >
+                        <PlaylistAddCheckCircleIcon size="small" /> Additional
+                        Information
+                      </Typography>
+                      <Paper sx={{ p: 2, bgcolor: "grey.50" }}>
+                        <Grid container spacing={2}>
+                          <Grid item xs={12} sm={6}>
+                            <Typography
+                              variant="subtitle2"
+                              color="text.secondary"
+                            >
+                              Interests
+                            </Typography>
+                            <Typography variant="body1">{interests}</Typography>
+                          </Grid>
+                          <Grid item xs={12} sm={6}>
+                            <Typography
+                              variant="subtitle2"
+                              color="text.secondary"
+                            >
+                              Skills
+                            </Typography>
+                            <Typography variant="body1">{skills}</Typography>
+                          </Grid>
+                          <Grid item xs={12} sm={6}>
+                            <Typography
+                              variant="subtitle2"
+                              color="text.secondary"
+                            >
+                              Achievements
+                            </Typography>
+                            <Typography variant="body1">
+                              {achievements}
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={12} sm={6}>
+                            <Typography
+                              variant="subtitle2"
+                              color="text.secondary"
+                            >
+                              Publications
+                            </Typography>
+                            <Typography variant="body1">
+                              {publications}
+                            </Typography>
+                          </Grid>
+                        </Grid>
+                      </Paper>
+                    </Box>
+                  )}
+
+                  {/* Security Profile Tab */}
+                  {tabValue === 4 && (
+                    <Box
+                      sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+                    >
+                      <Typography
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1,
+                          color: "primary.main",
+                        }}
+                      >
+                        <AdminPanelSettingsIcon size="small" /> Security Profile
+                      </Typography>
+                      <Paper sx={{ p: 2, bgcolor: "grey.50" }}>
+                        <Grid container spacing={2}>
+                          {/* Add your security profile fields here */}
+                        </Grid>
+                      </Paper>
+                    </Box>
+                  )}
+
+                  {/* Action Buttons */}
+                  <Box
+                    sx={{
+                      mt: 3,
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      gap: 2,
+                    }}
                   >
-                    Change Password
-                  </Button>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={handleUpdateProfile}
+                      sx={{
+                        textTransform: "none",
+                        px: 3,
+                      }}
+                      size="small"
+                    >
+                      Update Profile
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      onClick={handleChangePassword}
+                      sx={{
+                        textTransform: "none",
+                        px: 3,
+                      }}
+                      size="small"
+                    >
+                      Change Password
+                    </Button>
+                  </Box>
                 </Box>
               </Paper>
             </Grid>

@@ -15,6 +15,7 @@ import {
 import { toast } from "react-toastify";
 import ajaxCall from "../../../helpers/ajaxCall";
 import Breadcrumb from "../../../Ul/Breadcrumb";
+import { useNavigate } from "react-router-dom";
 
 const theme = createTheme({
   palette: {
@@ -39,6 +40,7 @@ const tabLabels = [
 ];
 
 const ProfileForm = ({ userID }) => {
+  const navigate = useNavigate();
   const [errors, setErrors] = useState({});
   const [activeTab, setActiveTab] = useState(0);
   const [userProfileData, setUserProfileData] = useState({});
@@ -173,6 +175,7 @@ const ProfileForm = ({ userID }) => {
       );
       if ([200, 201].includes(response.status)) {
         toast.success("Profile Updated Successfully");
+        navigate("/dashboard/userProfile");
         setErrors({});
       } else {
         if (response.data && typeof response.data === "object") {
@@ -601,7 +604,7 @@ const ProfileForm = ({ userID }) => {
               mt: 3,
             }}
           >
-            {activeTab < tabLabels.length - 1 ? (
+            {activeTab < tabLabels.length - 1 && (
               <Button
                 size="small"
                 variant="contained"
@@ -610,19 +613,20 @@ const ProfileForm = ({ userID }) => {
               >
                 Next
               </Button>
-            ) : (
-              <Button
-                size="small"
-                variant="contained"
-                color="primary"
-                type="submit"
-                onClick={handleSubmit}
-              >
-                Submit
-              </Button>
             )}
           </Box>
         </Paper>
+        <Grid item xs={12} container justifyContent="center" mt={4}>
+          <Button
+            size="small"
+            variant="contained"
+            color="primary"
+            type="submit"
+            onClick={handleSubmit}
+          >
+            Submit
+          </Button>
+        </Grid>
       </Box>
     </Container>
   );

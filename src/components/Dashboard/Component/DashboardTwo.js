@@ -14,7 +14,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import ajaxCall from "../../helpers/ajaxCall";
-import DashboardImg from "../../images/Dashboard.png";
+import DashboardImg from "../../images/DashboardTwo.png";
 
 const DashboardTwo = () => {
   const amount = 2500;
@@ -25,7 +25,7 @@ const DashboardTwo = () => {
   const [openDialog, setOpenDialog] = useState(false);
 
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  
+
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
 
   const loadScript = (src) => {
@@ -140,12 +140,11 @@ const DashboardTwo = () => {
       <Box
         sx={{
           position: "absolute",
-          top: 10,
+          top: 0,
           left: 0,
           right: 0,
           bottom: 0,
           backgroundImage: `url(${DashboardImg})`,
-          backgroundPosition: isMobile ? "left center" : "center",
           backgroundRepeat: "no-repeat",
           height: "100%",
           width: "100%",
