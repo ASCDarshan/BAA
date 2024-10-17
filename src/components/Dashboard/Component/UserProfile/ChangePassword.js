@@ -87,8 +87,9 @@ const ChangePassword = () => {
           sx={{
             p: 4,
             maxWidth: 500,
-            margin: "0 auto",
+            margin: "auto auto",
             boxShadow: "0 4px 8px rgba(251, 166, 69, 0.5)",
+            alignItems: "center",
           }}
         >
           <Typography variant="h5" align="center" gutterBottom>
