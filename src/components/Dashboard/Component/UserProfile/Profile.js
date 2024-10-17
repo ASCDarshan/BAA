@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import {
   Box,
   Grid,
@@ -13,6 +14,7 @@ import {
   IconButton,
   Tabs,
   Tab,
+  TextField,
 } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import {
@@ -21,6 +23,8 @@ import {
   Facebook as FacebookIcon,
   School as SchoolIcon,
   Work as WorkIcon,
+  Edit as EditIcon,
+  Save as SaveIcon,
 } from "@mui/icons-material";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import PlaylistAddCheckCircleIcon from "@mui/icons-material/PlaylistAddCheckCircle";
@@ -44,13 +48,11 @@ const Profile = () => {
   const navigate = useNavigate();
   const [tabValue, setTabValue] = useState(0);
   const [userProfileData, setUserProfileData] = useState(null);
+  const [editField, setEditField] = useState({});
+  const [isEditing, setIsEditing] = useState(false);
 
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
   const userID = loginInfo?.userId;
-
-  const handleUpdateProfile = () => {
-    navigate("/dashboard/updateProfile");
-  };
 
   const handleChangePassword = () => {
     navigate("/dashboard/changePassword");
@@ -123,6 +125,56 @@ const Profile = () => {
     setTabValue(newValue);
   };
 
+  const handleEditClick = (field, nested = null) => {
+    const fieldValue = nested
+      ? userProfileData[nested][field]
+      : userProfileData[field];
+    setEditField((prev) => ({ ...prev, [field]: fieldValue }));
+    setIsEditing(true);
+  };
+
+  const handleInputChange = (field, value) => {
+    setEditField((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSaveClick = async (field, nested = null) => {
+    try {
+      const updateData = nested
+        ? { [nested]: { [field]: editField[field] } }
+        : { [field]: editField[field] };
+      const response = await ajaxCall(
+        `profiles/user-profile/${userProfileData.id}/`,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
+            }`,
+          },
+          method: "PATCH",
+          body: JSON.stringify(updateData),
+        },
+        8000
+      );
+
+      if (response?.status === 200) {
+        setUserProfileData((prev) => ({
+          ...prev,
+          [nested ? nested : field]: nested
+            ? { ...prev[nested], [field]: editField[field] }
+            : editField[field],
+        }));
+        setIsEditing(false);
+        toast.success("Profile updated successfully!");
+      } else {
+        console.error("Update error:", response);
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+    }
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ display: "flex" }}>
@@ -141,9 +193,45 @@ const Profile = () => {
                   src={profile_picture}
                   sx={{ width: 130, height: 130, margin: "auto" }}
                 />
-                <Typography variant="h6" mt={2}>
-                  {username}
-                </Typography>
+                {isEditing && editField.username !== undefined ? (
+                  <Box
+                    sx={{
+                      mt: 2,
+                    }}
+                  >
+                    <TextField
+                      fullWidth
+                      value={editField.username}
+                      onChange={(e) =>
+                        handleInputChange("username", e.target.value)
+                      }
+                    />
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleSaveClick("username", "user")}
+                    >
+                      <SaveIcon />
+                    </IconButton>
+                  </Box>
+                ) : (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography variant="h6">
+                      {userProfileData.user.username}
+                    </Typography>
+                    <IconButton>
+                      <EditIcon
+                        onClick={() => handleEditClick("username", "user")}
+                      />
+                    </IconButton>
+                  </Box>
+                )}
+
                 <Typography variant="body1" color="textSecondary">
                   {job_title || "Add Job-Title"} | Batch of{" "}
                   {school_graduation_year}
@@ -232,7 +320,6 @@ const Profile = () => {
                     />
                   </Tabs>
                 </Box>
-
                 <Box sx={{ p: 3 }}>
                   {tabValue === 0 && (
                     <Box
@@ -242,6 +329,7 @@ const Profile = () => {
                         gap: 3,
                       }}
                     >
+                      {/* Bio Section */}
                       <Box>
                         <Typography
                           sx={{
@@ -255,9 +343,46 @@ const Profile = () => {
                           <LibraryBooksIcon size="small" /> Bio
                         </Typography>
                         <Paper sx={{ p: 2, bgcolor: "grey.50" }}>
-                          <Typography variant="body1" paragraph>
-                            {bio || "No bio available"}
-                          </Typography>
+                          {isEditing && editField.bio !== undefined ? (
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 2,
+                              }}
+                            >
+                              <TextField
+                                fullWidth
+                                value={editField.bio}
+                                onChange={(e) =>
+                                  handleInputChange("bio", e.target.value)
+                                }
+                              />
+                              <IconButton
+                                color="primary"
+                                onClick={() => handleSaveClick("bio")}
+                              >
+                                <SaveIcon />
+                              </IconButton>
+                            </Box>
+                          ) : (
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 2,
+                              }}
+                            >
+                              <Typography variant="body1" paragraph>
+                                {bio || "No bio available"}
+                              </Typography>
+                              <IconButton
+                                onClick={() => handleEditClick("bio")}
+                              >
+                                <EditIcon />
+                              </IconButton>
+                            </Box>
+                          )}
                           <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
                               <Typography
@@ -266,9 +391,55 @@ const Profile = () => {
                               >
                                 Birth Date
                               </Typography>
-                              <Typography variant="body1">
-                                {birth_date}
-                              </Typography>
+                              {isEditing &&
+                              editField.birth_date !== undefined ? (
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 2,
+                                  }}
+                                >
+                                  <TextField
+                                    fullWidth
+                                    type="date"
+                                    value={editField.birth_date}
+                                    onChange={(e) =>
+                                      handleInputChange(
+                                        "birth_date",
+                                        e.target.value
+                                      )
+                                    }
+                                  />
+                                  <IconButton
+                                    color="primary"
+                                    onClick={() =>
+                                      handleSaveClick("birth_date")
+                                    }
+                                  >
+                                    <SaveIcon />
+                                  </IconButton>
+                                </Box>
+                              ) : (
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 2,
+                                  }}
+                                >
+                                  <Typography variant="body1">
+                                    {birth_date || "N/A"}
+                                  </Typography>
+                                  <IconButton
+                                    onClick={() =>
+                                      handleEditClick("birth_date")
+                                    }
+                                  >
+                                    <EditIcon />
+                                  </IconButton>
+                                </Box>
+                              )}
                             </Grid>
                             <Grid item xs={12} sm={6}>
                               <Typography
@@ -277,14 +448,60 @@ const Profile = () => {
                               >
                                 School Graduation Year
                               </Typography>
-                              <Typography variant="body1">
-                                {school_graduation_year}
-                              </Typography>
+                              {isEditing &&
+                              editField.school_graduation_year !== undefined ? (
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 2,
+                                  }}
+                                >
+                                  <TextField
+                                    fullWidth
+                                    value={editField.school_graduation_year}
+                                    onChange={(e) =>
+                                      handleInputChange(
+                                        "school_graduation_year",
+                                        e.target.value
+                                      )
+                                    }
+                                  />
+                                  <IconButton
+                                    color="primary"
+                                    onClick={() =>
+                                      handleSaveClick("school_graduation_year")
+                                    }
+                                  >
+                                    <SaveIcon />
+                                  </IconButton>
+                                </Box>
+                              ) : (
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 2,
+                                  }}
+                                >
+                                  <Typography variant="body1">
+                                    {school_graduation_year || "N/A"}
+                                  </Typography>
+                                  <IconButton
+                                    onClick={() =>
+                                      handleEditClick("school_graduation_year")
+                                    }
+                                  >
+                                    <EditIcon />
+                                  </IconButton>
+                                </Box>
+                              )}
                             </Grid>
                           </Grid>
                         </Paper>
                       </Box>
 
+                      {/* Education Section */}
                       <Box>
                         <Typography
                           sx={{
@@ -306,11 +523,51 @@ const Profile = () => {
                               >
                                 Degree
                               </Typography>
-                              <Typography variant="body1">
-                                {Education
-                                  ? `${Education}, ${degree}`
-                                  : "No education details available"}
-                              </Typography>
+                              {isEditing && editField.degree !== undefined ? (
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 2,
+                                  }}
+                                >
+                                  <TextField
+                                    fullWidth
+                                    value={editField.degree}
+                                    onChange={(e) =>
+                                      handleInputChange(
+                                        "degree",
+                                        e.target.value
+                                      )
+                                    }
+                                  />
+                                  <IconButton
+                                    color="primary"
+                                    onClick={() => handleSaveClick("degree")}
+                                  >
+                                    <SaveIcon />
+                                  </IconButton>
+                                </Box>
+                              ) : (
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 2,
+                                  }}
+                                >
+                                  <Typography variant="body1">
+                                    {Education
+                                      ? `${Education}, ${degree}`
+                                      : "No education details available"}
+                                  </Typography>
+                                  <IconButton
+                                    onClick={() => handleEditClick("degree")}
+                                  >
+                                    <EditIcon />
+                                  </IconButton>
+                                </Box>
+                              )}
                             </Grid>
                             <Grid item xs={12} sm={6}>
                               <Typography
@@ -319,9 +576,54 @@ const Profile = () => {
                               >
                                 Graduation Year
                               </Typography>
-                              <Typography variant="body1">
-                                {year_of_graduation || "N/A"}
-                              </Typography>
+                              {isEditing &&
+                              editField.year_of_graduation !== undefined ? (
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 2,
+                                  }}
+                                >
+                                  <TextField
+                                    fullWidth
+                                    value={editField.year_of_graduation}
+                                    onChange={(e) =>
+                                      handleInputChange(
+                                        "year_of_graduation",
+                                        e.target.value
+                                      )
+                                    }
+                                  />
+                                  <IconButton
+                                    color="primary"
+                                    onClick={() =>
+                                      handleSaveClick("year_of_graduation")
+                                    }
+                                  >
+                                    <SaveIcon />
+                                  </IconButton>
+                                </Box>
+                              ) : (
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 2,
+                                  }}
+                                >
+                                  <Typography variant="body1">
+                                    {year_of_graduation || "N/A"}
+                                  </Typography>
+                                  <IconButton
+                                    onClick={() =>
+                                      handleEditClick("year_of_graduation")
+                                    }
+                                  >
+                                    <EditIcon />
+                                  </IconButton>
+                                </Box>
+                              )}
                             </Grid>
                           </Grid>
                         </Paper>
@@ -353,9 +655,50 @@ const Profile = () => {
                             >
                               Email
                             </Typography>
-                            <Typography variant="body1">
-                              {userProfileData.user.email}
-                            </Typography>
+                            {isEditing && editField.email !== undefined ? (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 2,
+                                }}
+                              >
+                                <TextField
+                                  fullWidth
+                                  value={editField.email}
+                                  onChange={(e) =>
+                                    handleInputChange("email", e.target.value)
+                                  }
+                                />
+                                <IconButton
+                                  color="primary"
+                                  onClick={() =>
+                                    handleSaveClick("email", "user")
+                                  }
+                                >
+                                  <SaveIcon />
+                                </IconButton>
+                              </Box>
+                            ) : (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 2,
+                                }}
+                              >
+                                <Typography variant="body1">
+                                  {userProfileData.user.email}
+                                </Typography>
+                                <IconButton>
+                                  <EditIcon
+                                    onClick={() =>
+                                      handleEditClick("email", "user")
+                                    }
+                                  />
+                                </IconButton>
+                              </Box>
+                            )}
                           </Grid>
                           <Grid item xs={12} sm={6}>
                             <Typography
@@ -364,9 +707,54 @@ const Profile = () => {
                             >
                               Alternative Email
                             </Typography>
-                            <Typography variant="body1">
-                              {alternative_email}
-                            </Typography>
+                            {isEditing &&
+                            editField.alternative_email !== undefined ? (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 2,
+                                }}
+                              >
+                                <TextField
+                                  fullWidth
+                                  value={editField.alternative_email}
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      "alternative_email",
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                                <IconButton
+                                  color="primary"
+                                  onClick={() =>
+                                    handleSaveClick("alternative_email")
+                                  }
+                                >
+                                  <SaveIcon />
+                                </IconButton>
+                              </Box>
+                            ) : (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 2,
+                                }}
+                              >
+                                <Typography variant="body1">
+                                  {alternative_email}
+                                </Typography>
+                                <IconButton>
+                                  <EditIcon
+                                    onClick={() =>
+                                      handleEditClick("alternative_email")
+                                    }
+                                  />
+                                </IconButton>
+                              </Box>
+                            )}
                           </Grid>
                           <Grid item xs={12} sm={6}>
                             <Typography
@@ -375,9 +763,54 @@ const Profile = () => {
                             >
                               Phone
                             </Typography>
-                            <Typography variant="body1">
-                              {phone_number}
-                            </Typography>
+                            {isEditing &&
+                            editField.phone_number !== undefined ? (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 2,
+                                }}
+                              >
+                                <TextField
+                                  fullWidth
+                                  value={editField.phone_number}
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      "phone_number",
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                                <IconButton
+                                  color="primary"
+                                  onClick={() =>
+                                    handleSaveClick("phone_number")
+                                  }
+                                >
+                                  <SaveIcon />
+                                </IconButton>
+                              </Box>
+                            ) : (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 2,
+                                }}
+                              >
+                                <Typography variant="body1">
+                                  {phone_number}
+                                </Typography>
+                                <IconButton>
+                                  <EditIcon
+                                    onClick={() =>
+                                      handleEditClick("phone_number")
+                                    }
+                                  />
+                                </IconButton>
+                              </Box>
+                            )}
                           </Grid>
                           <Grid item xs={12}>
                             <Typography
@@ -386,24 +819,60 @@ const Profile = () => {
                             >
                               Address
                             </Typography>
-                            <Typography variant="body1">
-                              {[
-                                street_address,
-                                city,
-                                state,
-                                country,
-                                postal_code,
-                              ]
-                                .filter(Boolean)
-                                .join(", ")}
-                            </Typography>
+                            {isEditing && editField.address !== undefined ? (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 2,
+                                }}
+                              >
+                                <TextField
+                                  fullWidth
+                                  value={editField.address}
+                                  onChange={(e) =>
+                                    handleInputChange("address", e.target.value)
+                                  }
+                                />
+                                <IconButton
+                                  color="primary"
+                                  onClick={() => handleSaveClick("address")}
+                                >
+                                  <SaveIcon />
+                                </IconButton>
+                              </Box>
+                            ) : (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 2,
+                                }}
+                              >
+                                <Typography variant="body1">
+                                  {[
+                                    street_address,
+                                    city,
+                                    state,
+                                    country,
+                                    postal_code,
+                                  ]
+                                    .filter(Boolean)
+                                    .join(", ")}
+                                </Typography>
+                                <IconButton>
+                                  <EditIcon
+                                    onClick={() => handleEditClick("address")}
+                                  />
+                                </IconButton>
+                              </Box>
+                            )}
                           </Grid>
                         </Grid>
                       </Paper>
                     </Box>
                   )}
 
-                  {/* Company Info Tab */}
                   {tabValue === 2 && (
                     <Box
                       sx={{ display: "flex", flexDirection: "column", gap: 2 }}
@@ -427,7 +896,46 @@ const Profile = () => {
                             >
                               Company
                             </Typography>
-                            <Typography variant="body1">{company}</Typography>
+                            {isEditing && editField.company !== undefined ? (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 2,
+                                }}
+                              >
+                                <TextField
+                                  fullWidth
+                                  value={editField.company}
+                                  onChange={(e) =>
+                                    handleInputChange("company", e.target.value)
+                                  }
+                                />
+                                <IconButton
+                                  color="primary"
+                                  onClick={() => handleSaveClick("company")}
+                                >
+                                  <SaveIcon />
+                                </IconButton>
+                              </Box>
+                            ) : (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 2,
+                                }}
+                              >
+                                <Typography variant="body1">
+                                  {company}
+                                </Typography>
+                                <IconButton>
+                                  <EditIcon
+                                    onClick={() => handleEditClick("company")}
+                                  />
+                                </IconButton>
+                              </Box>
+                            )}
                           </Grid>
                           <Grid item xs={12} sm={6}>
                             <Typography
@@ -436,7 +944,49 @@ const Profile = () => {
                             >
                               Job Title
                             </Typography>
-                            <Typography variant="body1">{job_title}</Typography>
+                            {isEditing && editField.job_title !== undefined ? (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 2,
+                                }}
+                              >
+                                <TextField
+                                  fullWidth
+                                  value={editField.job_title}
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      "job_title",
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                                <IconButton
+                                  color="primary"
+                                  onClick={() => handleSaveClick("job_title")}
+                                >
+                                  <SaveIcon />
+                                </IconButton>
+                              </Box>
+                            ) : (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 2,
+                                }}
+                              >
+                                <Typography variant="body1">
+                                  {job_title}
+                                </Typography>
+                                <IconButton>
+                                  <EditIcon
+                                    onClick={() => handleEditClick("job_title")}
+                                  />
+                                </IconButton>
+                              </Box>
+                            )}
                           </Grid>
                           <Grid item xs={12} sm={6}>
                             <Typography
@@ -445,7 +995,49 @@ const Profile = () => {
                             >
                               Industry
                             </Typography>
-                            <Typography variant="body1">{industry}</Typography>
+                            {isEditing && editField.industry !== undefined ? (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 2,
+                                }}
+                              >
+                                <TextField
+                                  fullWidth
+                                  value={editField.industry}
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      "industry",
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                                <IconButton
+                                  color="primary"
+                                  onClick={() => handleSaveClick("industry")}
+                                >
+                                  <SaveIcon />
+                                </IconButton>
+                              </Box>
+                            ) : (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 2,
+                                }}
+                              >
+                                <Typography variant="body1">
+                                  {industry}
+                                </Typography>
+                                <IconButton>
+                                  <EditIcon
+                                    onClick={() => handleEditClick("industry")}
+                                  />
+                                </IconButton>
+                              </Box>
+                            )}
                           </Grid>
                           <Grid item xs={12}>
                             <Typography
@@ -454,9 +1046,55 @@ const Profile = () => {
                             >
                               Company Address
                             </Typography>
-                            <Typography variant="body1">
-                              {company_address}
-                            </Typography>
+                            {isEditing &&
+                            editField.company_address !== undefined ? (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 2,
+                                }}
+                              >
+                                <TextField
+                                  fullWidth
+                                  value={editField.company_address}
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      "company_address",
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                                <IconButton
+                                  color="primary"
+                                  onClick={() =>
+                                    handleSaveClick("company_address")
+                                  }
+                                >
+                                  <SaveIcon />
+                                </IconButton>
+                              </Box>
+                            ) : (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 2,
+                                }}
+                              >
+                                <Typography variant="body1">
+                                  {company_address}
+                                </Typography>
+
+                                <IconButton>
+                                  <EditIcon
+                                    onClick={() =>
+                                      handleEditClick("company_address")
+                                    }
+                                  />
+                                </IconButton>
+                              </Box>
+                            )}
                           </Grid>
                           <Grid item xs={12} sm={6}>
                             <Button
@@ -487,7 +1125,6 @@ const Profile = () => {
                     </Box>
                   )}
 
-                  {/* Additional Info Tab */}
                   {tabValue === 3 && (
                     <Box
                       sx={{ display: "flex", flexDirection: "column", gap: 2 }}
@@ -512,7 +1149,49 @@ const Profile = () => {
                             >
                               Interests
                             </Typography>
-                            <Typography variant="body1">{interests}</Typography>
+                            {isEditing && editField.interests !== undefined ? (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 2,
+                                }}
+                              >
+                                <TextField
+                                  fullWidth
+                                  value={editField.interests}
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      "interests",
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                                <IconButton
+                                  color="primary"
+                                  onClick={() => handleSaveClick("interests")}
+                                >
+                                  <SaveIcon />
+                                </IconButton>
+                              </Box>
+                            ) : (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 2,
+                                }}
+                              >
+                                <Typography variant="body1">
+                                  {interests}
+                                </Typography>
+                                <IconButton>
+                                  <EditIcon
+                                    onClick={() => handleEditClick("interests")}
+                                  />
+                                </IconButton>
+                              </Box>
+                            )}
                           </Grid>
                           <Grid item xs={12} sm={6}>
                             <Typography
@@ -521,7 +1200,40 @@ const Profile = () => {
                             >
                               Skills
                             </Typography>
-                            <Typography variant="body1">{skills}</Typography>
+                            {isEditing && editField.skills !== undefined ? (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 2,
+                                }}
+                              >
+                                <TextField
+                                  fullWidth
+                                  value={editField.skills}
+                                  onChange={(e) =>
+                                    handleInputChange("skills", e.target.value)
+                                  }
+                                />
+                                <IconButton
+                                  color="primary"
+                                  onClick={() => handleSaveClick("skills")}
+                                >
+                                  <SaveIcon />
+                                </IconButton>
+                              </Box>
+                            ) : (
+                              <>
+                                <Typography variant="body1">
+                                  {skills}
+                                </Typography>
+                                <IconButton>
+                                  <EditIcon
+                                    onClick={() => handleEditClick("skills")}
+                                  />
+                                </IconButton>
+                              </>
+                            )}
                           </Grid>
                           <Grid item xs={12} sm={6}>
                             <Typography
@@ -530,9 +1242,54 @@ const Profile = () => {
                             >
                               Achievements
                             </Typography>
-                            <Typography variant="body1">
-                              {achievements}
-                            </Typography>
+                            {isEditing &&
+                            editField.achievements !== undefined ? (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 2,
+                                }}
+                              >
+                                <TextField
+                                  fullWidth
+                                  value={editField.achievements}
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      "achievements",
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                                <IconButton
+                                  color="primary"
+                                  onClick={() =>
+                                    handleSaveClick("achievements")
+                                  }
+                                >
+                                  <SaveIcon />
+                                </IconButton>
+                              </Box>
+                            ) : (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 2,
+                                }}
+                              >
+                                <Typography variant="body1">
+                                  {achievements}
+                                </Typography>
+                                <IconButton>
+                                  <EditIcon
+                                    onClick={() =>
+                                      handleEditClick("achievements")
+                                    }
+                                  />
+                                </IconButton>
+                              </Box>
+                            )}
                           </Grid>
                           <Grid item xs={12} sm={6}>
                             <Typography
@@ -541,16 +1298,60 @@ const Profile = () => {
                             >
                               Publications
                             </Typography>
-                            <Typography variant="body1">
-                              {publications}
-                            </Typography>
+                            {isEditing &&
+                            editField.publications !== undefined ? (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 2,
+                                }}
+                              >
+                                <TextField
+                                  fullWidth
+                                  value={editField.publications}
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      "publications",
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                                <IconButton
+                                  color="primary"
+                                  onClick={() =>
+                                    handleSaveClick("publications")
+                                  }
+                                >
+                                  <SaveIcon />
+                                </IconButton>
+                              </Box>
+                            ) : (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 2,
+                                }}
+                              >
+                                <Typography variant="body1">
+                                  {publications}
+                                </Typography>
+                                <IconButton>
+                                  <EditIcon
+                                    onClick={() =>
+                                      handleEditClick("publications")
+                                    }
+                                  />
+                                </IconButton>
+                              </Box>
+                            )}
                           </Grid>
                         </Grid>
                       </Paper>
                     </Box>
                   )}
 
-                  {/* Security Profile Tab */}
                   {tabValue === 4 && (
                     <Box
                       sx={{ display: "flex", flexDirection: "column", gap: 2 }}
@@ -582,18 +1383,6 @@ const Profile = () => {
                       gap: 2,
                     }}
                   >
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={handleUpdateProfile}
-                      sx={{
-                        textTransform: "none",
-                        px: 3,
-                      }}
-                      size="small"
-                    >
-                      Update Profile
-                    </Button>
                     <Button
                       variant="outlined"
                       color="primary"

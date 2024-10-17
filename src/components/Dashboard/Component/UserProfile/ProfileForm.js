@@ -111,15 +111,6 @@ const ProfileForm = ({ userID }) => {
       setErrors((prevErrors) => ({ ...prevErrors, [name]: null }));
     }
   };
-  // const handleFileChange = (e) => {
-  //   const { name, files } = e.target;
-  //   if (files.length > 0) {
-  //     setUserProfileData((prevData) => ({ ...prevData, [name]: files[0] }));
-  //     if (errors[name]) {
-  //       setErrors((prevErrors) => ({ ...prevErrors, [name]: null }));
-  //     }
-  //   }
-  // };
 
   const handleCheckboxChange = (e) => {
     const { name, checked } = e.target;
@@ -149,7 +140,6 @@ const ProfileForm = ({ userID }) => {
           key === "company_portfolio" ||
           key === "qr_code"
         ) {
-          // Ensure the value is a File object before appending
           if (userProfileData[key] instanceof File) {
             formDataToSend.append(key, userProfileData[key]);
           }
