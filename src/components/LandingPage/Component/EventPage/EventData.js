@@ -21,7 +21,6 @@ import {
 } from "@mui/icons-material";
 import { useNavigate, useLocation } from "react-router-dom";
 import ajaxCall from "../../../helpers/ajaxCall";
-import HeroBanner from "../Content/HeroBanner";
 
 const EventData = () => {
   const navigate = useNavigate();
@@ -29,7 +28,6 @@ const EventData = () => {
   const eventId = location.state;
 
   const [eventData, setEventData] = useState([]);
-  const [heroImages, setHeroImages] = useState([]);
 
   const Event = eventData.filter((item) => item.id === parseInt(eventId));
 
@@ -58,7 +56,6 @@ const EventData = () => {
 
   useEffect(() => {
     fetchData("events/events/", setEventData);
-    fetchData("website/hero-images/", setHeroImages);
   }, []);
 
   const formatDate = (dateString) => {
@@ -118,7 +115,6 @@ const EventData = () => {
 
   return (
     <>
-      <HeroBanner heroImages={heroImages} />
       <Container sx={{ mt: 2 }}>
         {Event.map((event, index) => (
           <StyledCard key={index}>

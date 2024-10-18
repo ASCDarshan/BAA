@@ -111,8 +111,6 @@ const EventData = () => {
     guests: [],
   });
 
-  console.log(formData.guests);
-
   const fetchData = useCallback(async (url, setData) => {
     try {
       const response = await ajaxCall(

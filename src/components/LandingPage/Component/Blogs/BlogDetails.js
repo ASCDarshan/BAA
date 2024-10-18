@@ -8,14 +8,12 @@ import {
   Typography,
 } from "@mui/material";
 import ajaxCall from "../../../helpers/ajaxCall";
-import HeroBanner from "../Content/HeroBanner";
 import { useParams } from "react-router-dom";
 
 const BlogDetails = () => {
   const { BlogId } = useParams();
 
   const [blogData, setBlogData] = useState([]);
-  const [heroImages, setHeroImages] = useState([]);
 
   const Event = blogData.filter((item) => item.id === parseInt(BlogId));
 
@@ -44,7 +42,6 @@ const BlogDetails = () => {
 
   useEffect(() => {
     fetchData("blog/bloglistsview", setBlogData);
-    fetchData("website/hero-images/", setHeroImages);
   }, []);
 
   const BackgroundImage = styled("div")(({ bgImage }) => ({
@@ -58,7 +55,6 @@ const BlogDetails = () => {
 
   return (
     <>
-      <HeroBanner heroImages={heroImages} />
       <Container sx={{ mt: 1 }}>
         {Event.map((event, index) => (
           <Card

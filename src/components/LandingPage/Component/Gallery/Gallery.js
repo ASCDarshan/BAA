@@ -11,7 +11,6 @@ import {
   Box,
 } from "@mui/material";
 import ajaxCall from "../../../helpers/ajaxCall";
-import HeroBanner from "../Content/HeroBanner";
 
 const SectionTitle = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(4),
@@ -31,7 +30,6 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
 
 const Gallery = () => {
   const [galleryData, setGalleryData] = useState([]);
-  const [heroImages, setHeroImages] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const fetchData = async (url, setData) => {
@@ -61,7 +59,6 @@ const Gallery = () => {
     const fetchAllData = async () => {
       await Promise.all([
         fetchData("gallery/gallerylistview", setGalleryData),
-        fetchData("website/hero-images/", setHeroImages),
         fetchData("gallery/category/list/gallery/", setCategories),
       ]);
     };
@@ -82,7 +79,6 @@ const Gallery = () => {
 
   return (
     <>
-      <HeroBanner heroImages={heroImages} />
       <Container sx={{ mt: 4 }}>
         <SectionTitle variant="h4">Gallery</SectionTitle>
         <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 3 }}>

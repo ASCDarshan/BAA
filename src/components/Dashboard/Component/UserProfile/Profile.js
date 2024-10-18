@@ -28,7 +28,6 @@ import {
 } from "@mui/icons-material";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import PlaylistAddCheckCircleIcon from "@mui/icons-material/PlaylistAddCheckCircle";
-import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import CallIcon from "@mui/icons-material/Call";
 import ajaxCall from "../../../helpers/ajaxCall";
 
@@ -118,6 +117,7 @@ const Profile = () => {
     postal_code,
     state,
     street_address,
+    terms_confirmed,
     user: { username },
   } = userProfileData;
 
@@ -261,6 +261,7 @@ const Profile = () => {
                   borderRadius: 2,
                   overflow: "hidden",
                   bgcolor: "background.paper",
+                  boxShadow: "0 4px 8px rgba(251, 166, 69, 0.5)",
                 }}
               >
                 <Box
@@ -556,7 +557,7 @@ const Profile = () => {
                                       ? `${Education || "N/A"}, ${
                                           degree || "N/A"
                                         }`
-                                      : "No education details available"}
+                                      : "N/A"}
                                   </Typography>
                                   <IconButton
                                     onClick={() => handleEditClick("degree")}
@@ -625,6 +626,14 @@ const Profile = () => {
                           </Grid>
                         </Paper>
                       </Box>
+                      {/* Display terms confirmed status */}
+                      {terms_confirmed && (
+                        <Box>
+                          <Typography variant="body2" color="success.main">
+                            Terms verified by you
+                          </Typography>
+                        </Box>
+                      )}
                     </Box>
                   )}
 

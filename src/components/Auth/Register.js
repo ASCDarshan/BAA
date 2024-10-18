@@ -13,6 +13,12 @@ import {
   CircularProgress,
   InputAdornment,
   IconButton,
+  Checkbox,
+  FormControlLabel,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import ajaxCall from "../helpers/ajaxCall";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
@@ -20,6 +26,20 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 const Register = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [openTermsDialog, setOpenTermsDialog] = useState(false);
+
+  const handleClickShowPassword = () => setShowPassword(!showPassword);
+  const handleClickShowConfirmPassword = () =>
+    setShowConfirmPassword(!showConfirmPassword);
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
+  const handleTermsDialogOpen = () => setOpenTermsDialog(true);
+  const handleTermsDialogClose = () => setOpenTermsDialog(false);
 
   const formik = useFormik({
     initialValues: {
@@ -28,7 +48,9 @@ const Register = () => {
       confirm_password: "",
       username: "",
       batchyear: "",
+      terms_confirmed: false,
     },
+
     validationSchema: Yup.object({
       email: Yup.string().required("Email is required"),
       password: Yup.string().required("Password is required"),
@@ -37,7 +59,12 @@ const Register = () => {
         .required("Confirm Password is required"),
       batchyear: Yup.string().required("Batch year is required"),
       username: Yup.string().required("Username is required"),
+      terms_confirmed: Yup.boolean().oneOf(
+        [true],
+        "You must accept terms and conditions"
+      ),
     }),
+
     onSubmit: (values) => {
       const signupData = {
         email: values.email,
@@ -45,7 +72,9 @@ const Register = () => {
         confirm_password: values.confirm_password,
         username: values.username,
         batchyear: values.batchyear,
+        terms_confirmed: values.terms_confirmed,
       };
+
       fetchData("accounts/signup/", signupData);
     },
   });
@@ -78,17 +107,6 @@ const Register = () => {
       toast.error("Registration failed. Please try again");
     }
     setIsLoading(false);
-  };
-
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  const handleClickShowPassword = () => setShowPassword(!showPassword);
-  const handleClickShowConfirmPassword = () =>
-    setShowConfirmPassword(!showConfirmPassword);
-
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
   };
 
   return (
@@ -189,7 +207,6 @@ const Register = () => {
                 ),
               }}
             />
-
             <TextField
               margin="normal"
               required
@@ -222,7 +239,6 @@ const Register = () => {
                 ),
               }}
             />
-
             <TextField
               margin="normal"
               required
@@ -238,6 +254,40 @@ const Register = () => {
               }
               helperText={formik.touched.batchyear && formik.errors.batchyear}
             />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="terms_confirmed"
+                  color="primary"
+                  checked={formik.values.terms_confirmed}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                />
+              }
+              label={
+                <span>
+                  I accept the
+                  <Button
+                    onClick={handleTermsDialogOpen}
+                    style={{
+                      textDecoration: "underline",
+                      padding: 0,
+                      marginLeft: "5px",
+                    }}
+                  >
+                    Terms and Conditions
+                  </Button>
+                </span>
+              }
+            />
+
+            {formik.touched.terms_confirmed &&
+              formik.errors.terms_confirmed && (
+                <Typography color="error" variant="caption">
+                  {formik.errors.terms_confirmed}
+                </Typography>
+              )}
+
             {isLoading ? (
               <Button variant="contained" color="primary" fullWidth disabled>
                 <CircularProgress />
@@ -263,6 +313,22 @@ const Register = () => {
           </Box>
         </Paper>
       </Container>
+
+      <Dialog open={openTermsDialog} onClose={handleTermsDialogClose}>
+        <DialogTitle>Terms and Conditions</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2">
+            Here are some dummy terms and conditions. You can replace this text
+            with the actual content later. Make sure to read all the terms
+            before agreeing.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleTermsDialogClose} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
