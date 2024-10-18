@@ -9,9 +9,12 @@ import {
   Button,
   styled,
   Typography,
+  CircularProgress,
+  Box,
 } from "@mui/material";
 import ajaxCall from "../../../helpers/ajaxCall";
 import HeroBanner from "../Content/HeroBanner";
+import LogoImg from "../../../images/BAA.png";
 
 const SectionTitle = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(4),
@@ -32,7 +35,7 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
 const Event = () => {
   const navigate = useNavigate();
   const [eventData, setEventData] = useState([]);
-  const [heroImages, setHeroImages] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchData = async (url, setData) => {
     try {
@@ -59,7 +62,7 @@ const Event = () => {
 
   useEffect(() => {
     fetchData("events/events/", setEventData);
-    fetchData("website/hero-images/", setHeroImages);
+    setLoading(false);
   }, []);
 
   const slugify = (text) => {
@@ -70,9 +73,42 @@ const Event = () => {
     navigate(`/events/${slugify(eventName)}/`, { state: eventId });
   };
 
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          position: "relative",
+        }}
+      >
+        <CircularProgress
+          size={120}
+          sx={{
+            position: "absolute",
+            zIndex: 0,
+          }}
+        />
+
+        {/* Logo image */}
+        <img
+          src={LogoImg}
+          alt="Loading Logo"
+          style={{
+            width: "90px",
+            height: "90px",
+            position: "relative",
+            zIndex: 1,
+          }}
+        />
+      </Box>
+    );
+  }
+
   return (
     <>
-      <HeroBanner heroImages={heroImages} />
       <Container sx={{ mt: 4 }}>
         <SectionTitle variant="h4">Upcoming Events</SectionTitle>
         {eventData.map((event, index) => (

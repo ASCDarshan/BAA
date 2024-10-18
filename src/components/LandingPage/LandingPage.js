@@ -14,7 +14,7 @@ import LogoImg from "../images/BAA.png";
 
 const LandingPage = () => {
   const navigate = useNavigate();
-  
+
   const [aboutusData, setAboutusData] = useState([]);
   const [heroImages, setHeroImages] = useState([]);
   const [achievements, setAchievements] = useState([]);
@@ -104,9 +104,6 @@ const LandingPage = () => {
 
   return (
     <>
-      <div id="hero-banner">
-        <HeroBanner heroImages={heroImages} />
-      </div>
       <div id="about-us">
         <AboutUs aboutusData={aboutusData} />
       </div>

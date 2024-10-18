@@ -16,6 +16,8 @@ import ForgotPassword from "./components/Auth/ForgotPassword";
 import Footers from "./components/LandingPage/Component/Footer/Footers";
 import Blogs from "./components/LandingPage/Component/Blogs/Blog";
 import Gallery from "./components/LandingPage/Component/Gallery/Gallery";
+import Terms from "./components/LandingPage/Component/TermsAndConditons/Terms";
+import Privacy from "./components/LandingPage/Component/TermsAndConditons/Privacy";
 // dashboard components
 import Dashboard from "./components/Dashboard/Component/Dashboard";
 import AdminNavbar from "./components/Dashboard/Component/Navbar/Navbar";
@@ -32,6 +34,7 @@ import BlogDetails from "./components/LandingPage/Component/Blogs/BlogDetails";
 import PostsByFollowing from "./components/Dashboard/Component/MainContent/PostsByFollowing";
 import ChangePassword from "./components/Dashboard/Component/UserProfile/ChangePassword";
 import DashboardTwo from "./components/Dashboard/Component/DashboardTwo";
+import HeroBanner from "./components/LandingPage/Component/Content/HeroBanner";
 
 const theme = createTheme({
   palette: {
@@ -50,6 +53,8 @@ function App() {
     "/forgotPassword",
   ];
 
+  const hideBanner = ["/login", "/register", "/forgotPassword"];
+
   const [drawerOpen, setDrawerOpen] = useState(false);
   const handleDrawerToggle = () => {
     setDrawerOpen(!drawerOpen);
@@ -59,6 +64,7 @@ function App() {
     return (
       <>
         <Navbar />
+        {!hideBanner.includes(location.pathname) && <HeroBanner />}
         <Outlet />
         {!hideFooterPaths.includes(location.pathname) && <Footers />}
       </>
@@ -94,6 +100,8 @@ function App() {
           <Route path="/Blogs/:BlogId" element={<BlogDetails />} />
           <Route path="/Gallery" element={<Gallery />} />
           <Route path="/forgotPassword" element={<ForgotPassword />} />
+          <Route path="/Terms" element={<Terms />} />
+          <Route path="/Privacy" element={<Privacy />} />
         </Route>
 
         <Route path="/dashboard" element={<AdminLayout />}>

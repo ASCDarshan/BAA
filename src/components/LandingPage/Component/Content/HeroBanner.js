@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Button, Container, Typography } from "@mui/material";
 import { styled } from "@mui/system";
+import ajaxCall from "../../../helpers/ajaxCall";
 
 const HeroSection = styled(Box)(() => ({
   height: "600px",
@@ -31,7 +32,40 @@ const BackgroundImage = styled("div")(({ bgImage }) => ({
   zIndex: -1,
 }));
 
-const HeroBanner = ({ heroImages }) => {
+const HeroBanner = () => {
+  const [heroImages, setHeroImages] = useState([]);
+
+  const fetchData = async (url, setData) => {
+    try {
+      const response = await ajaxCall(
+        url,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          method: "GET",
+        },
+        8000
+      );
+      if (response?.status === 200) {
+        setData(response?.data || []);
+      } else {
+        console.error("Fetch error:", response);
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchAllData = async () => {
+      await Promise.all([fetchData("website/hero-images/", setHeroImages)]);
+    };
+
+    fetchAllData();
+  }, []);
+
   return (
     <>
       {heroImages.map((heroimg, index) => (

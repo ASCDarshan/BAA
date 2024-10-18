@@ -11,7 +11,6 @@ import {
   Typography,
 } from "@mui/material";
 import ajaxCall from "../../../helpers/ajaxCall";
-import HeroBanner from "../Content/HeroBanner";
 
 const SectionTitle = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(4),
@@ -31,9 +30,8 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
 
 const Blogs = () => {
   const navigate = useNavigate();
-  
+
   const [blogData, setblogData] = useState([]);
-  const [heroImages, setHeroImages] = useState([]);
 
   const fetchData = async (url, setData) => {
     try {
@@ -60,10 +58,7 @@ const Blogs = () => {
 
   useEffect(() => {
     const fetchAllData = async () => {
-      await Promise.all([
-        fetchData("blog/bloglistsview", setblogData),
-        fetchData("website/hero-images/", setHeroImages),
-      ]);
+      await Promise.all([fetchData("blog/bloglistsview", setblogData)]);
     };
 
     fetchAllData();
@@ -86,7 +81,6 @@ const Blogs = () => {
 
   return (
     <>
-      <HeroBanner heroImages={heroImages} />
       <Container sx={{ mt: 4, mb: 4 }}>
         <SectionTitle variant="h4">Blogs</SectionTitle>
         <Grid container spacing={3}>

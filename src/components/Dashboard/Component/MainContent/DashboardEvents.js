@@ -30,7 +30,6 @@ const steps = [
 
 const DashboardEvents = ({ eventsData }) => {
   const [eventregistrationsData, seteventRegistrationsData] = useState([]);
-  console.log(eventregistrationsData);
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
   const userID = loginInfo?.userId;
 
@@ -90,12 +89,12 @@ const DashboardEvents = ({ eventsData }) => {
     fetchData("events/registrations-get/", seteventRegistrationsData);
   }, [count]);
 
-  const handleCloseDialog = () => {
+  const handleCloseDialog = useCallback(() => {
     setOpenDialog(false);
     setActiveStep(0);
     setFormData(initialData);
     setTotalGuests(0);
-  };
+  });
 
   const handleOpenDialog = (event) => {
     setSelectedEvent(event);
@@ -340,7 +339,9 @@ const DashboardEvents = ({ eventsData }) => {
 
   return (
     <>
-      <Paper sx={{ p: 2, mb: 3 }}>
+      <Paper
+        sx={{ p: 2, mb: 3, boxShadow: "0 4px 8px rgba(251, 166, 69, 0.5)" }}
+      >
         <Typography variant="h6" gutterBottom>
           Upcoming Events
         </Typography>

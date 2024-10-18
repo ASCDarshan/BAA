@@ -10,6 +10,8 @@ import {
   Box,
 } from "@mui/material";
 import { Menu as MenuIcon } from "@mui/icons-material";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
@@ -138,8 +140,14 @@ const Navbar = ({ handleDrawerToggle }) => {
           }}
         >
           <MenuItem>Alumni Number : {userID}</MenuItem>
-          <MenuItem onClick={handleViewProfile}>View Profile</MenuItem>
-          <MenuItem onClick={handleLogout}>Logout</MenuItem>
+          <MenuItem onClick={handleViewProfile}>
+            <AccountCircleIcon sx={{ mr: 1 }} />
+            <Typography>View Profile</Typography>
+          </MenuItem>
+          <MenuItem onClick={handleLogout}>
+            <LogoutIcon sx={{ mr: 1 }} />
+            <Typography>Logout</Typography>
+          </MenuItem>
         </Menu>
       </Toolbar>
     </AppBar>
