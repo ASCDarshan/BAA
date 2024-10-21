@@ -101,7 +101,7 @@ const Footers = () => {
             </Typography>
             <FooterLink to="/">Home</FooterLink>
             <FooterLink to="/events">Events</FooterLink>
-            <FooterLink to="/Term">Terms and Conditions</FooterLink>
+            <FooterLink to="/Terms">Terms and Conditions</FooterLink>
             <FooterLink to="/Privacy">Privacy</FooterLink>
             <FooterLink to="/login">Login</FooterLink>
           </Grid>

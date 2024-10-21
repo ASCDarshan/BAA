@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Box, Button, CircularProgress } from "@mui/material";
-import HeroBanner from "./Component/Content/HeroBanner";
+import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import AboutUs from "./Component/Content/AboutUs";
 import Achievements from "./Component/Content/Achievements";
 import Testimonials from "./Component/Content/Testimonials";
@@ -10,19 +10,19 @@ import Events from "./Component/Content/Events";
 import Committee from "./Component/Content/Committee";
 import Initiatives from "./Component/Content/Initiatives";
 import { useNavigate } from "react-router-dom";
+import FeedbackForm from "./Component/Feedback/FeedbackForm";
 import LogoImg from "../images/BAA.png";
 
 const LandingPage = () => {
   const navigate = useNavigate();
-
   const [aboutusData, setAboutusData] = useState([]);
-  const [heroImages, setHeroImages] = useState([]);
   const [achievements, setAchievements] = useState([]);
   const [testimonialsData, setTestimonialsData] = useState([]);
   const [eventsData, setEventsData] = useState([]);
   const [InitiativesData, setInitiativesData] = useState([]);
   const [committeeData, setCommitteeData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
 
   const fetchData = async (url, setData) => {
     try {
@@ -50,7 +50,6 @@ const LandingPage = () => {
   useEffect(() => {
     const fetchAllData = async () => {
       await Promise.all([
-        fetchData("website/hero-images/", setHeroImages),
         fetchData("website/about-us/", setAboutusData),
         fetchData("website/achievements/", setAchievements),
         fetchData("website/testimonials/", setTestimonialsData),
@@ -64,6 +63,14 @@ const LandingPage = () => {
     fetchAllData();
   }, []);
 
+  const handleFeedbackOpen = () => {
+    setIsFeedbackOpen(true);
+  };
+
+  const handleFeedbackClose = () => {
+    setIsFeedbackOpen(false);
+  };
+
   if (loading) {
     return (
       <Box
@@ -75,15 +82,7 @@ const LandingPage = () => {
           position: "relative",
         }}
       >
-        <CircularProgress
-          size={120}
-          sx={{
-            position: "absolute",
-            zIndex: 0,
-          }}
-        />
-
-        {/* Logo image */}
+        <CircularProgress size={120} sx={{ position: "absolute", zIndex: 0 }} />
         <img
           src={LogoImg}
           alt="Loading Logo"
@@ -110,7 +109,7 @@ const LandingPage = () => {
       <div id="events">
         <Events eventsData={eventsData} />
       </div>
-      <div id="events">
+      <div id="initiatives">
         <Initiatives InitiativesData={InitiativesData} />
       </div>
       <div id="committee">
@@ -168,7 +167,40 @@ const LandingPage = () => {
         >
           Become A Lifetime Member
         </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          size="small"
+          onClick={handleFeedbackOpen}
+          sx={{
+            fontSize: "14px",
+            padding: "9px 30px",
+            borderRadius: "25px",
+            textTransform: "none",
+            background: "rgb(75 169 241)",
+            color: "#fff",
+            fontWeight: "bold",
+            position: "fixed",
+            right: "20px",
+            boxShadow: "0 6px 15px rgba(0, 0, 0, 0.2)",
+            transition: "all 0.4s ease",
+            "&:hover": {
+              background: "rgb(75 169 241)",
+              transform: "scale(1.05)",
+              boxShadow: "0 8px 20px rgba(0, 0, 0, 0.25)",
+            },
+            "&:focus": {
+              outline: "none",
+              boxShadow: "0 0 15px rgba(33, 150, 243, 0.6)",
+            },
+          }}
+        >
+          <ThumbUpAltIcon style={{ verticalAlign: "middle", marginRight: 4 }} />{" "}
+          Feedback
+        </Button>
       </Box>
+
+      <FeedbackForm open={isFeedbackOpen} handleClose={handleFeedbackClose} />
     </>
   );
 };

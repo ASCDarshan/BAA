@@ -8,9 +8,12 @@ import {
   Button,
   Typography,
   Container,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import ajaxCall from "../../../helpers/ajaxCall";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const theme = createTheme({
   palette: {
@@ -68,15 +71,28 @@ const ChangePassword = () => {
         setCurrentPassword("");
         setNewPassword("");
         setConfirmPassword("");
-      } else {
-        toast.error(response.data.errors.non_field_errors[0]);
+      } else if (response?.status !== 200) {
+        // Set the error message from the response data
+        const errorMessage =
+          response.data.errors?.password?.join(" ") ||
+          "An error occurred while changing the password.";
+        setError(errorMessage);
       }
     } catch (error) {
+      setError("An unexpected error occurred. Please try again later.");
       console.log(error);
-      setError("Network error occurred");
-    } finally {
-      console.log("");
     }
+  };
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const handleClickShowPassword = () => setShowPassword(!showPassword);
+  const handleClickShowConfirmPassword = () =>
+    setShowConfirmPassword(!showConfirmPassword);
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
   };
 
   return (
@@ -107,21 +123,47 @@ const ChangePassword = () => {
             />
             <TextField
               label="New Password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               fullWidth
               margin="normal"
               value={password}
               onChange={(e) => setNewPassword(e.target.value)}
               required
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
             <TextField
               label="Confirm New Password"
-              type="password"
+              type={showConfirmPassword ? "text" : "password"}
               fullWidth
               margin="normal"
               value={newpassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={handleClickShowConfirmPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
             {error && (
               <Typography color="error" variant="body2" sx={{ mt: 1 }}>

@@ -57,7 +57,12 @@ const Register = () => {
       confirm_password: Yup.string()
         .oneOf([Yup.ref("password"), null], "Passwords must match")
         .required("Confirm Password is required"),
-      batchyear: Yup.string().required("Batch year is required"),
+      batchyear: Yup.number()
+        .required("Batch year is required")
+        .max(
+          new Date().getFullYear() - 1,
+          `Enter batch year below ${new Date().getFullYear()}`
+        ),
       username: Yup.string().required("Username is required"),
       terms_confirmed: Yup.boolean().oneOf(
         [true],
@@ -244,7 +249,7 @@ const Register = () => {
               required
               fullWidth
               name="batchyear"
-              label="Batch Year"
+              label="Batch Year(Year of Passing 12th std)"
               type="text"
               value={formik.values.batchyear}
               onChange={formik.handleChange}
@@ -270,6 +275,7 @@ const Register = () => {
                   <Button
                     onClick={handleTermsDialogOpen}
                     style={{
+                      textTransform: "none",
                       textDecoration: "underline",
                       padding: 0,
                       marginLeft: "5px",

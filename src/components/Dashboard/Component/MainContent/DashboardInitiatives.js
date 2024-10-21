@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import ajaxCall from "../../../helpers/ajaxCall";
+import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 
 const DashboardInitiatives = ({ initiativesData, setCount }) => {
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
@@ -266,7 +267,16 @@ const DashboardInitiatives = ({ initiativesData, setCount }) => {
               size="small"
               disabled={loading}
             >
-              {loading ? <CircularProgress size={24} /> : "Pay"}
+              {loading ? (
+                <CircularProgress size={24} />
+              ) : (
+                <>
+                  <CurrencyRupeeIcon
+                    style={{ fontSize: 16, verticalAlign: "middle" }}
+                  />
+                  Pay
+                </>
+              )}
             </Button>
           </Box>
           {amountError && (

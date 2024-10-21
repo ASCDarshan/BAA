@@ -10,6 +10,7 @@ import {
   Box,
   Button,
 } from "@mui/material";
+import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import ajaxCall from "../../../helpers/ajaxCall";
 import { useNavigate } from "react-router-dom";
 
@@ -85,7 +86,7 @@ const DashboardUsers = () => {
           onClick={handleViewAllClick}
           size="small"
         >
-          View All
+          <RemoveRedEyeIcon sx={{ mr: 1 }} /> View All
         </Button>
       </Box>
     </Paper>

@@ -15,6 +15,8 @@ import {
   Tabs,
   Tab,
   TextField,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import {
@@ -27,6 +29,7 @@ import {
   Save as SaveIcon,
 } from "@mui/icons-material";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
+import DoneAllIcon from "@mui/icons-material/DoneAll";
 import PlaylistAddCheckCircleIcon from "@mui/icons-material/PlaylistAddCheckCircle";
 import CallIcon from "@mui/icons-material/Call";
 import ajaxCall from "../../../helpers/ajaxCall";
@@ -49,6 +52,7 @@ const Profile = () => {
   const [userProfileData, setUserProfileData] = useState(null);
   const [editField, setEditField] = useState({});
   const [isEditing, setIsEditing] = useState(false);
+  const [makeItPrivate, setMakeItPrivate] = useState(false);
 
   const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
   const userID = loginInfo?.userId;
@@ -84,7 +88,10 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    fetchData(`profiles/user-profile/user/${userID}/`, setUserProfileData);
+    fetchData(`profiles/user-profile/user/${userID}/`, (data) => {
+      setUserProfileData(data);
+      setMakeItPrivate(data.make_it_public); // Set initial value directly
+    });
   }, [userID]);
 
   if (!userProfileData) return null;
@@ -108,6 +115,7 @@ const Profile = () => {
     company_website,
     alternative_email,
     industry,
+    industry_category,
     publications,
     achievements,
     skills,
@@ -167,6 +175,39 @@ const Profile = () => {
         }));
         setIsEditing(false);
         toast.success("Profile updated successfully!");
+      } else {
+        console.error("Update error:", response);
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+    }
+  };
+
+  const handleCheckboxChange = async (event) => {
+    const newValue = !makeItPrivate; // Toggle the value
+    setMakeItPrivate(newValue);
+
+    try {
+      const response = await ajaxCall(
+        `profiles/user-profile/${userProfileData.id}/`,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${loginInfo?.accessToken}`,
+          },
+          method: "PATCH",
+          body: JSON.stringify({ make_it_public: newValue }), // Use the new value directly
+        },
+        8000
+      );
+
+      if (response?.status === 200) {
+        toast.success("Privacy setting updated successfully!");
+        setUserProfileData((prev) => ({
+          ...prev,
+          make_it_public: newValue,
+        }));
       } else {
         console.error("Update error:", response);
       }
@@ -629,7 +670,12 @@ const Profile = () => {
                       {/* Display terms confirmed status */}
                       {terms_confirmed && (
                         <Box>
-                          <Typography variant="body2" color="success.main">
+                          <Typography
+                            color="success.main"
+                            display="flex"
+                            alignItems="center"
+                          >
+                            <DoneAllIcon style={{ marginRight: 4 }} />
                             Terms verified by you
                           </Typography>
                         </Box>
@@ -642,16 +688,32 @@ const Profile = () => {
                     <Box
                       sx={{ display: "flex", flexDirection: "column", gap: 2 }}
                     >
-                      <Typography
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1,
-                          color: "primary.main",
-                        }}
+                      <Box
+                        sx={{ display: "flex", alignItems: "center", gap: 2 }}
                       >
-                        <CallIcon size="small" /> Contact Information
-                      </Typography>
+                        <Typography
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                            color: "primary.main",
+                          }}
+                        >
+                          <CallIcon size="small" /> Contact Information
+                        </Typography>
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              value={makeItPrivate}
+                              checked={makeItPrivate}
+                              onChange={handleCheckboxChange}
+                              color="primary"
+                            />
+                          }
+                          label="Make it Public"
+                        />
+                      </Box>
+
                       <Paper sx={{ p: 2, bgcolor: "grey.50" }}>
                         <Grid container spacing={2}>
                           <Grid item xs={12} sm={6}>
@@ -1040,6 +1102,62 @@ const Profile = () => {
                                 <IconButton>
                                   <EditIcon
                                     onClick={() => handleEditClick("industry")}
+                                  />
+                                </IconButton>
+                              </Box>
+                            )}
+                          </Grid>
+                          <Grid item xs={12} sm={6}>
+                            <Typography
+                              variant="subtitle2"
+                              color="text.secondary"
+                            >
+                              Industry Category
+                            </Typography>
+                            {isEditing &&
+                            editField.industry_category !== undefined ? (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 2,
+                                }}
+                              >
+                                <TextField
+                                  fullWidth
+                                  value={editField.industry_category}
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      "industry_category",
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                                <IconButton
+                                  color="primary"
+                                  onClick={() =>
+                                    handleSaveClick("industry_category")
+                                  }
+                                >
+                                  <SaveIcon />
+                                </IconButton>
+                              </Box>
+                            ) : (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 2,
+                                }}
+                              >
+                                <Typography variant="body1">
+                                  {industry_category || "N/A"}
+                                </Typography>
+                                <IconButton>
+                                  <EditIcon
+                                    onClick={() =>
+                                      handleEditClick("industry_category")
+                                    }
                                   />
                                 </IconButton>
                               </Box>
