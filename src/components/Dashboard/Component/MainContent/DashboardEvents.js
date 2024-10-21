@@ -21,6 +21,7 @@ import {
 } from "@mui/material";
 import { toast } from "react-toastify";
 import ajaxCall from "../../../helpers/ajaxCall";
+import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 
 const steps = [
   "Event Registration",
@@ -361,7 +362,16 @@ const DashboardEvents = ({ eventsData }) => {
                 size="small"
                 disabled={isUserRegistered}
               >
-                {isUserRegistered ? "Registered" : "Register"}
+                {isUserRegistered ? (
+                  "Registered"
+                ) : (
+                  <>
+                    <CurrencyRupeeIcon
+                      style={{ fontSize: 16, verticalAlign: "middle" }}
+                    />
+                    Pay
+                  </>
+                )}
               </Button>
             </ListItem>
           ))}

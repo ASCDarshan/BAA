@@ -28,7 +28,6 @@ import {
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import CallIcon from "@mui/icons-material/Call";
 import PlaylistAddCheckCircleIcon from "@mui/icons-material/PlaylistAddCheckCircle";
-import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import ajaxCall from "../../../helpers/ajaxCall";
 
 const theme = createTheme({
@@ -186,6 +185,7 @@ const CheckUser = () => {
     postal_code,
     state,
     street_address,
+    make_it_public,
     user: { username },
   } = userProfileData;
 
@@ -333,11 +333,6 @@ const CheckUser = () => {
                       iconPosition="start"
                       label="Additional Info"
                     />
-                    <Tab
-                      icon={<AdminPanelSettingsIcon sx={{ mb: 0.5 }} />}
-                      iconPosition="start"
-                      label="Security Profile"
-                    />
                   </Tabs>
                 </Box>
 
@@ -437,78 +432,97 @@ const CheckUser = () => {
                     </Box>
                   )}
 
-                  {tabValue === 1 && (
-                    <Box
-                      sx={{ display: "flex", flexDirection: "column", gap: 2 }}
-                    >
-                      <Typography
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1,
-                          color: "primary.main",
-                        }}
-                      >
-                        <CallIcon size="small" /> Contact Information
-                      </Typography>
-                      <Paper sx={{ p: 2, bgcolor: "grey.50" }}>
-                        <Grid container spacing={2}>
-                          <Grid item xs={12} sm={6}>
-                            <Typography
-                              variant="subtitle2"
-                              color="text.secondary"
-                            >
-                              Email
-                            </Typography>
-                            <Typography variant="body1">
-                              {userProfileData.user.email}
-                            </Typography>
-                          </Grid>
-                          <Grid item xs={12} sm={6}>
-                            <Typography
-                              variant="subtitle2"
-                              color="text.secondary"
-                            >
-                              Alternative Email
-                            </Typography>
-                            <Typography variant="body1">
-                              {alternative_email}
-                            </Typography>
-                          </Grid>
-                          <Grid item xs={12} sm={6}>
-                            <Typography
-                              variant="subtitle2"
-                              color="text.secondary"
-                            >
-                              Phone
-                            </Typography>
-                            <Typography variant="body1">
-                              {phone_number}
-                            </Typography>
-                          </Grid>
-                          <Grid item xs={12}>
-                            <Typography
-                              variant="subtitle2"
-                              color="text.secondary"
-                            >
-                              Address
-                            </Typography>
-                            <Typography variant="body1">
-                              {[
-                                street_address,
-                                city,
-                                state,
-                                country,
-                                postal_code,
-                              ]
-                                .filter(Boolean)
-                                .join(", ")}
-                            </Typography>
-                          </Grid>
-                        </Grid>
-                      </Paper>
-                    </Box>
-                  )}
+                  {make_it_public
+                    ? tabValue === 1 && (
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 2,
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 1,
+                              color: "primary.main",
+                            }}
+                          >
+                            <CallIcon size="small" /> Contact Information
+                          </Typography>
+                          <Paper sx={{ p: 2, bgcolor: "grey.50" }}>
+                            <Grid container spacing={2}>
+                              <Grid item xs={12} sm={6}>
+                                <Typography
+                                  variant="subtitle2"
+                                  color="text.secondary"
+                                >
+                                  Email
+                                </Typography>
+                                <Typography variant="body1">
+                                  {userProfileData.user.email}
+                                </Typography>
+                              </Grid>
+                              <Grid item xs={12} sm={6}>
+                                <Typography
+                                  variant="subtitle2"
+                                  color="text.secondary"
+                                >
+                                  Alternative Email
+                                </Typography>
+                                <Typography variant="body1">
+                                  {alternative_email}
+                                </Typography>
+                              </Grid>
+                              <Grid item xs={12} sm={6}>
+                                <Typography
+                                  variant="subtitle2"
+                                  color="text.secondary"
+                                >
+                                  Phone
+                                </Typography>
+                                <Typography variant="body1">
+                                  {phone_number}
+                                </Typography>
+                              </Grid>
+                              <Grid item xs={12}>
+                                <Typography
+                                  variant="subtitle2"
+                                  color="text.secondary"
+                                >
+                                  Address
+                                </Typography>
+                                <Typography variant="body1">
+                                  {[
+                                    street_address,
+                                    city,
+                                    state,
+                                    country,
+                                    postal_code,
+                                  ]
+                                    .filter(Boolean)
+                                    .join(", ")}
+                                </Typography>
+                              </Grid>
+                            </Grid>
+                          </Paper>
+                        </Box>
+                      )
+                    : tabValue === 1 && (
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            height: "100%",
+                          }}
+                        >
+                          <Typography variant="body1" color="text.secondary">
+                            User made it private
+                          </Typography>
+                        </Box>
+                      )}
 
                   {tabValue === 2 && (
                     <Box
@@ -651,28 +665,6 @@ const CheckUser = () => {
                             </Typography>
                           </Grid>
                         </Grid>
-                      </Paper>
-                    </Box>
-                  )}
-
-                  {tabValue === 4 && (
-                    <Box
-                      sx={{ display: "flex", flexDirection: "column", gap: 2 }}
-                    >
-                      <Typography
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1,
-                          color: "primary.main",
-                        }}
-                      >
-                        <AdminPanelSettingsIcon size="small" /> Security Profile
-                      </Typography>
-                      <Paper sx={{ p: 2, bgcolor: "grey.50" }}>
-                        <Typography variant="body1">
-                          Security profile information would go here.
-                        </Typography>
                       </Paper>
                     </Box>
                   )}
