@@ -13,7 +13,6 @@ import {
   Box,
 } from "@mui/material";
 import ajaxCall from "../../../helpers/ajaxCall";
-import HeroBanner from "../Content/HeroBanner";
 import LogoImg from "../../../images/BAA.png";
 
 const SectionTitle = styled(Typography)(({ theme }) => ({

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   AppBar,
   Toolbar,
@@ -20,15 +20,14 @@ import ContactMailIcon from "@mui/icons-material/Call";
 import HomeIcon from "@mui/icons-material/Home";
 import EventIcon from "@mui/icons-material/Event";
 import LoginIcon from "@mui/icons-material/Person";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const theme = useTheme();
   const navigate = useNavigate();
-
+  const location = useLocation();
   const [value, setValue] = useState(0);
   const [mobileOpen, setMobileOpen] = useState(false);
-
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const handleDrawerToggle = () => {
@@ -43,7 +42,21 @@ const Navbar = () => {
     { name: "Contact", to: "contact-us" },
   ];
 
+  useEffect(() => {
+    const storedSection = localStorage.getItem("selectedSection");
+    if (storedSection && location.pathname === "/") {
+      scrollToSection(storedSection);
+      localStorage.removeItem("selectedSection");
+    }
+  }, [location.pathname]);
+
   const scrollToSection = (sectionId) => {
+    if (location.pathname !== "/") {
+      localStorage.setItem("selectedSection", sectionId);
+      navigate("/");
+      return;
+    }
+
     const section = document.getElementById(sectionId);
     if (section) {
       section.scrollIntoView({ behavior: "smooth" });
