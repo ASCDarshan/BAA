@@ -105,6 +105,25 @@ const Event = () => {
       </Box>
     );
   }
+  if (!eventData || eventData.length === 0) {
+    return (
+      <Container sx={{ mt: 4 }}>
+        <Card
+          sx={{ mt: 4, boxShadow: "0 4px 8px rgba(251, 166, 69, 0.5)", p: 2 }}
+        >
+          <Grid container>
+            <Grid item xs={12} md={4}>
+              <div className="mt-16 container mx-auto px-4 p-2 m-2">
+                <p className="text-gray-600">
+                  Currently, there are no upcoming events.
+                </p>
+              </div>
+            </Grid>
+          </Grid>
+        </Card>
+      </Container>
+    );
+  }
 
   return (
     <>
