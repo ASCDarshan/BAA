@@ -41,6 +41,7 @@ const Events = ({ eventsData }) => {
   if (!eventsData || eventsData.length === 0) {
     return (
       <Container sx={{ mt: 4 }}>
+        <SectionTitle variant="h4">Upcoming Events</SectionTitle>
         <Card
           sx={{ mt: 4, boxShadow: "0 4px 8px rgba(251, 166, 69, 0.5)", p: 2 }}
         >
@@ -48,7 +49,7 @@ const Events = ({ eventsData }) => {
             <Grid item xs={12} md={4}>
               <div className="mt-16 container mx-auto px-4 p-2 m-2">
                 <p className="text-gray-600">
-                  Currently, there are no upcoming events.
+                  Currently, There are No Upcoming events.
                 </p>
               </div>
             </Grid>
