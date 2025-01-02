@@ -188,7 +188,7 @@ const Navbar = () => {
                 pointerEvents: "none",
                 backgroundColor: isMobile
                   ? "transparent"
-                  : "rgba(255, 255, 255, 0.5)",
+                  : "rgba(255, 255, 255, 0.77)",
                 borderRadius: "8px",
                 padding: isMobile ? "0" : "8px",
               }}
